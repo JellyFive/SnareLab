@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Snare Practice Lab - 设置</title>
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">Snare<span>Lab</span></div>
+    <div class="subtitle">深色练习驾驶舱 · 拆分原型</div>
+    <nav class="nav"><a class="" href="index.html"><span class="dot"></span>首页</a>
+<a class="" href="rhythm.html"><span class="dot"></span>节奏</a>
+<a class="" href="trainer.html"><span class="dot"></span>跟练</a>
+<a class="" href="library.html"><span class="dot"></span>练习库</a>
+<a class="" href="log.html"><span class="dot"></span>日志</a>
+<a class="active" href="settings.html"><span class="dot"></span>设置</a></nav>
+    <div class="side-note">当前页面：设置<br/>原型已拆分为独立页面，所有页面共享同一套控件规范和视觉 token。</div>
+  </aside>
+  <main class="main">
+    <header class="topbar">
+      <div class="title"><h1>设置 · 偏好与数据</h1><p>保持本地优先，管理声音、播放和数据。</p></div>
+      <div class="status"><div class="badge accent">Local First</div></div>
+    </header>
+    
+<section class="stack">
+  <section class="card">
+    <h2>设置</h2>
+    <p class="muted">管理声音层、默认 BPM、响应式偏好、数据导入导出。</p>
+  </section>
+  <section class="log-grid">
+    <div class="card">
+      <h3>声音与播放</h3>
+      <div class="switches">
+        <label class="switch-label">默认节拍器 <span class="switch on"><i></i></span></label>
+        <label class="switch-label">默认鼓点 <span class="switch on"><i></i></span></label>
+        <label class="switch-label">Count-in <span class="switch on"><i></i></span></label>
+      </div>
+      <div style="height:14px"></div>
+      <input class="input" value="默认 BPM：80"/>
+    </div>
+    <div class="card">
+      <h3>数据</h3>
+      <p class="muted">MVP 阶段采用本地优先存储。后续支持 JSON 导入导出、云同步或小程序端迁移。</p>
+      <div class="row"><button class="btn">导入</button><button class="btn primary">导出</button><button class="btn">清空缓存</button></div>
+    </div>
+  </section>
+  <section class="card">
+    <h3>响应式策略</h3>
+    <p class="muted">桌面大屏使用完整侧边栏；平板横屏保留双栏；小屏幕启用底部导航和卡片纵向堆叠。视觉风格不变，只改变排布。</p>
+  </section>
+</section>
+
+  </main>
+</div>
+<nav class="mobile-topnav"><a class="" href="index.html">首页</a>
+<a class="" href="rhythm.html">节奏</a>
+<a class="" href="trainer.html">跟练</a>
+<a class="" href="library.html">练习库</a>
+<a class="" href="log.html">日志</a></nav>
+</body>
+</html>

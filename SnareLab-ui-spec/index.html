@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Snare Practice Lab - 首页</title>
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">Snare<span>Lab</span></div>
+    <div class="subtitle">深色练习驾驶舱 · 拆分原型</div>
+    <nav class="nav"><a class="active" href="index.html"><span class="dot"></span>首页</a>
+<a class="" href="rhythm.html"><span class="dot"></span>节奏</a>
+<a class="" href="trainer.html"><span class="dot"></span>跟练</a>
+<a class="" href="library.html"><span class="dot"></span>练习库</a>
+<a class="" href="log.html"><span class="dot"></span>日志</a>
+<a class="" href="settings.html"><span class="dot"></span>设置</a></nav>
+    <div class="side-note">当前页面：首页<br/>原型已拆分为独立页面，所有页面共享同一套控件规范和视觉 token。</div>
+  </aside>
+  <main class="main">
+    <header class="topbar">
+      <div class="title"><h1>首页 · 个人练习驾驶舱</h1><p>把个人目标、练习笔记、练习计划、最近记录和快速入口集中在一个页面。</p></div>
+      <div class="status"><div class="badge accent">今日 18m</div>
+<div class="badge green">连续 3 天</div></div>
+    </header>
+    
+<section class="home-grid">
+  <div class="stack">
+    <section class="card hero">
+      <div class="hero-main">
+        <div>
+          <h2>继续上次练习</h2>
+          <p class="muted">Paradiddle Accent Grid · 个人目标 · 建议从 72 BPM 开始。今天目标是稳定完成 8 轮。</p>
+          <div class="hero-meta">
+            <div class="mini-stat"><strong>72</strong><span>上次 BPM</span></div>
+            <div class="mini-stat"><strong>12m</strong><span>上次时长</span></div>
+            <div class="mini-stat"><strong>8</strong><span>目标重复</span></div>
+          </div>
+          <div class="row">
+            <a class="btn primary" href="trainer.html">开始跟练</a>
+            <a class="btn" href="rhythm.html">调整节奏</a>
+            <a class="btn" href="log.html">写练习笔记</a>
+          </div>
+        </div>
+        <div class="gauge"><small>BPM</small></div>
+      </div>
+    </section>
+    <section class="quick-grid">
+      <div class="quick"><b>随机读谱</b><span>从已选十六分节奏型随机生成 4 小节。</span><div style="height:12px"></div><a class="btn primary" href="rhythm.html">生成</a></div>
+      <div class="quick"><b>顺序目标</b><span>按自己设定的 7 个节奏型顺序练习。</span><div style="height:12px"></div><a class="btn" href="trainer.html">打开</a></div>
+      <div class="quick"><b>新建练习笔记</b><span>记录练习想法、问题观察和下一步目标。</span><div style="height:12px"></div><a class="btn" href="log.html">记录</a></div>
+    </section>
+    <section class="home-columns">
+      <div class="card">
+        <h3>当前个人目标</h3>
+        <div class="list">
+          <div class="item"><b>十六分节奏型 7 个</b><span>目标 70 BPM · 进行中 · 可转为顺序练习</span></div>
+          <div class="item"><b>右手重音后左手不要虚</b><span>问题记录 · 关联 Paradiddle Accent Grid</span></div>
+          <div class="item"><b>三连音读谱</b><span>本周至少练 3 次</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>最近练习</h3>
+        <div class="list">
+          <div class="item"><b>今天 · 随机读谱</b><span>80 BPM · 12 分钟 · 鼓点关 / 节拍器开</span></div>
+          <div class="item"><b>昨天 · 顺序目标</b><span>72 BPM · 8 轮 · 主观难度 3/5</span></div>
+          <div class="item"><b>周一 · Paradiddle</b><span>68 BPM · 15 分钟 · 标记待复习</span></div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <aside class="stack">
+    <section class="card">
+      <h3>本周进度</h3>
+      <div class="progress-row">
+        <div><div class="progress-title"><span>练习时长</span><span>1h 35m / 2h</span></div><div class="bar"><i style="width:78%"></i></div></div>
+        <div><div class="progress-title"><span>目标完成度</span><span>3 / 5</span></div><div class="bar"><i style="width:60%"></i></div></div>
+        <div><div class="progress-title"><span>稳定 BPM</span><span>72 → 80</span></div><div class="bar"><i style="width:66%"></i></div></div>
+      </div>
+    </section>
+    <section class="card">
+      <h3>当前 Focus</h3>
+      <p class="muted">系统根据个人目标和最近练习自动聚合当前重点。</p>
+      <div class="focus-tags"><span class="hot">十六分</span><span>重音</span><span>Paradiddle</span><span>顺序练习</span><span>读谱反应</span></div>
+    </section>
+    <section class="card">
+      <h3>下一步建议</h3>
+      <div class="list">
+        <div class="item"><b>先练顺序目标</b><span>72 BPM，完成 8 轮后再进入随机读谱。</span></div>
+        <div class="item"><b>结束后补记感受</b><span>记录“左手是否变虚”，下次练习可回看。</span></div>
+      </div>
+    </section>
+  </aside>
+</section>
+
+  </main>
+</div>
+<nav class="mobile-topnav"><a class="active" href="index.html">首页</a>
+<a class="" href="rhythm.html">节奏</a>
+<a class="" href="trainer.html">跟练</a>
+<a class="" href="library.html">练习库</a>
+<a class="" href="log.html">日志</a></nav>
+</body>
+</html>

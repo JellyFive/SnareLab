@@ -1,0 +1,2347 @@
+// Snare Practice Lab - Rhythm Pattern Catalog V1.0
+// 说明：音符本体不手画，使用 VexFlow 根据 render.score.atoms 渲染。
+// UI 卡片使用统一 pattern-card 样式，cardFallbackGlyph 只作为加载失败或极小尺寸降级显示。
+
+export type Subdivision = 'sixteenth' | 'triplet';
+export type PatternDifficulty = 1 | 2 | 3 | 4 | 5;
+export type PatternAtom = {
+  slotIndex: number;
+  kind: 'note' | 'rest';
+  duration: '16' | '8';
+};
+
+export type RhythmPattern = {
+  id: string;
+  code: string;
+  name: string;
+  displayNameZh: string;
+  subdivision: Subdivision;
+  slotLabels: string[];
+  steps: boolean[];
+  hitCount: string;
+  difficulty: PatternDifficulty;
+  tags: string[];
+  ui: {
+    cardSize: 'pattern-card';
+    cardFallbackGlyph: string;
+    dotStates: Array<'hit' | 'rest'>;
+    defaultState: 'default';
+    selectedState: 'yellow-outline-dark-gold-fill';
+    disabledState: 'opacity-42-dashed-border';
+    currentPlaybackState: 'red-playhead-yellow-beat-dot';
+  };
+  render: {
+    engine: 'vexflow';
+    staff: 'percussion-one-line';
+    card: {
+      mode: 'compact-score-preview';
+      showRests: 'minimal';
+      showDots: boolean;
+      fallbackGlyph: string;
+    };
+    score: {
+      mode: 'precise';
+      atoms: PatternAtom[];
+      beamGroup: boolean;
+      tuplet: null | { actualNotes: 3; normalNotes: 2 };
+    };
+    playback: {
+      gridUnit: Subdivision;
+      hitSlots: number[];
+      restSlots: number[];
+    };
+  };
+};
+
+export type StarterPracticeTemplate = {
+  id: string;
+  displayNameZh: string;
+  description: string;
+  patternIds: string[];
+  modeSuggestion: 'shuffle' | 'ordered' | 'reshuffle-each-round' | 'endless';
+  difficulty: PatternDifficulty;
+  tags: string[];
+};
+
+export const rhythmPatternCatalog = {
+  "version": "1.0.0",
+  "product": "Snare Practice Lab",
+  "scope": "MVP rhythm pattern catalog",
+  "principle": "Use standard notation rendered by VexFlow, wrapped in the product's dark cockpit rhythm-card UI.",
+  "subdivisions": {
+    "sixteenth": {
+      "slots": [
+        "1",
+        "e",
+        "&",
+        "a"
+      ],
+      "slotCount": 4,
+      "unit": "16"
+    },
+    "triplet": {
+      "slots": [
+        "1",
+        "trip",
+        "let"
+      ],
+      "slotCount": 3,
+      "unit": "8t"
+    }
+  },
+  "difficultyScale": {
+    "1": "基础：正拍、连续、完整均分，适合热身",
+    "2": "入门进阶：后半拍或简单组合，需要基础读谱",
+    "3": "进阶：切分、缺位、三连弱位，需要反应",
+    "4": "困难：弱位单击、稀疏进入、容易抢拍或拖拍",
+    "5": "保留：未来用于跨拍、复杂连线、套鼓声部分离"
+  },
+  "patterns": [
+    {
+      "id": "sixteenth-0000",
+      "code": "0000",
+      "name": "Full Rest",
+      "displayNameZh": "全休止",
+      "subdivision": "sixteenth",
+      "slotLabels": [
+        "1",
+        "e",
+        "&",
+        "a"
+      ],
+      "steps": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "hitCount": "0/4",
+      "difficulty": 1,
+      "tags": [
+        "十六分",
+        "休止",
+        "基础",
+        "静默",
+        "套鼓可复用"
+      ],
+      "ui": {
+        "cardSize": "pattern-card",
+        "cardFallbackGlyph": "𝄽",
+        "dotStates": [
+          "rest",
+          "rest",
+          "rest",
+          "rest"
+        ],
+        "defaultState": "default",
+        "selectedState": "yellow-outline-dark-gold-fill",
+        "disabledState": "opacity-42-dashed-border",
+        "currentPlaybackState": "red-playhead-yellow-beat-dot"
+      },
+      "render": {
+        "engine": "vexflow",
+        "staff": "percussion-one-line",
+        "card": {
+          "mode": "compact-score-preview",
+          "showRests": "minimal",
+          "showDots": true,
+          "fallbackGlyph": "𝄽"
+        },
+        "score": {
+          "mode": "precise",
+          "atoms": [
+            {
+              "slotIndex": 0,
+              "kind": "rest",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 1,
+              "kind": "rest",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 2,
+              "kind": "rest",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 3,
+              "kind": "rest",
+              "duration": "16"
+            }
+          ],
+          "beamGroup": true,
+          "tuplet": null
+        },
+        "playback": {
+          "gridUnit": "sixteenth",
+          "hitSlots": [],
+          "restSlots": [
+            0,
+            1,
+            2,
+            3
+          ]
+        }
+      }
+    },
+    {
+      "id": "sixteenth-1000",
+      "code": "1000",
+      "name": "Downbeat Single",
+      "displayNameZh": "正拍单击",
+      "subdivision": "sixteenth",
+      "slotLabels": [
+        "1",
+        "e",
+        "&",
+        "a"
+      ],
+      "steps": [
+        true,
+        false,
+        false,
+        false
+      ],
+      "hitCount": "1/4",
+      "difficulty": 1,
+      "tags": [
+        "十六分",
+        "正拍",
+        "基础",
+        "读谱",
+        "套鼓可复用"
+      ],
+      "ui": {
+        "cardSize": "pattern-card",
+        "cardFallbackGlyph": "♩",
+        "dotStates": [
+          "hit",
+          "rest",
+          "rest",
+          "rest"
+        ],
+        "defaultState": "default",
+        "selectedState": "yellow-outline-dark-gold-fill",
+        "disabledState": "opacity-42-dashed-border",
+        "currentPlaybackState": "red-playhead-yellow-beat-dot"
+      },
+      "render": {
+        "engine": "vexflow",
+        "staff": "percussion-one-line",
+        "card": {
+          "mode": "compact-score-preview",
+          "showRests": "minimal",
+          "showDots": true,
+          "fallbackGlyph": "♩"
+        },
+        "score": {
+          "mode": "precise",
+          "atoms": [
+            {
+              "slotIndex": 0,
+              "kind": "note",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 1,
+              "kind": "rest",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 2,
+              "kind": "rest",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 3,
+              "kind": "rest",
+              "duration": "16"
+            }
+          ],
+          "beamGroup": true,
+          "tuplet": null
+        },
+        "playback": {
+          "gridUnit": "sixteenth",
+          "hitSlots": [
+            0
+          ],
+          "restSlots": [
+            1,
+            2,
+            3
+          ]
+        }
+      }
+    },
+    {
+      "id": "sixteenth-0100",
+      "code": "0100",
+      "name": "E Single",
+      "displayNameZh": "e 位单击",
+      "subdivision": "sixteenth",
+      "slotLabels": [
+        "1",
+        "e",
+        "&",
+        "a"
+      ],
+      "steps": [
+        false,
+        true,
+        false,
+        false
+      ],
+      "hitCount": "1/4",
+      "difficulty": 4,
+      "tags": [
+        "十六分",
+        "弱位",
+        "反应",
+        "困难",
+        "读谱",
+        "套鼓可复用"
+      ],
+      "ui": {
+        "cardSize": "pattern-card",
+        "cardFallbackGlyph": "𝄾𝅘𝅥𝅯",
+        "dotStates": [
+          "rest",
+          "hit",
+          "rest",
+          "rest"
+        ],
+        "defaultState": "default",
+        "selectedState": "yellow-outline-dark-gold-fill",
+        "disabledState": "opacity-42-dashed-border",
+        "currentPlaybackState": "red-playhead-yellow-beat-dot"
+      },
+      "render": {
+        "engine": "vexflow",
+        "staff": "percussion-one-line",
+        "card": {
+          "mode": "compact-score-preview",
+          "showRests": "minimal",
+          "showDots": true,
+          "fallbackGlyph": "𝄾𝅘𝅥𝅯"
+        },
+        "score": {
+          "mode": "precise",
+          "atoms": [
+            {
+              "slotIndex": 0,
+              "kind": "rest",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 1,
+              "kind": "note",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 2,
+              "kind": "rest",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 3,
+              "kind": "rest",
+              "duration": "16"
+            }
+          ],
+          "beamGroup": true,
+          "tuplet": null
+        },
+        "playback": {
+          "gridUnit": "sixteenth",
+          "hitSlots": [
+            1
+          ],
+          "restSlots": [
+            0,
+            2,
+            3
+          ]
+        }
+      }
+    },
+    {
+      "id": "sixteenth-0010",
+      "code": "0010",
+      "name": "And Single",
+      "displayNameZh": "& 位单击",
+      "subdivision": "sixteenth",
+      "slotLabels": [
+        "1",
+        "e",
+        "&",
+        "a"
+      ],
+      "steps": [
+        false,
+        false,
+        true,
+        false
+      ],
+      "hitCount": "1/4",
+      "difficulty": 3,
+      "tags": [
+        "十六分",
+        "反拍",
+        "切分",
+        "读谱",
+        "套鼓可复用"
+      ],
+      "ui": {
+        "cardSize": "pattern-card",
+        "cardFallbackGlyph": "𝄾𝄾𝅘𝅥𝅯",
+        "dotStates": [
+          "rest",
+          "rest",
+          "hit",
+          "rest"
+        ],
+        "defaultState": "default",
+        "selectedState": "yellow-outline-dark-gold-fill",
+        "disabledState": "opacity-42-dashed-border",
+        "currentPlaybackState": "red-playhead-yellow-beat-dot"
+      },
+      "render": {
+        "engine": "vexflow",
+        "staff": "percussion-one-line",
+        "card": {
+          "mode": "compact-score-preview",
+          "showRests": "minimal",
+          "showDots": true,
+          "fallbackGlyph": "𝄾𝄾𝅘𝅥𝅯"
+        },
+        "score": {
+          "mode": "precise",
+          "atoms": [
+            {
+              "slotIndex": 0,
+              "kind": "rest",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 1,
+              "kind": "rest",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 2,
+              "kind": "note",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 3,
+              "kind": "rest",
+              "duration": "16"
+            }
+          ],
+          "beamGroup": true,
+          "tuplet": null
+        },
+        "playback": {
+          "gridUnit": "sixteenth",
+          "hitSlots": [
+            2
+          ],
+          "restSlots": [
+            0,
+            1,
+            3
+          ]
+        }
+      }
+    },
+    {
+      "id": "sixteenth-0001",
+      "code": "0001",
+      "name": "A Single",
+      "displayNameZh": "a 位单击",
+      "subdivision": "sixteenth",
+      "slotLabels": [
+        "1",
+        "e",
+        "&",
+        "a"
+      ],
+      "steps": [
+        false,
+        false,
+        false,
+        true
+      ],
+      "hitCount": "1/4",
+      "difficulty": 4,
+      "tags": [
+        "十六分",
+        "弱位",
+        "反应",
+        "困难",
+        "读谱",
+        "套鼓可复用"
+      ],
+      "ui": {
+        "cardSize": "pattern-card",
+        "cardFallbackGlyph": "𝄾𝄾𝄾𝅘𝅥𝅯",
+        "dotStates": [
+          "rest",
+          "rest",
+          "rest",
+          "hit"
+        ],
+        "defaultState": "default",
+        "selectedState": "yellow-outline-dark-gold-fill",
+        "disabledState": "opacity-42-dashed-border",
+        "currentPlaybackState": "red-playhead-yellow-beat-dot"
+      },
+      "render": {
+        "engine": "vexflow",
+        "staff": "percussion-one-line",
+        "card": {
+          "mode": "compact-score-preview",
+          "showRests": "minimal",
+          "showDots": true,
+          "fallbackGlyph": "𝄾𝄾𝄾𝅘𝅥𝅯"
+        },
+        "score": {
+          "mode": "precise",
+          "atoms": [
+            {
+              "slotIndex": 0,
+              "kind": "rest",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 1,
+              "kind": "rest",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 2,
+              "kind": "rest",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 3,
+              "kind": "note",
+              "duration": "16"
+            }
+          ],
+          "beamGroup": true,
+          "tuplet": null
+        },
+        "playback": {
+          "gridUnit": "sixteenth",
+          "hitSlots": [
+            3
+          ],
+          "restSlots": [
+            0,
+            1,
+            2
+          ]
+        }
+      }
+    },
+    {
+      "id": "sixteenth-1100",
+      "code": "1100",
+      "name": "Front Pair",
+      "displayNameZh": "前八分",
+      "subdivision": "sixteenth",
+      "slotLabels": [
+        "1",
+        "e",
+        "&",
+        "a"
+      ],
+      "steps": [
+        true,
+        true,
+        false,
+        false
+      ],
+      "hitCount": "2/4",
+      "difficulty": 1,
+      "tags": [
+        "十六分",
+        "基础",
+        "连续",
+        "前半拍",
+        "套鼓可复用"
+      ],
+      "ui": {
+        "cardSize": "pattern-card",
+        "cardFallbackGlyph": "♫",
+        "dotStates": [
+          "hit",
+          "hit",
+          "rest",
+          "rest"
+        ],
+        "defaultState": "default",
+        "selectedState": "yellow-outline-dark-gold-fill",
+        "disabledState": "opacity-42-dashed-border",
+        "currentPlaybackState": "red-playhead-yellow-beat-dot"
+      },
+      "render": {
+        "engine": "vexflow",
+        "staff": "percussion-one-line",
+        "card": {
+          "mode": "compact-score-preview",
+          "showRests": "minimal",
+          "showDots": true,
+          "fallbackGlyph": "♫"
+        },
+        "score": {
+          "mode": "precise",
+          "atoms": [
+            {
+              "slotIndex": 0,
+              "kind": "note",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 1,
+              "kind": "note",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 2,
+              "kind": "rest",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 3,
+              "kind": "rest",
+              "duration": "16"
+            }
+          ],
+          "beamGroup": true,
+          "tuplet": null
+        },
+        "playback": {
+          "gridUnit": "sixteenth",
+          "hitSlots": [
+            0,
+            1
+          ],
+          "restSlots": [
+            2,
+            3
+          ]
+        }
+      }
+    },
+    {
+      "id": "sixteenth-1010",
+      "code": "1010",
+      "name": "One And",
+      "displayNameZh": "正拍与反拍",
+      "subdivision": "sixteenth",
+      "slotLabels": [
+        "1",
+        "e",
+        "&",
+        "a"
+      ],
+      "steps": [
+        true,
+        false,
+        true,
+        false
+      ],
+      "hitCount": "2/4",
+      "difficulty": 2,
+      "tags": [
+        "十六分",
+        "基础",
+        "正拍",
+        "反拍",
+        "套鼓可复用"
+      ],
+      "ui": {
+        "cardSize": "pattern-card",
+        "cardFallbackGlyph": "♩♪",
+        "dotStates": [
+          "hit",
+          "rest",
+          "hit",
+          "rest"
+        ],
+        "defaultState": "default",
+        "selectedState": "yellow-outline-dark-gold-fill",
+        "disabledState": "opacity-42-dashed-border",
+        "currentPlaybackState": "red-playhead-yellow-beat-dot"
+      },
+      "render": {
+        "engine": "vexflow",
+        "staff": "percussion-one-line",
+        "card": {
+          "mode": "compact-score-preview",
+          "showRests": "minimal",
+          "showDots": true,
+          "fallbackGlyph": "♩♪"
+        },
+        "score": {
+          "mode": "precise",
+          "atoms": [
+            {
+              "slotIndex": 0,
+              "kind": "note",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 1,
+              "kind": "rest",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 2,
+              "kind": "note",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 3,
+              "kind": "rest",
+              "duration": "16"
+            }
+          ],
+          "beamGroup": true,
+          "tuplet": null
+        },
+        "playback": {
+          "gridUnit": "sixteenth",
+          "hitSlots": [
+            0,
+            2
+          ],
+          "restSlots": [
+            1,
+            3
+          ]
+        }
+      }
+    },
+    {
+      "id": "sixteenth-1001",
+      "code": "1001",
+      "name": "Edge Syncopation",
+      "displayNameZh": "首尾切分",
+      "subdivision": "sixteenth",
+      "slotLabels": [
+        "1",
+        "e",
+        "&",
+        "a"
+      ],
+      "steps": [
+        true,
+        false,
+        false,
+        true
+      ],
+      "hitCount": "2/4",
+      "difficulty": 3,
+      "tags": [
+        "十六分",
+        "切分",
+        "首尾",
+        "读谱",
+        "套鼓可复用"
+      ],
+      "ui": {
+        "cardSize": "pattern-card",
+        "cardFallbackGlyph": "♩𝄾𝅘𝅥𝅯",
+        "dotStates": [
+          "hit",
+          "rest",
+          "rest",
+          "hit"
+        ],
+        "defaultState": "default",
+        "selectedState": "yellow-outline-dark-gold-fill",
+        "disabledState": "opacity-42-dashed-border",
+        "currentPlaybackState": "red-playhead-yellow-beat-dot"
+      },
+      "render": {
+        "engine": "vexflow",
+        "staff": "percussion-one-line",
+        "card": {
+          "mode": "compact-score-preview",
+          "showRests": "minimal",
+          "showDots": true,
+          "fallbackGlyph": "♩𝄾𝅘𝅥𝅯"
+        },
+        "score": {
+          "mode": "precise",
+          "atoms": [
+            {
+              "slotIndex": 0,
+              "kind": "note",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 1,
+              "kind": "rest",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 2,
+              "kind": "rest",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 3,
+              "kind": "note",
+              "duration": "16"
+            }
+          ],
+          "beamGroup": true,
+          "tuplet": null
+        },
+        "playback": {
+          "gridUnit": "sixteenth",
+          "hitSlots": [
+            0,
+            3
+          ],
+          "restSlots": [
+            1,
+            2
+          ]
+        }
+      }
+    },
+    {
+      "id": "sixteenth-0110",
+      "code": "0110",
+      "name": "Middle Pair",
+      "displayNameZh": "中间两位",
+      "subdivision": "sixteenth",
+      "slotLabels": [
+        "1",
+        "e",
+        "&",
+        "a"
+      ],
+      "steps": [
+        false,
+        true,
+        true,
+        false
+      ],
+      "hitCount": "2/4",
+      "difficulty": 3,
+      "tags": [
+        "十六分",
+        "弱位",
+        "切分",
+        "读谱",
+        "套鼓可复用"
+      ],
+      "ui": {
+        "cardSize": "pattern-card",
+        "cardFallbackGlyph": "𝄾♫",
+        "dotStates": [
+          "rest",
+          "hit",
+          "hit",
+          "rest"
+        ],
+        "defaultState": "default",
+        "selectedState": "yellow-outline-dark-gold-fill",
+        "disabledState": "opacity-42-dashed-border",
+        "currentPlaybackState": "red-playhead-yellow-beat-dot"
+      },
+      "render": {
+        "engine": "vexflow",
+        "staff": "percussion-one-line",
+        "card": {
+          "mode": "compact-score-preview",
+          "showRests": "minimal",
+          "showDots": true,
+          "fallbackGlyph": "𝄾♫"
+        },
+        "score": {
+          "mode": "precise",
+          "atoms": [
+            {
+              "slotIndex": 0,
+              "kind": "rest",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 1,
+              "kind": "note",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 2,
+              "kind": "note",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 3,
+              "kind": "rest",
+              "duration": "16"
+            }
+          ],
+          "beamGroup": true,
+          "tuplet": null
+        },
+        "playback": {
+          "gridUnit": "sixteenth",
+          "hitSlots": [
+            1,
+            2
+          ],
+          "restSlots": [
+            0,
+            3
+          ]
+        }
+      }
+    },
+    {
+      "id": "sixteenth-0101",
+      "code": "0101",
+      "name": "Weak Syncopation",
+      "displayNameZh": "弱位切分",
+      "subdivision": "sixteenth",
+      "slotLabels": [
+        "1",
+        "e",
+        "&",
+        "a"
+      ],
+      "steps": [
+        false,
+        true,
+        false,
+        true
+      ],
+      "hitCount": "2/4",
+      "difficulty": 4,
+      "tags": [
+        "十六分",
+        "弱位",
+        "切分",
+        "困难",
+        "读谱",
+        "套鼓可复用"
+      ],
+      "ui": {
+        "cardSize": "pattern-card",
+        "cardFallbackGlyph": "𝄾𝅘𝅥𝅯𝄾𝅘𝅥𝅯",
+        "dotStates": [
+          "rest",
+          "hit",
+          "rest",
+          "hit"
+        ],
+        "defaultState": "default",
+        "selectedState": "yellow-outline-dark-gold-fill",
+        "disabledState": "opacity-42-dashed-border",
+        "currentPlaybackState": "red-playhead-yellow-beat-dot"
+      },
+      "render": {
+        "engine": "vexflow",
+        "staff": "percussion-one-line",
+        "card": {
+          "mode": "compact-score-preview",
+          "showRests": "minimal",
+          "showDots": true,
+          "fallbackGlyph": "𝄾𝅘𝅥𝅯𝄾𝅘𝅥𝅯"
+        },
+        "score": {
+          "mode": "precise",
+          "atoms": [
+            {
+              "slotIndex": 0,
+              "kind": "rest",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 1,
+              "kind": "note",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 2,
+              "kind": "rest",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 3,
+              "kind": "note",
+              "duration": "16"
+            }
+          ],
+          "beamGroup": true,
+          "tuplet": null
+        },
+        "playback": {
+          "gridUnit": "sixteenth",
+          "hitSlots": [
+            1,
+            3
+          ],
+          "restSlots": [
+            0,
+            2
+          ]
+        }
+      }
+    },
+    {
+      "id": "sixteenth-0011",
+      "code": "0011",
+      "name": "Back Pair",
+      "displayNameZh": "后八分",
+      "subdivision": "sixteenth",
+      "slotLabels": [
+        "1",
+        "e",
+        "&",
+        "a"
+      ],
+      "steps": [
+        false,
+        false,
+        true,
+        true
+      ],
+      "hitCount": "2/4",
+      "difficulty": 2,
+      "tags": [
+        "十六分",
+        "后半拍",
+        "连续",
+        "读谱",
+        "套鼓可复用"
+      ],
+      "ui": {
+        "cardSize": "pattern-card",
+        "cardFallbackGlyph": "𝄾♫",
+        "dotStates": [
+          "rest",
+          "rest",
+          "hit",
+          "hit"
+        ],
+        "defaultState": "default",
+        "selectedState": "yellow-outline-dark-gold-fill",
+        "disabledState": "opacity-42-dashed-border",
+        "currentPlaybackState": "red-playhead-yellow-beat-dot"
+      },
+      "render": {
+        "engine": "vexflow",
+        "staff": "percussion-one-line",
+        "card": {
+          "mode": "compact-score-preview",
+          "showRests": "minimal",
+          "showDots": true,
+          "fallbackGlyph": "𝄾♫"
+        },
+        "score": {
+          "mode": "precise",
+          "atoms": [
+            {
+              "slotIndex": 0,
+              "kind": "rest",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 1,
+              "kind": "rest",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 2,
+              "kind": "note",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 3,
+              "kind": "note",
+              "duration": "16"
+            }
+          ],
+          "beamGroup": true,
+          "tuplet": null
+        },
+        "playback": {
+          "gridUnit": "sixteenth",
+          "hitSlots": [
+            2,
+            3
+          ],
+          "restSlots": [
+            0,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "id": "sixteenth-1110",
+      "code": "1110",
+      "name": "First Three",
+      "displayNameZh": "前三位",
+      "subdivision": "sixteenth",
+      "slotLabels": [
+        "1",
+        "e",
+        "&",
+        "a"
+      ],
+      "steps": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "hitCount": "3/4",
+      "difficulty": 2,
+      "tags": [
+        "十六分",
+        "连续",
+        "前三位",
+        "读谱",
+        "套鼓可复用"
+      ],
+      "ui": {
+        "cardSize": "pattern-card",
+        "cardFallbackGlyph": "♬𝄾",
+        "dotStates": [
+          "hit",
+          "hit",
+          "hit",
+          "rest"
+        ],
+        "defaultState": "default",
+        "selectedState": "yellow-outline-dark-gold-fill",
+        "disabledState": "opacity-42-dashed-border",
+        "currentPlaybackState": "red-playhead-yellow-beat-dot"
+      },
+      "render": {
+        "engine": "vexflow",
+        "staff": "percussion-one-line",
+        "card": {
+          "mode": "compact-score-preview",
+          "showRests": "minimal",
+          "showDots": true,
+          "fallbackGlyph": "♬𝄾"
+        },
+        "score": {
+          "mode": "precise",
+          "atoms": [
+            {
+              "slotIndex": 0,
+              "kind": "note",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 1,
+              "kind": "note",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 2,
+              "kind": "note",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 3,
+              "kind": "rest",
+              "duration": "16"
+            }
+          ],
+          "beamGroup": true,
+          "tuplet": null
+        },
+        "playback": {
+          "gridUnit": "sixteenth",
+          "hitSlots": [
+            0,
+            1,
+            2
+          ],
+          "restSlots": [
+            3
+          ]
+        }
+      }
+    },
+    {
+      "id": "sixteenth-1101",
+      "code": "1101",
+      "name": "Missing And",
+      "displayNameZh": "缺反拍",
+      "subdivision": "sixteenth",
+      "slotLabels": [
+        "1",
+        "e",
+        "&",
+        "a"
+      ],
+      "steps": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "hitCount": "3/4",
+      "difficulty": 3,
+      "tags": [
+        "十六分",
+        "切分",
+        "缺位",
+        "进阶",
+        "套鼓可复用"
+      ],
+      "ui": {
+        "cardSize": "pattern-card",
+        "cardFallbackGlyph": "♫𝄾𝅘𝅥𝅯",
+        "dotStates": [
+          "hit",
+          "hit",
+          "rest",
+          "hit"
+        ],
+        "defaultState": "default",
+        "selectedState": "yellow-outline-dark-gold-fill",
+        "disabledState": "opacity-42-dashed-border",
+        "currentPlaybackState": "red-playhead-yellow-beat-dot"
+      },
+      "render": {
+        "engine": "vexflow",
+        "staff": "percussion-one-line",
+        "card": {
+          "mode": "compact-score-preview",
+          "showRests": "minimal",
+          "showDots": true,
+          "fallbackGlyph": "♫𝄾𝅘𝅥𝅯"
+        },
+        "score": {
+          "mode": "precise",
+          "atoms": [
+            {
+              "slotIndex": 0,
+              "kind": "note",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 1,
+              "kind": "note",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 2,
+              "kind": "rest",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 3,
+              "kind": "note",
+              "duration": "16"
+            }
+          ],
+          "beamGroup": true,
+          "tuplet": null
+        },
+        "playback": {
+          "gridUnit": "sixteenth",
+          "hitSlots": [
+            0,
+            1,
+            3
+          ],
+          "restSlots": [
+            2
+          ]
+        }
+      }
+    },
+    {
+      "id": "sixteenth-1011",
+      "code": "1011",
+      "name": "Missing E",
+      "displayNameZh": "缺 e 位",
+      "subdivision": "sixteenth",
+      "slotLabels": [
+        "1",
+        "e",
+        "&",
+        "a"
+      ],
+      "steps": [
+        true,
+        false,
+        true,
+        true
+      ],
+      "hitCount": "3/4",
+      "difficulty": 3,
+      "tags": [
+        "十六分",
+        "切分",
+        "缺位",
+        "进阶",
+        "套鼓可复用"
+      ],
+      "ui": {
+        "cardSize": "pattern-card",
+        "cardFallbackGlyph": "𝅘𝅥𝅯𝄾♫",
+        "dotStates": [
+          "hit",
+          "rest",
+          "hit",
+          "hit"
+        ],
+        "defaultState": "default",
+        "selectedState": "yellow-outline-dark-gold-fill",
+        "disabledState": "opacity-42-dashed-border",
+        "currentPlaybackState": "red-playhead-yellow-beat-dot"
+      },
+      "render": {
+        "engine": "vexflow",
+        "staff": "percussion-one-line",
+        "card": {
+          "mode": "compact-score-preview",
+          "showRests": "minimal",
+          "showDots": true,
+          "fallbackGlyph": "𝅘𝅥𝅯𝄾♫"
+        },
+        "score": {
+          "mode": "precise",
+          "atoms": [
+            {
+              "slotIndex": 0,
+              "kind": "note",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 1,
+              "kind": "rest",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 2,
+              "kind": "note",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 3,
+              "kind": "note",
+              "duration": "16"
+            }
+          ],
+          "beamGroup": true,
+          "tuplet": null
+        },
+        "playback": {
+          "gridUnit": "sixteenth",
+          "hitSlots": [
+            0,
+            2,
+            3
+          ],
+          "restSlots": [
+            1
+          ]
+        }
+      }
+    },
+    {
+      "id": "sixteenth-0111",
+      "code": "0111",
+      "name": "Last Three",
+      "displayNameZh": "后三位",
+      "subdivision": "sixteenth",
+      "slotLabels": [
+        "1",
+        "e",
+        "&",
+        "a"
+      ],
+      "steps": [
+        false,
+        true,
+        true,
+        true
+      ],
+      "hitCount": "3/4",
+      "difficulty": 3,
+      "tags": [
+        "十六分",
+        "后半拍",
+        "连续",
+        "进阶",
+        "套鼓可复用"
+      ],
+      "ui": {
+        "cardSize": "pattern-card",
+        "cardFallbackGlyph": "𝄾♬",
+        "dotStates": [
+          "rest",
+          "hit",
+          "hit",
+          "hit"
+        ],
+        "defaultState": "default",
+        "selectedState": "yellow-outline-dark-gold-fill",
+        "disabledState": "opacity-42-dashed-border",
+        "currentPlaybackState": "red-playhead-yellow-beat-dot"
+      },
+      "render": {
+        "engine": "vexflow",
+        "staff": "percussion-one-line",
+        "card": {
+          "mode": "compact-score-preview",
+          "showRests": "minimal",
+          "showDots": true,
+          "fallbackGlyph": "𝄾♬"
+        },
+        "score": {
+          "mode": "precise",
+          "atoms": [
+            {
+              "slotIndex": 0,
+              "kind": "rest",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 1,
+              "kind": "note",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 2,
+              "kind": "note",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 3,
+              "kind": "note",
+              "duration": "16"
+            }
+          ],
+          "beamGroup": true,
+          "tuplet": null
+        },
+        "playback": {
+          "gridUnit": "sixteenth",
+          "hitSlots": [
+            1,
+            2,
+            3
+          ],
+          "restSlots": [
+            0
+          ]
+        }
+      }
+    },
+    {
+      "id": "sixteenth-1111",
+      "code": "1111",
+      "name": "Full Sixteenth",
+      "displayNameZh": "完整十六分",
+      "subdivision": "sixteenth",
+      "slotLabels": [
+        "1",
+        "e",
+        "&",
+        "a"
+      ],
+      "steps": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "hitCount": "4/4",
+      "difficulty": 1,
+      "tags": [
+        "十六分",
+        "基础",
+        "连续",
+        "均分",
+        "套鼓可复用"
+      ],
+      "ui": {
+        "cardSize": "pattern-card",
+        "cardFallbackGlyph": "♬",
+        "dotStates": [
+          "hit",
+          "hit",
+          "hit",
+          "hit"
+        ],
+        "defaultState": "default",
+        "selectedState": "yellow-outline-dark-gold-fill",
+        "disabledState": "opacity-42-dashed-border",
+        "currentPlaybackState": "red-playhead-yellow-beat-dot"
+      },
+      "render": {
+        "engine": "vexflow",
+        "staff": "percussion-one-line",
+        "card": {
+          "mode": "compact-score-preview",
+          "showRests": "minimal",
+          "showDots": true,
+          "fallbackGlyph": "♬"
+        },
+        "score": {
+          "mode": "precise",
+          "atoms": [
+            {
+              "slotIndex": 0,
+              "kind": "note",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 1,
+              "kind": "note",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 2,
+              "kind": "note",
+              "duration": "16"
+            },
+            {
+              "slotIndex": 3,
+              "kind": "note",
+              "duration": "16"
+            }
+          ],
+          "beamGroup": true,
+          "tuplet": null
+        },
+        "playback": {
+          "gridUnit": "sixteenth",
+          "hitSlots": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "restSlots": []
+        }
+      }
+    },
+    {
+      "id": "triplet-000",
+      "code": "000",
+      "name": "Triplet Rest",
+      "displayNameZh": "三连音全休止",
+      "subdivision": "triplet",
+      "slotLabels": [
+        "1",
+        "trip",
+        "let"
+      ],
+      "steps": [
+        false,
+        false,
+        false
+      ],
+      "hitCount": "0/3",
+      "difficulty": 1,
+      "tags": [
+        "三连音",
+        "休止",
+        "基础",
+        "静默",
+        "套鼓可复用"
+      ],
+      "ui": {
+        "cardSize": "pattern-card",
+        "cardFallbackGlyph": "𝄽",
+        "dotStates": [
+          "rest",
+          "rest",
+          "rest"
+        ],
+        "defaultState": "default",
+        "selectedState": "yellow-outline-dark-gold-fill",
+        "disabledState": "opacity-42-dashed-border",
+        "currentPlaybackState": "red-playhead-yellow-beat-dot"
+      },
+      "render": {
+        "engine": "vexflow",
+        "staff": "percussion-one-line",
+        "card": {
+          "mode": "compact-score-preview",
+          "showRests": "minimal",
+          "showDots": true,
+          "fallbackGlyph": "𝄽"
+        },
+        "score": {
+          "mode": "precise",
+          "atoms": [
+            {
+              "slotIndex": 0,
+              "kind": "rest",
+              "duration": "8"
+            },
+            {
+              "slotIndex": 1,
+              "kind": "rest",
+              "duration": "8"
+            },
+            {
+              "slotIndex": 2,
+              "kind": "rest",
+              "duration": "8"
+            }
+          ],
+          "beamGroup": true,
+          "tuplet": {
+            "actualNotes": 3,
+            "normalNotes": 2
+          }
+        },
+        "playback": {
+          "gridUnit": "triplet",
+          "hitSlots": [],
+          "restSlots": [
+            0,
+            1,
+            2
+          ]
+        }
+      }
+    },
+    {
+      "id": "triplet-100",
+      "code": "100",
+      "name": "Triplet First",
+      "displayNameZh": "三连音第 1 位",
+      "subdivision": "triplet",
+      "slotLabels": [
+        "1",
+        "trip",
+        "let"
+      ],
+      "steps": [
+        true,
+        false,
+        false
+      ],
+      "hitCount": "1/3",
+      "difficulty": 1,
+      "tags": [
+        "三连音",
+        "正拍",
+        "基础",
+        "读谱",
+        "套鼓可复用"
+      ],
+      "ui": {
+        "cardSize": "pattern-card",
+        "cardFallbackGlyph": "♩",
+        "dotStates": [
+          "hit",
+          "rest",
+          "rest"
+        ],
+        "defaultState": "default",
+        "selectedState": "yellow-outline-dark-gold-fill",
+        "disabledState": "opacity-42-dashed-border",
+        "currentPlaybackState": "red-playhead-yellow-beat-dot"
+      },
+      "render": {
+        "engine": "vexflow",
+        "staff": "percussion-one-line",
+        "card": {
+          "mode": "compact-score-preview",
+          "showRests": "minimal",
+          "showDots": true,
+          "fallbackGlyph": "♩"
+        },
+        "score": {
+          "mode": "precise",
+          "atoms": [
+            {
+              "slotIndex": 0,
+              "kind": "note",
+              "duration": "8"
+            },
+            {
+              "slotIndex": 1,
+              "kind": "rest",
+              "duration": "8"
+            },
+            {
+              "slotIndex": 2,
+              "kind": "rest",
+              "duration": "8"
+            }
+          ],
+          "beamGroup": true,
+          "tuplet": {
+            "actualNotes": 3,
+            "normalNotes": 2
+          }
+        },
+        "playback": {
+          "gridUnit": "triplet",
+          "hitSlots": [
+            0
+          ],
+          "restSlots": [
+            1,
+            2
+          ]
+        }
+      }
+    },
+    {
+      "id": "triplet-010",
+      "code": "010",
+      "name": "Triplet Middle",
+      "displayNameZh": "Trip 位单击",
+      "subdivision": "triplet",
+      "slotLabels": [
+        "1",
+        "trip",
+        "let"
+      ],
+      "steps": [
+        false,
+        true,
+        false
+      ],
+      "hitCount": "1/3",
+      "difficulty": 3,
+      "tags": [
+        "三连音",
+        "弱位",
+        "反应",
+        "读谱",
+        "套鼓可复用"
+      ],
+      "ui": {
+        "cardSize": "pattern-card",
+        "cardFallbackGlyph": "𝄾♪",
+        "dotStates": [
+          "rest",
+          "hit",
+          "rest"
+        ],
+        "defaultState": "default",
+        "selectedState": "yellow-outline-dark-gold-fill",
+        "disabledState": "opacity-42-dashed-border",
+        "currentPlaybackState": "red-playhead-yellow-beat-dot"
+      },
+      "render": {
+        "engine": "vexflow",
+        "staff": "percussion-one-line",
+        "card": {
+          "mode": "compact-score-preview",
+          "showRests": "minimal",
+          "showDots": true,
+          "fallbackGlyph": "𝄾♪"
+        },
+        "score": {
+          "mode": "precise",
+          "atoms": [
+            {
+              "slotIndex": 0,
+              "kind": "rest",
+              "duration": "8"
+            },
+            {
+              "slotIndex": 1,
+              "kind": "note",
+              "duration": "8"
+            },
+            {
+              "slotIndex": 2,
+              "kind": "rest",
+              "duration": "8"
+            }
+          ],
+          "beamGroup": true,
+          "tuplet": {
+            "actualNotes": 3,
+            "normalNotes": 2
+          }
+        },
+        "playback": {
+          "gridUnit": "triplet",
+          "hitSlots": [
+            1
+          ],
+          "restSlots": [
+            0,
+            2
+          ]
+        }
+      }
+    },
+    {
+      "id": "triplet-001",
+      "code": "001",
+      "name": "Triplet Last",
+      "displayNameZh": "Let 位单击",
+      "subdivision": "triplet",
+      "slotLabels": [
+        "1",
+        "trip",
+        "let"
+      ],
+      "steps": [
+        false,
+        false,
+        true
+      ],
+      "hitCount": "1/3",
+      "difficulty": 3,
+      "tags": [
+        "三连音",
+        "弱位",
+        "后位",
+        "读谱",
+        "套鼓可复用"
+      ],
+      "ui": {
+        "cardSize": "pattern-card",
+        "cardFallbackGlyph": "𝄾𝄾♪",
+        "dotStates": [
+          "rest",
+          "rest",
+          "hit"
+        ],
+        "defaultState": "default",
+        "selectedState": "yellow-outline-dark-gold-fill",
+        "disabledState": "opacity-42-dashed-border",
+        "currentPlaybackState": "red-playhead-yellow-beat-dot"
+      },
+      "render": {
+        "engine": "vexflow",
+        "staff": "percussion-one-line",
+        "card": {
+          "mode": "compact-score-preview",
+          "showRests": "minimal",
+          "showDots": true,
+          "fallbackGlyph": "𝄾𝄾♪"
+        },
+        "score": {
+          "mode": "precise",
+          "atoms": [
+            {
+              "slotIndex": 0,
+              "kind": "rest",
+              "duration": "8"
+            },
+            {
+              "slotIndex": 1,
+              "kind": "rest",
+              "duration": "8"
+            },
+            {
+              "slotIndex": 2,
+              "kind": "note",
+              "duration": "8"
+            }
+          ],
+          "beamGroup": true,
+          "tuplet": {
+            "actualNotes": 3,
+            "normalNotes": 2
+          }
+        },
+        "playback": {
+          "gridUnit": "triplet",
+          "hitSlots": [
+            2
+          ],
+          "restSlots": [
+            0,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "id": "triplet-110",
+      "code": "110",
+      "name": "Triplet First Two",
+      "displayNameZh": "三连音前两位",
+      "subdivision": "triplet",
+      "slotLabels": [
+        "1",
+        "trip",
+        "let"
+      ],
+      "steps": [
+        true,
+        true,
+        false
+      ],
+      "hitCount": "2/3",
+      "difficulty": 2,
+      "tags": [
+        "三连音",
+        "连续",
+        "前两位",
+        "基础",
+        "套鼓可复用"
+      ],
+      "ui": {
+        "cardSize": "pattern-card",
+        "cardFallbackGlyph": "♪♪𝄾",
+        "dotStates": [
+          "hit",
+          "hit",
+          "rest"
+        ],
+        "defaultState": "default",
+        "selectedState": "yellow-outline-dark-gold-fill",
+        "disabledState": "opacity-42-dashed-border",
+        "currentPlaybackState": "red-playhead-yellow-beat-dot"
+      },
+      "render": {
+        "engine": "vexflow",
+        "staff": "percussion-one-line",
+        "card": {
+          "mode": "compact-score-preview",
+          "showRests": "minimal",
+          "showDots": true,
+          "fallbackGlyph": "♪♪𝄾"
+        },
+        "score": {
+          "mode": "precise",
+          "atoms": [
+            {
+              "slotIndex": 0,
+              "kind": "note",
+              "duration": "8"
+            },
+            {
+              "slotIndex": 1,
+              "kind": "note",
+              "duration": "8"
+            },
+            {
+              "slotIndex": 2,
+              "kind": "rest",
+              "duration": "8"
+            }
+          ],
+          "beamGroup": true,
+          "tuplet": {
+            "actualNotes": 3,
+            "normalNotes": 2
+          }
+        },
+        "playback": {
+          "gridUnit": "triplet",
+          "hitSlots": [
+            0,
+            1
+          ],
+          "restSlots": [
+            2
+          ]
+        }
+      }
+    },
+    {
+      "id": "triplet-101",
+      "code": "101",
+      "name": "Triplet Outer",
+      "displayNameZh": "三连音首尾",
+      "subdivision": "triplet",
+      "slotLabels": [
+        "1",
+        "trip",
+        "let"
+      ],
+      "steps": [
+        true,
+        false,
+        true
+      ],
+      "hitCount": "2/3",
+      "difficulty": 3,
+      "tags": [
+        "三连音",
+        "切分",
+        "首尾",
+        "进阶",
+        "套鼓可复用"
+      ],
+      "ui": {
+        "cardSize": "pattern-card",
+        "cardFallbackGlyph": "♪𝄾♪",
+        "dotStates": [
+          "hit",
+          "rest",
+          "hit"
+        ],
+        "defaultState": "default",
+        "selectedState": "yellow-outline-dark-gold-fill",
+        "disabledState": "opacity-42-dashed-border",
+        "currentPlaybackState": "red-playhead-yellow-beat-dot"
+      },
+      "render": {
+        "engine": "vexflow",
+        "staff": "percussion-one-line",
+        "card": {
+          "mode": "compact-score-preview",
+          "showRests": "minimal",
+          "showDots": true,
+          "fallbackGlyph": "♪𝄾♪"
+        },
+        "score": {
+          "mode": "precise",
+          "atoms": [
+            {
+              "slotIndex": 0,
+              "kind": "note",
+              "duration": "8"
+            },
+            {
+              "slotIndex": 1,
+              "kind": "rest",
+              "duration": "8"
+            },
+            {
+              "slotIndex": 2,
+              "kind": "note",
+              "duration": "8"
+            }
+          ],
+          "beamGroup": true,
+          "tuplet": {
+            "actualNotes": 3,
+            "normalNotes": 2
+          }
+        },
+        "playback": {
+          "gridUnit": "triplet",
+          "hitSlots": [
+            0,
+            2
+          ],
+          "restSlots": [
+            1
+          ]
+        }
+      }
+    },
+    {
+      "id": "triplet-011",
+      "code": "011",
+      "name": "Triplet Last Two",
+      "displayNameZh": "三连音后两位",
+      "subdivision": "triplet",
+      "slotLabels": [
+        "1",
+        "trip",
+        "let"
+      ],
+      "steps": [
+        false,
+        true,
+        true
+      ],
+      "hitCount": "2/3",
+      "difficulty": 3,
+      "tags": [
+        "三连音",
+        "后两位",
+        "连续",
+        "读谱",
+        "套鼓可复用"
+      ],
+      "ui": {
+        "cardSize": "pattern-card",
+        "cardFallbackGlyph": "𝄾♪♪",
+        "dotStates": [
+          "rest",
+          "hit",
+          "hit"
+        ],
+        "defaultState": "default",
+        "selectedState": "yellow-outline-dark-gold-fill",
+        "disabledState": "opacity-42-dashed-border",
+        "currentPlaybackState": "red-playhead-yellow-beat-dot"
+      },
+      "render": {
+        "engine": "vexflow",
+        "staff": "percussion-one-line",
+        "card": {
+          "mode": "compact-score-preview",
+          "showRests": "minimal",
+          "showDots": true,
+          "fallbackGlyph": "𝄾♪♪"
+        },
+        "score": {
+          "mode": "precise",
+          "atoms": [
+            {
+              "slotIndex": 0,
+              "kind": "rest",
+              "duration": "8"
+            },
+            {
+              "slotIndex": 1,
+              "kind": "note",
+              "duration": "8"
+            },
+            {
+              "slotIndex": 2,
+              "kind": "note",
+              "duration": "8"
+            }
+          ],
+          "beamGroup": true,
+          "tuplet": {
+            "actualNotes": 3,
+            "normalNotes": 2
+          }
+        },
+        "playback": {
+          "gridUnit": "triplet",
+          "hitSlots": [
+            1,
+            2
+          ],
+          "restSlots": [
+            0
+          ]
+        }
+      }
+    },
+    {
+      "id": "triplet-111",
+      "code": "111",
+      "name": "Full Triplet",
+      "displayNameZh": "完整三连音",
+      "subdivision": "triplet",
+      "slotLabels": [
+        "1",
+        "trip",
+        "let"
+      ],
+      "steps": [
+        true,
+        true,
+        true
+      ],
+      "hitCount": "3/3",
+      "difficulty": 1,
+      "tags": [
+        "三连音",
+        "基础",
+        "连续",
+        "均分",
+        "套鼓可复用"
+      ],
+      "ui": {
+        "cardSize": "pattern-card",
+        "cardFallbackGlyph": "♪♪♪",
+        "dotStates": [
+          "hit",
+          "hit",
+          "hit"
+        ],
+        "defaultState": "default",
+        "selectedState": "yellow-outline-dark-gold-fill",
+        "disabledState": "opacity-42-dashed-border",
+        "currentPlaybackState": "red-playhead-yellow-beat-dot"
+      },
+      "render": {
+        "engine": "vexflow",
+        "staff": "percussion-one-line",
+        "card": {
+          "mode": "compact-score-preview",
+          "showRests": "minimal",
+          "showDots": true,
+          "fallbackGlyph": "♪♪♪"
+        },
+        "score": {
+          "mode": "precise",
+          "atoms": [
+            {
+              "slotIndex": 0,
+              "kind": "note",
+              "duration": "8"
+            },
+            {
+              "slotIndex": 1,
+              "kind": "note",
+              "duration": "8"
+            },
+            {
+              "slotIndex": 2,
+              "kind": "note",
+              "duration": "8"
+            }
+          ],
+          "beamGroup": true,
+          "tuplet": {
+            "actualNotes": 3,
+            "normalNotes": 2
+          }
+        },
+        "playback": {
+          "gridUnit": "triplet",
+          "hitSlots": [
+            0,
+            1,
+            2
+          ],
+          "restSlots": []
+        }
+      }
+    }
+  ],
+  "starterTemplates": [
+    {
+      "id": "template-sixteenth-basic-reading",
+      "displayNameZh": "十六分基础读谱",
+      "description": "由正拍、前八分、完整十六分组成，适合热身。",
+      "patternIds": [
+        "sixteenth-1000",
+        "sixteenth-1100",
+        "sixteenth-1010",
+        "sixteenth-1111"
+      ],
+      "modeSuggestion": "shuffle",
+      "difficulty": 1,
+      "tags": [
+        "十六分",
+        "基础",
+        "热身",
+        "读谱"
+      ]
+    },
+    {
+      "id": "template-sixteenth-offbeat-focus",
+      "displayNameZh": "弱位反应训练",
+      "description": "集中练 e、a、后半拍和弱位切分。",
+      "patternIds": [
+        "sixteenth-0100",
+        "sixteenth-0001",
+        "sixteenth-0101",
+        "sixteenth-0110",
+        "sixteenth-0111"
+      ],
+      "modeSuggestion": "shuffle",
+      "difficulty": 4,
+      "tags": [
+        "十六分",
+        "弱位",
+        "反应",
+        "进阶"
+      ]
+    },
+    {
+      "id": "template-sixteenth-syncopation",
+      "displayNameZh": "切分组合",
+      "description": "练习不连续击打和缺位节奏。",
+      "patternIds": [
+        "sixteenth-1001",
+        "sixteenth-0101",
+        "sixteenth-1101",
+        "sixteenth-1011"
+      ],
+      "modeSuggestion": "ordered",
+      "difficulty": 3,
+      "tags": [
+        "十六分",
+        "切分",
+        "缺位",
+        "读谱"
+      ]
+    },
+    {
+      "id": "template-triplet-basic",
+      "displayNameZh": "三连音基础",
+      "description": "从完整三连音与前两位开始建立三连音 feel。",
+      "patternIds": [
+        "triplet-100",
+        "triplet-110",
+        "triplet-111"
+      ],
+      "modeSuggestion": "shuffle",
+      "difficulty": 1,
+      "tags": [
+        "三连音",
+        "基础",
+        "均分"
+      ]
+    },
+    {
+      "id": "template-triplet-offbeat",
+      "displayNameZh": "三连音弱位",
+      "description": "练 trip、let 和首尾三连的识别反应。",
+      "patternIds": [
+        "triplet-010",
+        "triplet-001",
+        "triplet-101",
+        "triplet-011"
+      ],
+      "modeSuggestion": "shuffle",
+      "difficulty": 3,
+      "tags": [
+        "三连音",
+        "弱位",
+        "反应"
+      ]
+    },
+    {
+      "id": "template-silence-and-entry",
+      "displayNameZh": "休止与进入",
+      "description": "练习休止后准确进入，适合 timing 训练。",
+      "patternIds": [
+        "sixteenth-0000",
+        "sixteenth-0100",
+        "sixteenth-0010",
+        "sixteenth-0001",
+        "triplet-000",
+        "triplet-010"
+      ],
+      "modeSuggestion": "ordered",
+      "difficulty": 4,
+      "tags": [
+        "休止",
+        "进入",
+        "timing",
+        "进阶"
+      ]
+    }
+  ]
+} as const;
+
+export const rhythmPatterns = rhythmPatternCatalog.patterns;
+export const starterPracticeTemplates = rhythmPatternCatalog.starterTemplates;
+
+export function getPatternById(id: string) {
+  return rhythmPatterns.find((pattern) => pattern.id === id);
+}
+
+export function getPatternsBySubdivision(subdivision: Subdivision) {
+  return rhythmPatterns.filter((pattern) => pattern.subdivision === subdivision);
+}
+
+export function getSelectedPatternDots(pattern: RhythmPattern) {
+  return pattern.steps.map((hit, index) => ({
+    index,
+    label: pattern.slotLabels[index],
+    state: hit ? 'hit' : 'rest',
+  }));
+}

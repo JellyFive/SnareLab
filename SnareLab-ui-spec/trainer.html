@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Snare Practice Lab - 跟练</title>
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">Snare<span>Lab</span></div>
+    <div class="subtitle">深色练习驾驶舱 · 拆分原型</div>
+    <nav class="nav"><a class="" href="index.html"><span class="dot"></span>首页</a>
+<a class="" href="rhythm.html"><span class="dot"></span>节奏</a>
+<a class="active" href="trainer.html"><span class="dot"></span>跟练</a>
+<a class="" href="library.html"><span class="dot"></span>练习库</a>
+<a class="" href="log.html"><span class="dot"></span>日志</a>
+<a class="" href="settings.html"><span class="dot"></span>设置</a></nav>
+    <div class="side-note">当前页面：跟练<br/>原型已拆分为独立页面，所有页面共享同一套控件规范和视觉 token。</div>
+  </aside>
+  <main class="main">
+    <header class="topbar">
+      <div class="title"><h1>跟练 · 五线谱与 BPM 驾驶舱</h1><p>看谱、听节拍、调速度、保存练习记录。</p></div>
+      <div class="status"><div class="badge accent">80 BPM</div>
+<div class="badge ">Repeat 3/8</div>
+<div class="badge green">节拍器开</div></div>
+    </header>
+    
+<section class="card">
+  <div class="section-head">
+    <div><h2>五线谱跟练</h2><p>跟练时以五线谱/节奏谱为主，长按音符进入局部编辑。</p></div>
+    <div class="switches">
+      <label class="switch-label">无限 <span class="switch"><i></i></span></label>
+      <label class="switch-label">重音 <span class="switch"><i></i></span></label>
+      <label class="switch-label">节拍器 <span class="switch on"><i></i></span></label>
+      <label class="switch-label">鼓点 <span class="switch on"><i></i></span></label>
+    </div>
+  </div>
+  <div class="trainer-card">
+    <div>
+      <button class="btn blue full">▶ 开始播放</button>
+      <div class="staff-panel" style="margin-top:14px">
+        <div class="beat-dots"><span></span><span class="active"></span><span></span><span></span></div>
+        <div class="staff">
+          <div class="staff-line"></div><div class="staff-line"></div><div class="staff-line"></div><div class="staff-line"></div><div class="staff-line"></div>
+          <div class="measure m0"></div><div class="measure m1"></div><div class="measure m2"></div><div class="measure m3"></div>
+          <div class="staff-note accent" style="left:4%">♬</div><div class="staff-note dim" style="left:15%">𝄾</div><div class="staff-note" style="left:22%">♩</div><div class="staff-note" style="left:32%">♪</div><div class="staff-note accent" style="left:42%">♬</div><div class="staff-note" style="left:54%">♩</div><div class="staff-note" style="left:63%">♫</div><div class="staff-note dim" style="left:76%">𝄾</div><div class="staff-note" style="left:83%">♬</div><div class="playhead"></div>
+        </div>
+        <div class="edit-hint">长按音符：局部编辑 / 重音 / 休止 / R-L</div>
+      </div>
+      <div class="row" style="margin-top:14px">
+        <button class="btn">暂停</button><button class="btn">重置</button><button class="btn primary">保存练习记录</button>
+      </div>
+    </div>
+    <aside class="bpm-panel">
+      <h3>BPM 调速</h3>
+      <div class="knob"></div>
+      <div class="bpm-number">80<span>BPM</span></div>
+      <div class="bpm-actions"><button class="btn">-1</button><button class="btn primary">+1</button><button class="btn">-5</button><button class="btn primary">+5</button></div>
+      <button class="btn full">自动升速</button>
+      <p class="muted">BPM 是跟练页的主控。生成器只负责材料，跟练页负责速度。</p>
+    </aside>
+  </div>
+</section>
+
+  </main>
+</div>
+<nav class="mobile-topnav"><a class="" href="index.html">首页</a>
+<a class="" href="rhythm.html">节奏</a>
+<a class="active" href="trainer.html">跟练</a>
+<a class="" href="library.html">练习库</a>
+<a class="" href="log.html">日志</a></nav>
+</body>
+</html>

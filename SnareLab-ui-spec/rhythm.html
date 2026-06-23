@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Snare Practice Lab - 节奏</title>
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">Snare<span>Lab</span></div>
+    <div class="subtitle">深色练习驾驶舱 · 拆分原型</div>
+    <nav class="nav"><a class="" href="index.html"><span class="dot"></span>首页</a>
+<a class="active" href="rhythm.html"><span class="dot"></span>节奏</a>
+<a class="" href="trainer.html"><span class="dot"></span>跟练</a>
+<a class="" href="library.html"><span class="dot"></span>练习库</a>
+<a class="" href="log.html"><span class="dot"></span>日志</a>
+<a class="" href="settings.html"><span class="dot"></span>设置</a></nav>
+    <div class="side-note">当前页面：节奏<br/>原型已拆分为独立页面，所有页面共享同一套控件规范和视觉 token。</div>
+  </aside>
+  <main class="main">
+    <header class="topbar">
+      <div class="title"><h1>节奏型选择与练习编排</h1><p>选择节奏型，决定随机、顺序或无尽模式，并生成可跟练材料。</p></div>
+      <div class="status"><div class="badge ">4/4</div>
+<div class="badge accent">十六分</div>
+<div class="badge red">7 个已选</div></div>
+    </header>
+    
+<section class="grid-page">
+  <div class="stack settings">
+    <section class="card">
+      <h3>练习模式</h3>
+      <div class="segment"><button class="active">随机</button><button>顺序</button><button>无尽</button></div>
+      <p class="muted">随机练读谱反应；顺序练个人目标；无尽用于长时间 sight-reading。</p>
+    </section>
+    <section class="card">
+      <h3>节奏设置</h3>
+      <div class="controls-grid"><button class="btn primary">生成练习</button><button class="btn">保存队列</button></div>
+      <p class="muted">BPM 不在这里作为主控，只保留默认速度。真正调速在跟练页完成。</p>
+    </section>
+    <section class="card">
+      <h3>拍号</h3>
+      <div class="segment"><button>2/4</button><button>3/4</button><button class="active">4/4</button></div>
+    </section>
+  </div>
+  <div class="stack">
+    <section class="card">
+      <div class="section-head">
+        <div><h2>节奏型选择</h2><p>采用音符卡片，而不是纯网格。底部圆点只是辅助理解节奏位置。</p></div>
+        <div class="tabs"><button class="tab active">十六分音符</button><button class="tab">三连音</button><button class="tab">我的收藏</button></div>
+      </div>
+      <div class="pattern-grid">
+        <article class="pattern-card placeholder"><div class="pattern-title"><span>休止</span><span>0/4</span></div><div class="note-box">𝄽</div><div class="dots"><span class="dot-step"></span><span class="dot-step"></span><span class="dot-step"></span><span class="dot-step"></span></div></article>
+        <article class="pattern-card"><div class="pattern-title"><span>四分</span><span>1/4</span></div><div class="note-box">♩</div><div class="dots"><span class="dot-step on"></span><span class="dot-step"></span><span class="dot-step"></span><span class="dot-step"></span></div></article>
+        <article class="pattern-card selected"><div class="pattern-title"><span>八分前半</span><span>2/4</span></div><div class="note-box">♫</div><div class="dots"><span class="dot-step hot"></span><span class="dot-step hot"></span><span class="dot-step"></span><span class="dot-step"></span></div></article>
+        <article class="pattern-card"><div class="pattern-title"><span>切分</span><span>2/4</span></div><div class="note-box">♩♪</div><div class="dots"><span class="dot-step on"></span><span class="dot-step"></span><span class="dot-step on"></span><span class="dot-step"></span></div></article>
+        <article class="pattern-card selected"><div class="pattern-title"><span>十六分</span><span>4/4</span></div><div class="note-box">♬</div><div class="dots"><span class="dot-step hot"></span><span class="dot-step hot"></span><span class="dot-step hot"></span><span class="dot-step hot"></span></div></article>
+        <article class="pattern-card"><div class="pattern-title"><span>后半拍</span><span>2/4</span></div><div class="note-box">𝄾♫</div><div class="dots"><span class="dot-step"></span><span class="dot-step"></span><span class="dot-step on"></span><span class="dot-step on"></span></div></article>
+        <article class="pattern-card"><div class="pattern-title"><span>前三位</span><span>3/4</span></div><div class="note-box">♬</div><div class="dots"><span class="dot-step on"></span><span class="dot-step on"></span><span class="dot-step on"></span><span class="dot-step"></span></div></article>
+        <article class="pattern-card"><div class="pattern-title"><span>后三位</span><span>3/4</span></div><div class="note-box">𝄾♬</div><div class="dots"><span class="dot-step"></span><span class="dot-step on"></span><span class="dot-step on"></span><span class="dot-step on"></span></div></article>
+      </div>
+    </section>
+    <section class="card">
+      <div class="section-head">
+        <div><h2>练习队列</h2><p>同一批节奏型可以打乱随机，也可以按你排列好的顺序练。</p></div>
+        <div class="tabs"><button class="tab active">随机打乱</button><button class="tab">按顺序</button><button class="tab">每轮重洗</button></div>
+      </div>
+      <div class="practice-queue">
+        <div class="queue-item active" data-i="1"><div class="queue-note">♫</div><div class="dots"><span class="dot-step on"></span><span class="dot-step on"></span><span class="dot-step"></span><span class="dot-step"></span></div></div>
+        <div class="queue-item" data-i="2"><div class="queue-note">♩♪</div><div class="dots"><span class="dot-step on"></span><span class="dot-step"></span><span class="dot-step on"></span><span class="dot-step"></span></div></div>
+        <div class="queue-item" data-i="3"><div class="queue-note">♬</div><div class="dots"><span class="dot-step on"></span><span class="dot-step on"></span><span class="dot-step on"></span><span class="dot-step on"></span></div></div>
+        <div class="queue-item" data-i="4"><div class="queue-note">𝄾♬</div><div class="dots"><span class="dot-step"></span><span class="dot-step on"></span><span class="dot-step on"></span><span class="dot-step on"></span></div></div>
+      </div>
+    </section>
+  </div>
+</section>
+
+  </main>
+</div>
+<nav class="mobile-topnav"><a class="" href="index.html">首页</a>
+<a class="active" href="rhythm.html">节奏</a>
+<a class="" href="trainer.html">跟练</a>
+<a class="" href="library.html">练习库</a>
+<a class="" href="log.html">日志</a></nav>
+</body>
+</html>

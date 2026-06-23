@@ -1,0 +1,25 @@
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# VS Code
+.vscode/
+
+# JetBrains
+.idea/
+
+.codex/
+
+# Obsidian workspace
+.obsidian/workspace.json
+.obsidian/workspaces.json
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.bak

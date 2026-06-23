@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Snare Practice Lab - 日志</title>
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">Snare<span>Lab</span></div>
+    <div class="subtitle">深色练习驾驶舱 · 拆分原型</div>
+    <nav class="nav"><a class="" href="index.html"><span class="dot"></span>首页</a>
+<a class="" href="rhythm.html"><span class="dot"></span>节奏</a>
+<a class="" href="trainer.html"><span class="dot"></span>跟练</a>
+<a class="" href="library.html"><span class="dot"></span>练习库</a>
+<a class="active" href="log.html"><span class="dot"></span>日志</a>
+<a class="" href="settings.html"><span class="dot"></span>设置</a></nav>
+    <div class="side-note">当前页面：日志<br/>原型已拆分为独立页面，所有页面共享同一套控件规范和视觉 token。</div>
+  </aside>
+  <main class="main">
+    <header class="topbar">
+      <div class="title"><h1>日志 · 练习笔记与问题记录</h1><p>沉淀个人练习过程，不使用课堂或教学语境。</p></div>
+      <div class="status"><div class="badge accent">今日 2 条</div>
+<div class="badge green">目标 3/5</div></div>
+    </header>
+    
+<section class="grid-page">
+  <div class="stack settings">
+    <section class="card">
+      <h3>快速记录</h3>
+      <button class="btn primary full">新建练习笔记</button>
+      <div style="height:10px"></div>
+      <button class="btn full">新建个人目标</button>
+      <div style="height:10px"></div>
+      <button class="btn full">补记练习</button>
+    </section>
+    <section class="card">
+      <h3>记录类型</h3>
+      <div class="tabs"><button class="tab active">全部</button><button class="tab">笔记</button><button class="tab">问题</button><button class="tab">回顾</button></div>
+    </section>
+  </div>
+  <div class="stack">
+    <section class="card">
+      <h2>练习记录与笔记</h2>
+      <div class="list">
+        <div class="item"><b>今天 · 随机读谱 12 分钟</b><span>80 BPM · 鼓点关 · 节拍器开 · 主观难度 3/5</span></div>
+        <div class="item"><b>问题记录：右手重音后左手变虚</b><span>关联 Paradiddle Accent Grid · 标记待复习</span></div>
+        <div class="item"><b>练习笔记：十六分后半拍读谱慢</b><span>建议下次先用 60 BPM 顺序练，再进入随机</span></div>
+      </div>
+    </section>
+    <section class="card">
+      <h2>新建练习笔记</h2>
+      <div class="form-grid">
+        <input class="input" value="笔记标题"/>
+        <select class="select"><option>练习笔记</option><option>问题记录</option><option>练习回顾</option></select>
+        <input class="input" value="关联目标：十六分节奏型 7 个"/>
+        <input class="input" value="标签：十六分 / 重音"/>
+      </div>
+      <div style="height:14px"></div>
+      <textarea class="textarea">记录今天练习中发现的问题、身体感受和下一步行动。</textarea>
+      <div class="row" style="margin-top:14px"><button class="btn primary">保存</button><button class="btn">关联练习</button></div>
+    </section>
+  </div>
+</section>
+
+  </main>
+</div>
+<nav class="mobile-topnav"><a class="" href="index.html">首页</a>
+<a class="" href="rhythm.html">节奏</a>
+<a class="" href="trainer.html">跟练</a>
+<a class="" href="library.html">练习库</a>
+<a class="active" href="log.html">日志</a></nav>
+</body>
+</html>
