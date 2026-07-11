@@ -1,0 +1,973 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SnareLab Practice Log v0.3 Prototype</title>
+  <style>
+    :root {
+      --bg: #f7f8fa;
+      --surface: #ffffff;
+      --text: #171717;
+      --muted: #8e8e93;
+      --faint: #b8b8be;
+      --border: #eceef2;
+      --primary: #5b63f6;
+      --primary-2: #4e56e8;
+      --soft: #eef0ff;
+      --soft-2: #f6f7ff;
+      --green: #22c55e;
+      --orange: #f59e0b;
+      --red: #ef4444;
+      --ink: #1d1d1f;
+      --shadow: 0 18px 48px rgba(15, 23, 42, 0.08);
+      --radius: 28px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 18% 12%, rgba(91, 99, 246, 0.08), transparent 28%),
+        radial-gradient(circle at 80% 18%, rgba(245, 158, 11, 0.08), transparent 24%),
+        linear-gradient(180deg, #fbfcff 0%, #f2f4f8 100%);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Inter", "Helvetica Neue", Arial, sans-serif;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .board {
+      width: 2600px;
+      height: 1100px;
+      padding: 42px 46px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .title-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 30px;
+    }
+
+    .title h1 {
+      margin: 0;
+      font-size: 43px;
+      line-height: 1.05;
+      letter-spacing: 0;
+      font-weight: 800;
+    }
+
+    .title .version {
+      color: var(--primary);
+      margin-left: 10px;
+    }
+
+    .subtitle {
+      margin-top: 10px;
+      color: #657083;
+      font-size: 19px;
+      font-weight: 500;
+    }
+
+    .legend {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      color: #657083;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .legend span {
+      display: inline-flex;
+      gap: 7px;
+      align-items: center;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.8);
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--primary);
+    }
+
+    .screens {
+      display: grid;
+      grid-template-columns: repeat(6, 330px) 1fr;
+      gap: 26px;
+      align-items: start;
+    }
+
+    .phone-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+      align-items: center;
+    }
+
+    .screen-title {
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .phone {
+      width: 330px;
+      height: 704px;
+      border-radius: 34px;
+      background: var(--surface);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .status {
+      height: 34px;
+      padding: 13px 20px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #111827;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .signal {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .pill {
+      border-radius: 999px;
+      background: var(--soft);
+      color: var(--primary);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 9px;
+    }
+
+    .content {
+      padding: 22px 20px 92px;
+      height: calc(100% - 34px);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .app-title {
+      font-size: 28px;
+      font-weight: 830;
+      letter-spacing: 0;
+    }
+
+    .page-title {
+      font-size: 23px;
+      font-weight: 820;
+      letter-spacing: 0;
+    }
+
+    .icons {
+      display: flex;
+      gap: 12px;
+      color: #0f172a;
+      font-size: 20px;
+      align-items: center;
+    }
+
+    .date, .caption {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.04);
+    }
+
+    .stat-num {
+      font-size: 20px;
+      font-weight: 800;
+      margin-top: 8px;
+    }
+
+    .hero {
+      margin-top: 12px;
+      border-radius: 22px;
+      padding: 21px 16px 16px;
+      border: 1px solid var(--border);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.98)),
+        repeating-linear-gradient(90deg, rgba(91,99,246,0.24) 0 2px, transparent 2px 12px);
+      text-align: center;
+      min-height: 204px;
+    }
+
+    .hero-number {
+      font-size: 56px;
+      font-weight: 820;
+      line-height: 0.95;
+      margin-top: 6px;
+    }
+
+    .hero-number small {
+      font-size: 19px;
+      font-weight: 750;
+    }
+
+    .primary {
+      width: 100%;
+      height: 50px;
+      border: none;
+      border-radius: 15px;
+      background: linear-gradient(135deg, var(--primary), #3f6fff);
+      color: white;
+      font-size: 16px;
+      font-weight: 780;
+      box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
+    }
+
+    .section {
+      margin-top: 16px;
+      margin-bottom: 9px;
+      font-size: 15px;
+      font-weight: 780;
+    }
+
+    .record {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 58px;
+      padding: 11px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: white;
+      margin-bottom: 10px;
+    }
+
+    .record .meta { flex: 1; }
+    .record .name { font-weight: 760; font-size: 14px; }
+    .record .sub { color: var(--muted); font-size: 12px; margin-top: 3px; }
+    .duration { font-weight: 740; font-size: 13px; color: #4b5563; }
+
+    .iconbox {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--primary);
+      background: var(--soft);
+    }
+
+    .nav {
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 12px;
+      height: 64px;
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.95);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      align-items: center;
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: #9ca3af;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .nav-item b {
+      font-size: 21px;
+      line-height: 1;
+      font-weight: 700;
+    }
+
+    .nav-item.active { color: var(--primary); }
+
+    .timer-face {
+      width: 248px;
+      height: 248px;
+      border-radius: 999px;
+      margin: 62px auto 0;
+      display: grid;
+      place-items: center;
+      background:
+        conic-gradient(var(--primary) 0 78%, #edf0f5 78% 100%);
+      position: relative;
+    }
+
+    .timer-face:before {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      border-radius: 999px;
+      background: white;
+    }
+
+    .timer-inner {
+      position: relative;
+      text-align: center;
+    }
+
+    .timer-value {
+      font-size: 54px;
+      font-weight: 520;
+      letter-spacing: 0;
+    }
+
+    .timer-label {
+      margin-top: 8px;
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .practice-strip {
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+
+    .mini-card {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px 8px;
+      text-align: center;
+      background: #fff;
+    }
+
+    .mini-card strong {
+      display: block;
+      font-size: 17px;
+      margin-bottom: 3px;
+    }
+
+    .mini-card span {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .timer-controls {
+      display: grid;
+      grid-template-columns: 64px 1fr 64px;
+      align-items: center;
+      gap: 20px;
+      margin: 34px 8px 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .round {
+      width: 54px;
+      height: 54px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      display: grid;
+      place-items: center;
+      margin: 0 auto 7px;
+      color: #111827;
+      background: #fff;
+      font-size: 18px;
+    }
+
+    .round.main {
+      width: 78px;
+      height: 78px;
+      background: linear-gradient(135deg, var(--primary), #3f6fff);
+      color: #fff;
+      font-size: 29px;
+      border: 0;
+      box-shadow: 0 16px 30px rgba(15, 23, 42, 0.14);
+    }
+
+    .field {
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 12px;
+      margin-top: 10px;
+      background: #fff;
+    }
+
+    .field-label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 7px;
+    }
+
+    .field-value {
+      font-size: 15px;
+      font-weight: 760;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .chips {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 9px;
+    }
+
+    .chip {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 11px;
+      font-size: 12px;
+      color: #4b5563;
+      font-weight: 720;
+      background: #fff;
+    }
+
+    .chip.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .chip.soft {
+      background: var(--soft);
+      border-color: var(--soft);
+      color: var(--primary);
+    }
+
+    .calendar {
+      margin-top: 14px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 14px;
+      background: #fff;
+    }
+
+    .month-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .weekdays, .days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 7px;
+      text-align: center;
+    }
+
+    .weekdays {
+      color: var(--muted);
+      font-size: 11px;
+      margin-bottom: 8px;
+    }
+
+    .day {
+      height: 32px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #4b5563;
+      background: #f3f4f8;
+    }
+
+    .day.l1 { background: #eef0ff; color: var(--primary); }
+    .day.l2 { background: #dfe4ff; color: var(--primary); }
+    .day.l3 { background: #aeb8ff; color: #fff; }
+    .day.l4 { background: var(--primary); color: #fff; }
+    .day.selected { outline: 3px solid rgba(91,99,246,.22); }
+
+    .bottom-sheet {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 425px;
+      border-radius: 28px 28px 0 0;
+      background: white;
+      box-shadow: 0 -18px 50px rgba(15,23,42,.13);
+      padding: 13px 20px 22px;
+    }
+
+    .handle {
+      width: 40px;
+      height: 4px;
+      border-radius: 999px;
+      background: #d8dce5;
+      margin: 0 auto 15px;
+    }
+
+    .sheet-title {
+      text-align: center;
+      font-size: 18px;
+      font-weight: 820;
+      margin-bottom: 12px;
+    }
+
+    .note-box {
+      height: 54px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      color: var(--muted);
+      font-size: 13px;
+      padding: 13px;
+      margin-top: 9px;
+    }
+
+    .segmented {
+      height: 38px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border-radius: 999px;
+      background: #f0f1f5;
+      padding: 3px;
+      margin-top: 12px;
+    }
+
+    .segment {
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      font-size: 13px;
+      color: #6b7280;
+      font-weight: 760;
+    }
+
+    .segment.active {
+      background: white;
+      color: var(--primary);
+      box-shadow: 0 4px 12px rgba(15,23,42,.08);
+    }
+
+    .bar {
+      height: 10px;
+      border-radius: 999px;
+      background: #edf0f6;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .bar > span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--primary), #ff9b45);
+    }
+
+    .donut {
+      width: 118px;
+      height: 118px;
+      border-radius: 999px;
+      background: conic-gradient(var(--primary) 0 42%, #9a8cff 42% 74%, #ff8a3d 74% 100%);
+      position: relative;
+      flex: none;
+    }
+
+    .donut:after {
+      content: "";
+      position: absolute;
+      inset: 28px;
+      border-radius: 999px;
+      background: white;
+    }
+
+    .side-panel {
+      width: 310px;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      background: rgba(255,255,255,.72);
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .side-panel h2 {
+      margin: 0 0 15px;
+      font-size: 22px;
+    }
+
+    .side-section {
+      margin-top: 20px;
+    }
+
+    .side-section h3 {
+      margin: 0 0 10px;
+      font-size: 14px;
+      color: #374151;
+    }
+
+    .swatches {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .swatch {
+      height: 40px;
+      border-radius: 10px;
+      border: 1px solid rgba(0,0,0,.04);
+    }
+
+    .small-list {
+      display: grid;
+      gap: 8px;
+      color: #4b5563;
+      font-size: 13px;
+      line-height: 1.45;
+      font-weight: 600;
+    }
+
+    .flow {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-top: 26px;
+      padding: 16px 20px;
+      border: 1px dashed #cad2e2;
+      border-radius: 20px;
+      background: rgba(255,255,255,.58);
+      color: #4b5563;
+      font-size: 14px;
+      font-weight: 700;
+      width: max-content;
+    }
+
+    .arrow {
+      color: var(--primary);
+      font-weight: 900;
+      font-size: 22px;
+    }
+
+    .ruler {
+      position: absolute;
+      left: 46px;
+      right: 46px;
+      bottom: 40px;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      background: rgba(255,255,255,.62);
+      display: grid;
+      grid-template-columns: 1.1fr 1.3fr 1fr;
+      gap: 22px;
+      padding: 18px 22px;
+      color: #4b5563;
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .ruler b {
+      color: var(--text);
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    .tempo-ring {
+      width: 54px;
+      height: 54px;
+      border-radius: 999px;
+      border: 8px solid var(--soft);
+      border-top-color: var(--orange);
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--orange);
+    }
+  </style>
+</head>
+<body>
+  <main class="board">
+    <section class="title-row">
+      <div class="title">
+        <h1>SnareLab Practice Log <span class="version">v0.3</span> 原型图</h1>
+        <div class="subtitle">从练习日志进入 Rhythm Practice：BPM、拍号、目标与节奏备注轻量加入，不破坏 V0.2 的记录闭环</div>
+      </div>
+      <div class="legend">
+        <span><i class="dot"></i> 主色 #5B63F6</span>
+        <span><i class="dot" style="background:#F59E0B"></i> 节奏信息</span>
+        <span><i class="dot" style="background:#22C55E"></i> 目标完成</span>
+      </div>
+    </section>
+
+    <section class="screens">
+      <div class="phone-wrap">
+        <div class="screen-title">Today · 今天</div>
+        <div class="phone">
+          <div class="status"><span>9:41</span><span class="signal">▰ ▰ ▰ ◔</span></div>
+          <div class="content">
+            <div class="topbar">
+              <div class="app-title">SnareLab</div>
+              <div class="icons">⌕ ⚙ ＋</div>
+            </div>
+            <div class="date">7月9日 周四</div>
+            <div class="grid-2">
+              <div class="card"><div class="caption">今日总计</div><div class="stat-num">78 分钟</div></div>
+              <div class="card"><div class="caption">记录次数</div><div class="stat-num">4 次</div></div>
+            </div>
+            <div class="hero">
+              <div class="caption">当前已练习</div>
+              <div class="hero-number">42 <small>分钟</small></div>
+              <div class="chips" style="justify-content:center;margin:16px 0;">
+                <span class="chip soft">目标：双跳控制</span>
+                <span class="chip">92 BPM</span>
+              </div>
+              <button class="primary">开始计时 ▶</button>
+            </div>
+            <div class="section">今日记录</div>
+            <div class="record">
+              <div class="iconbox">♬</div><div class="meta"><div class="name">基本功 · 双跳</div><div class="sub">92 BPM · 4/4 · 控制</div></div><div class="duration">18 分</div>
+            </div>
+            <div class="record">
+              <div class="iconbox" style="background:#fff1c8;color:#d69a00;">◎</div><div class="meta"><div class="name">曲目练习</div><div class="sub">目标：副歌稳定</div></div><div class="duration">24 分</div>
+            </div>
+          </div>
+          <div class="nav">
+            <div class="nav-item active"><b>⌂</b>今天</div><div class="nav-item"><b>▦</b>日志</div><div class="nav-item"><b>▣</b>分类</div><div class="nav-item"><b>▥</b>统计</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phone-wrap">
+        <div class="screen-title">Timer · 专注计时</div>
+        <div class="phone">
+          <div class="status"><span>9:41</span><span class="signal">▰ ▰ ▰ ◔</span></div>
+          <div class="content">
+            <div class="topbar"><div class="icons">‹</div><div class="page-title">专注计时</div><div class="icons">⋯</div></div>
+            <div class="timer-face">
+              <div class="timer-inner">
+                <div class="timer-value">20:40</div>
+                <div class="timer-label">练习中</div>
+              </div>
+            </div>
+            <div class="practice-strip">
+              <div class="mini-card"><strong>92</strong><span>BPM</span></div>
+              <div class="mini-card"><strong>4/4</strong><span>拍号</span></div>
+              <div class="mini-card"><strong>目标</strong><span>双跳控制</span></div>
+            </div>
+            <div class="timer-controls">
+              <div><div class="round">■</div>结束</div>
+              <div><div class="round main">Ⅱ</div>暂停</div>
+              <div><div class="round">↻</div>重置</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phone-wrap">
+        <div class="screen-title">Save · 保存练习</div>
+        <div class="phone">
+          <div class="status"><span>9:41</span><span class="signal">▰ ▰ ▰ ◔</span></div>
+          <div class="content">
+            <div class="topbar"><div class="icons">‹</div><div class="page-title">保存本次练习</div><div></div></div>
+            <div class="card" style="text-align:center;padding:24px 14px;margin-top:18px;">
+              <div class="hero-number" style="font-size:40px;">20 <small>分</small> 40 <small>秒</small></div>
+              <div class="caption" style="margin-top:8px;">本次练习时长</div>
+            </div>
+            <div class="grid-2">
+              <div class="field"><div class="field-label">BPM</div><div class="field-value">92 <span>⌄</span></div></div>
+              <div class="field"><div class="field-label">拍号</div><div class="field-value">4/4 <span>⌄</span></div></div>
+            </div>
+            <div class="field"><div class="field-label">练习目标</div><div class="field-value">双跳控制 <span>⌄</span></div></div>
+            <div class="section">选择分类</div>
+            <div class="chips"><span class="chip active">基本功</span><span class="chip">手脚协调</span><span class="chip">曲目</span><span class="chip">自由</span></div>
+            <div class="section">标签</div>
+            <div class="chips"><span class="chip soft">双跳</span><span class="chip soft">速度</span><span class="chip">控制</span><span class="chip">+ 新增</span></div>
+            <div class="note-box">节奏备注：右手第二拍容易抢，下一次降到 88 BPM 稳定。</div>
+            <button class="primary" style="margin-top:14px;">保存记录</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="phone-wrap">
+        <div class="screen-title">Log · 日志</div>
+        <div class="phone">
+          <div class="status"><span>9:41</span><span class="signal">▰ ▰ ▰ ◔</span></div>
+          <div class="content">
+            <div class="topbar"><div class="page-title">日志</div><div class="icons">筛选</div></div>
+            <div class="calendar">
+              <div class="month-row"><span>2026年7月</span><span>‹  ›</span></div>
+              <div class="weekdays"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+              <div class="days">
+                <span class="day">1</span><span class="day l1">2</span><span class="day">3</span><span class="day l2">4</span><span class="day">5</span><span class="day l1">6</span><span class="day">7</span>
+                <span class="day l2">8</span><span class="day l4 selected">9</span><span class="day">10</span><span class="day l3">11</span><span class="day">12</span><span class="day l1">13</span><span class="day">14</span>
+                <span class="day">15</span><span class="day l2">16</span><span class="day l2">17</span><span class="day">18</span><span class="day l3">19</span><span class="day">20</span><span class="day">21</span>
+                <span class="day l1">22</span><span class="day">23</span><span class="day l2">24</span><span class="day">25</span><span class="day">26</span><span class="day l3">27</span><span class="day">28</span>
+                <span class="day">29</span><span class="day l1">30</span><span class="day">31</span><span></span><span></span><span></span><span></span>
+              </div>
+            </div>
+            <div class="section">7月9日 · 4 次 · 78 分钟</div>
+            <div class="record"><div class="iconbox">92</div><div class="meta"><div class="name">基本功 · 双跳控制</div><div class="sub">4/4 · 双跳 / 控制</div></div><div class="duration">20:40</div></div>
+            <div class="record"><div class="iconbox" style="background:#ffe5d6;color:#f26f45;">♬</div><div class="meta"><div class="name">曲目练习</div><div class="sub">目标：副歌稳定</div></div><div class="duration">24 分</div></div>
+          </div>
+          <div class="nav">
+            <div class="nav-item"><b>⌂</b>今天</div><div class="nav-item active"><b>▦</b>日志</div><div class="nav-item"><b>▣</b>分类</div><div class="nav-item"><b>▥</b>统计</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phone-wrap">
+        <div class="screen-title">Record · 记录详情</div>
+        <div class="phone">
+          <div class="status"><span>9:41</span><span class="signal">▰ ▰ ▰ ◔</span></div>
+          <div class="content" style="background:linear-gradient(180deg,#f8f9fc,#eef1f8);">
+            <div class="topbar"><div class="page-title">日志</div><div class="icons">筛选</div></div>
+            <div class="calendar" style="opacity:.45;">
+              <div class="month-row"><span>2026年7月</span><span>‹  ›</span></div>
+              <div class="days" style="grid-template-columns:repeat(7,1fr);">
+                <span class="day l1"></span><span class="day l2"></span><span class="day"></span><span class="day l2"></span><span class="day"></span><span class="day l1"></span><span class="day"></span>
+                <span class="day l2"></span><span class="day l4 selected"></span><span class="day"></span><span class="day l3"></span><span class="day"></span><span class="day l1"></span><span class="day"></span>
+                <span class="day"></span><span class="day l2"></span><span class="day l2"></span><span class="day"></span><span class="day l3"></span><span class="day"></span><span class="day"></span>
+              </div>
+            </div>
+          </div>
+          <div class="bottom-sheet">
+            <div class="handle"></div>
+            <div class="sheet-title">基本功 · 双跳控制</div>
+            <div class="grid-2">
+              <div class="mini-card"><strong>20:40</strong><span>时长</span></div>
+              <div class="mini-card"><strong>92 BPM</strong><span>节奏</span></div>
+            </div>
+            <div class="field"><div class="field-label">拍号 / 目标</div><div class="field-value">4/4 · 双跳控制 <span>编辑</span></div></div>
+            <div class="chips"><span class="chip active">基本功</span><span class="chip soft">双跳</span><span class="chip soft">控制</span></div>
+            <div class="note-box" style="height:70px;">右手第二拍容易抢，下一次降到 88 BPM 稳定。保持脚鼓轻一点。</div>
+            <button class="primary" style="height:44px;margin-top:12px;">保存修改</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="phone-wrap">
+        <div class="screen-title">Stats · 分类与统计</div>
+        <div class="phone">
+          <div class="status"><span>9:41</span><span class="signal">▰ ▰ ▰ ◔</span></div>
+          <div class="content">
+            <div class="topbar"><div class="page-title">统计</div><span class="pill">月</span></div>
+            <div class="grid-2">
+              <div class="card"><div class="caption">总练习</div><div class="stat-num">18 小时 42 分</div></div>
+              <div class="card"><div class="caption">本月</div><div class="stat-num">5 小时 12 分</div></div>
+              <div class="card"><div class="caption">目标完成</div><div class="stat-num">72%</div></div>
+              <div class="card"><div class="caption">平均 BPM</div><div class="stat-num">96</div></div>
+            </div>
+            <div class="section">分类分布</div>
+            <div class="card" style="display:flex;gap:18px;align-items:center;">
+              <div class="donut"></div>
+              <div style="flex:1;font-size:13px;font-weight:700;color:#4b5563;display:grid;gap:10px;">
+                <div>基本功 <span style="float:right;">42%</span></div>
+                <div>手脚协调 <span style="float:right;">35%</span></div>
+                <div>曲目练习 <span style="float:right;">23%</span></div>
+              </div>
+            </div>
+            <div class="section">Rhythm Practice</div>
+            <div class="card">
+              <div style="display:flex;gap:14px;align-items:center;">
+                <div class="tempo-ring">96</div>
+                <div style="flex:1;">
+                  <div style="font-weight:800;font-size:15px;">BPM 稳定区间</div>
+                  <div class="caption" style="margin-top:4px;">80-110 BPM 练习占比最高</div>
+                  <div class="bar"><span style="width:72%"></span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="nav">
+            <div class="nav-item"><b>⌂</b>今天</div><div class="nav-item"><b>▦</b>日志</div><div class="nav-item"><b>▣</b>分类</div><div class="nav-item active"><b>▥</b>统计</div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="side-panel">
+        <h2>UI 规范总览</h2>
+        <div class="side-section">
+          <h3>色彩规范</h3>
+          <div class="swatches">
+            <div class="swatch" style="background:#5B63F6"></div>
+            <div class="swatch" style="background:#22C55E"></div>
+            <div class="swatch" style="background:#F59E0B"></div>
+            <div class="swatch" style="background:#EF4444"></div>
+            <div class="swatch" style="background:#F7F8FA"></div>
+            <div class="swatch" style="background:#FFFFFF"></div>
+            <div class="swatch" style="background:#ECEEF2"></div>
+            <div class="swatch" style="background:#171717"></div>
+          </div>
+        </div>
+        <div class="side-section">
+          <h3>V0.3 新增字段</h3>
+          <div class="small-list">
+            <div>• BPM：保存练习时记录，可用于轻量统计。</div>
+            <div>• 拍号：默认 4/4，可在保存页调整。</div>
+            <div>• 练习目标：短文本，帮助复盘练习意图。</div>
+            <div>• 节奏备注：记录手法、弱点、下次调整。</div>
+          </div>
+        </div>
+        <div class="side-section">
+          <h3>交互原则</h3>
+          <div class="small-list">
+            <div>• 计时前不强制填写，保存时补充语义。</div>
+            <div>• 记录详情仍用 Bottom Sheet。</div>
+            <div>• Log 日历和统计热力图复用同一组件。</div>
+            <div>• 高阶信息轻量出现，不压过计时闭环。</div>
+          </div>
+        </div>
+        <div class="side-section">
+          <h3>图标风格</h3>
+          <div class="small-list">
+            <div>线性图标、2px stroke、44px 触控热区、主操作只保留一个高强调按钮。</div>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="flow">
+      <span>今天</span><span class="arrow">→</span><span>专注计时</span><span class="arrow">→</span><span>保存节奏信息</span><span class="arrow">→</span><span>日志复盘</span><span class="arrow">→</span><span>统计节奏趋势</span>
+    </section>
+
+    <section class="ruler">
+      <div><b>产品方向</b>V0.3 进入 Rhythm Practice，但仍保持本地优先、无账号、无云同步、无 AI 分析。</div>
+      <div><b>视觉方向</b>保留 V0.2 的清爽白底和蓝紫主色，用橙色只标记 BPM / 节奏信息，避免变成复杂训练仪表盘。</div>
+      <div><b>信息架构</b>Today / Log / Category / Statistics 四导航不变，高阶字段通过保存页、详情页和统计补充进入。</div>
+    </section>
+  </main>
+</body>
+</html>

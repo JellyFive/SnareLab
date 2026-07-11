@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" role="img" aria-labelledby="title">
+  <title id="title">SnareLab</title>
+  <rect width="192" height="192" rx="36" fill="#5B63F6"/>
+  <circle cx="96" cy="96" r="52" fill="#FFFFFF"/>
+  <circle cx="96" cy="96" r="39" fill="#EEF0FF" stroke="#171717" stroke-width="6"/>
+  <path d="M57 75h78M57 117h78" stroke="#5B63F6" stroke-linecap="round" stroke-width="8"/>
+  <path d="m66 52 60 88M126 52 66 140" stroke="#171717" stroke-linecap="round" stroke-width="7"/>
+</svg>
