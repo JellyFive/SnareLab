@@ -450,3 +450,30 @@ practice target, and rhythm fields remain absent.
 - Ran `npm run build`: production PWA build completed and precached six entries.
 - Ran `npm run test:ui`: all six mobile Chromium route/navigation checks passed.
 - Ran `git diff --check`: no whitespace errors were reported.
+
+## 2026-07-12 - V0.2 GitHub Pages Deployment
+
+### What Changed
+
+- Added a GitHub Actions workflow at `.github/workflows/deploy-pages.yml` that
+  builds the Vite app and publishes `dist/` through GitHub Pages on every push
+  to `main` or manual workflow dispatch.
+- Made the Vite base path configurable through `VITE_BASE_PATH`. Production
+  Pages builds use `/SnareLab/`, while local development retains `/`.
+- Bound React Router to Vite's `BASE_URL` so route navigation remains correct
+  when the app is served from the repository subpath.
+- Bound the PWA manifest icon, start URL, and Workbox navigation fallback to
+  the same configurable base path.
+- Updated the PWA configuration test to validate base-path-aware assets.
+
+### Verification Performed
+
+- Ran `npm test`: fourteen test files and forty-three tests passed.
+- Ran `npm run typecheck`: completed without TypeScript errors.
+- Ran `VITE_BASE_PATH=/SnareLab/ npm run build`: completed successfully; the
+  generated HTML and manifest point to `/SnareLab/` assets and start URL.
+- Enabled GitHub Pages with GitHub Actions as its deployment source.
+- GitHub Actions deployment run `29181186240` completed successfully.
+- Requested `https://jellyfive.github.io/SnareLab/` and confirmed it returns
+  the SnareLab document with correctly prefixed JavaScript, CSS, manifest, and
+  service-worker assets.

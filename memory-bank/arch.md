@@ -29,6 +29,9 @@ and automated browser regression.
 - `.gitignore`: excludes generated artifacts and local noise such as `node_modules/`, `dist/`, `test-results/`, and `.DS_Store`.
 - `index.html`: Vite HTML entry that mounts React into `#root`.
 - `vite.config.ts`: Vite configuration with React plugin and basic PWA manifest/service-worker generation.
+- `.github/workflows/deploy-pages.yml`: GitHub Pages release pipeline. It
+  installs locked dependencies, builds with `VITE_BASE_PATH=/SnareLab/`, uploads
+  `dist/`, and deploys it through GitHub Actions when `main` changes.
 - `public/icons/snarelab-icon.svg`: standalone and maskable SnareLab PWA icon, referenced by the generated web manifest and precached by Workbox.
 - `vitest.config.ts`: Vitest configuration using jsdom, global test APIs, and `tests/setup.ts`.
 - `playwright.config.ts`: Playwright configuration for future mobile Chrome UI tests. It builds the app, starts Vite preview on `127.0.0.1:4173`, and looks for `*.e2e.ts` or `*.e2e.tsx` files under `tests/`.
@@ -39,7 +42,9 @@ and automated browser regression.
 ## App Files
 
 - `src/main.tsx`: React entry point. It mounts `App` inside `StrictMode` and imports global styles.
-- `src/app/App.tsx`: top-level browser-router provider and app route mount point.
+- `src/app/App.tsx`: top-level browser-router provider and app route mount
+  point. Its Vite `BASE_URL` basename keeps route URLs correct both locally and
+  under the GitHub Pages `/SnareLab/` subpath.
 - `src/app/router.tsx`: defines the five Task 2 routes, shared layout, unknown-route redirect, temporary route titles, and the rule that Timer has no bottom navigation.
 - `src/components/BottomNavigation/BottomNavigation.tsx`: renders the four visible primary navigation links and derives active state from `NavLink`.
 - `src/components/BottomNavigation/index.ts`: public export boundary for the bottom-navigation component.
@@ -125,3 +130,6 @@ Follow the V0.2 technical design when adding product code:
 - `statisticsService` owns statistics aggregation; it operates only on session facts and category ids, so tag ids cannot affect V0.2 statistics.
 - Running timer state is not restored after refresh; only finished unsaved drafts are recoverable.
 - PWA navigation uses Workbox's `index.html` fallback, and its manifest icon is cacheable offline; browser sheets use `useDialogFocus` for keyboard containment.
+- Deployment is GitHub Pages at `https://jellyfive.github.io/SnareLab/`. The
+  configurable Vite base path is the shared source for page assets, React
+  Router, PWA icon/start URL, and Workbox fallback, preventing subpath drift.
