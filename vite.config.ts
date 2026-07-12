@@ -2,7 +2,10 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
+const base = process.env.VITE_BASE_PATH ?? "/";
+
 export default defineConfig({
+  base,
   plugins: [
     react(),
     VitePWA({
@@ -16,17 +19,17 @@ export default defineConfig({
         display: "standalone",
         icons: [
           {
-            src: "/icons/snarelab-icon.svg",
+            src: `${base}icons/snarelab-icon.svg`,
             sizes: "any",
             type: "image/svg+xml",
             purpose: "any maskable"
           }
         ],
-        start_url: "/"
+        start_url: base
       },
       workbox: {
         globPatterns: ["**/*.{js,css,html,png,woff2}"],
-        navigateFallback: "/index.html"
+        navigateFallback: `${base}index.html`
       }
     })
   ]
