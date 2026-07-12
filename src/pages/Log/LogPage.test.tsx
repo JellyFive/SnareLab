@@ -81,7 +81,7 @@ describe("LogPage", () => {
 
     render(<LogPage database={database} initialMonth={new Date(2026, 6, 1)} />);
     await screen.findByRole("button", { name: /July 4, 2026/i });
-    await user.click(screen.getByRole("button", { name: /Filter practice log/i }));
+    await user.click(screen.getByRole("button", { name: "筛选练习记录" }));
 
     await user.click(screen.getByRole("checkbox", { name: "Fundamentals" }));
     await user.click(screen.getByRole("checkbox", { name: "Timing" }));

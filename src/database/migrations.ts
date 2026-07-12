@@ -26,3 +26,11 @@ export async function migrateV1ToV2(transaction: Transaction): Promise<void> {
       }
     });
 }
+
+export async function migrateV2ToV3(transaction: Transaction): Promise<void> {
+  await transaction.table("sessions").toCollection().modify((session: LegacyRecord) => {
+    if (!Array.isArray(session.attachments)) {
+      session.attachments = [];
+    }
+  });
+}

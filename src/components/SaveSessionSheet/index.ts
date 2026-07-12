@@ -1,1 +1,1 @@
-export { SaveSessionSheet } from "./SaveSessionSheet";
+export { SaveSessionSheet, type SaveSessionMetadata } from "./SaveSessionSheet";

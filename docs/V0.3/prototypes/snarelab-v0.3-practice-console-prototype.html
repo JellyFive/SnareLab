@@ -1,0 +1,641 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SnareLab v0.3 练习控制台原型</title>
+  <style>
+    :root {
+      --canvas: #e9edf3;
+      --bg: #f5f6f8;
+      --surface: #ffffff;
+      --surface-subtle: #f8f9fb;
+      --ink: #1c1d20;
+      --muted: #626875;
+      --quiet: #8d94a1;
+      --line: #e4e7ec;
+      --primary: #535bf2;
+      --primary-press: #434bd2;
+      --primary-soft: #eef0ff;
+      --success: #199c63;
+      --warning: #c98512;
+      --danger: #d83c3e;
+      --category-a: #5a83e7;
+      --category-b: #8069df;
+      --category-c: #e67c4a;
+      --category-d: #ca9b21;
+      --tag-a: #9a8fe7;
+      --tag-b: #62a7a3;
+      --tag-c: #df8fa5;
+      --tag-d: #d8aa58;
+      --radius-sm: 10px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      font-variant-numeric: tabular-nums;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      background: var(--canvas);
+      color: var(--ink);
+    }
+
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+      outline: 3px solid rgba(83, 91, 242, .32);
+      outline-offset: 2px;
+    }
+
+    .prototype-shell {
+      width: min(100%, 440px);
+      min-height: 100vh;
+      margin: 0 auto;
+      background: var(--bg);
+      box-shadow: 0 0 0 1px rgba(20, 24, 31, .06);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .screen {
+      display: none;
+      min-height: 100vh;
+      padding: 22px 20px 104px;
+    }
+
+    .screen.is-active { display: block; }
+    .timer-screen { align-items: center; padding-bottom: 30px; }
+    .timer-screen.is-active { display: flex; flex-direction: column; }
+
+    .brand-row, .page-row, .panel-title, .stat-header, .record-meta, .setting-row, .sheet-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+    }
+
+    .brand {
+      font-size: 28px;
+      font-weight: 830;
+      letter-spacing: 0;
+    }
+
+    .timer-top .brand { font-size: 18px; }
+
+    .icon-button {
+      width: 44px;
+      height: 44px;
+      display: inline-grid;
+      place-items: center;
+      border: 0;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--ink);
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .icon-button:hover { background: #eaedf2; }
+    .page-row { margin-top: var(--space-2); }
+    h1, h2, h3, p { margin: 0; }
+    h1 { font-size: 28px; line-height: 1.22; letter-spacing: 0; }
+    h2 { font-size: 18px; line-height: 1.3; }
+    h3 { font-size: 15px; line-height: 1.35; }
+    .caption { color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .fine { color: var(--quiet); font-size: 12px; line-height: 1.4; }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-3);
+      margin-top: var(--space-5);
+    }
+
+    .metric {
+      min-height: 112px;
+      padding: var(--space-4);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+    }
+
+    .metric-label { color: var(--muted); font-size: 13px; font-weight: 600; }
+    .metric-value { margin-top: 10px; font-size: 29px; line-height: 1; font-weight: 760; }
+    .metric-unit { margin-left: 3px; color: var(--muted); font-size: 13px; font-weight: 600; }
+
+    .today-summary-grid {
+      gap: var(--space-3);
+      overflow: visible;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+    }
+
+    .today-summary-grid .metric {
+      min-height: 82px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+    }
+
+    .today-summary-grid .metric-label { display: block; font-size: 12px; white-space: nowrap; }
+    .today-summary-grid .metric-value { display: block; margin-top: 8px; font-size: 25px; white-space: nowrap; }
+    .today-summary-grid .metric-unit { font-size: 12px; }
+
+    .button {
+      min-height: 48px;
+      padding: 0 var(--space-4);
+      border: 0;
+      border-radius: var(--radius-sm);
+      font-weight: 750;
+      font-size: 15px;
+    }
+
+    .button-primary { background: var(--primary); color: #fff; }
+    .button-primary:hover { background: var(--primary-press); }
+    .button-secondary { border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+    .button-danger { background: var(--danger); color: #fff; }
+    .button:disabled { background: #d8dce4; color: #858c99; cursor: not-allowed; }
+    .button-full { width: 100%; margin-top: var(--space-4); }
+
+    .section { margin-top: var(--space-6); }
+    .section > .panel-title { margin-bottom: var(--space-3); }
+
+    .heatmap-panel, .timeline-card, .chart-card, .settings-panel, .draft-banner {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+    }
+
+    .heatmap-panel { padding: var(--space-4); }
+    .month-line { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-3); }
+    .month-line strong { font-size: 15px; }
+    .month-controls { display: flex; gap: var(--space-1); }
+    .month-controls button { width: 32px; height: 32px; border: 0; border-radius: 8px; background: var(--surface-subtle); color: var(--muted); }
+    .weekdays, .heatmap-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+    .weekdays { margin-bottom: 6px; color: var(--quiet); font-size: 11px; text-align: center; }
+    .heat { aspect-ratio: 1; border: 0; border-radius: 7px; background: #eef0f3; color: var(--muted); font-size: 11px; }
+    .heat.is-1 { background: #e5e8ff; color: var(--primary); }
+    .heat.is-2 { background: #bfc5ff; color: #343a9a; }
+    .heat.is-3 { background: #858df7; color: #fff; }
+    .heat.is-4 { background: var(--primary); color: #fff; }
+    .heat.is-today { outline: 2px solid var(--ink); outline-offset: 1px; }
+
+    .today-heatmap__body { display: grid; grid-template-columns: minmax(0, 1fr) 84px; align-items: center; gap: 12px; }
+    .today-heatmap .heatmap-panel { width: 100%; padding: 12px; }
+    .today-heatmap .month-line { margin-bottom: 8px; }
+    .today-heatmap .weekdays, .today-heatmap .heatmap-grid { gap: 5px; }
+    .today-heatmap .weekdays { margin-bottom: 5px; font-size: 10px; }
+    .today-heatmap .heat { aspect-ratio: auto; height: 24px; border-radius: 6px; font-size: 10px; }
+    .month-pulse { display: grid; gap: 6px; align-content: center; min-height: 144px; padding: 12px 10px; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); }
+    .month-pulse__label { color: var(--muted); font-size: 11px; font-weight: 650; line-height: 1.35; }
+    .month-pulse__count { display: flex; align-items: baseline; gap: 3px; }
+    .month-pulse__count strong { font-size: 30px; line-height: 1; }
+    .month-pulse__count span { color: var(--muted); font-size: 12px; font-weight: 700; }
+    .month-pulse__duration { padding-top: 6px; border-top: 1px solid var(--line); color: var(--muted); font-size: 11px; font-weight: 650; line-height: 1.45; }
+
+    .record-list { display: grid; gap: var(--space-2); }
+    .today-record { display: grid; grid-template-columns: 8px minmax(0, 1fr) auto; gap: var(--space-3); align-items: center; padding: var(--space-3); border-bottom: 1px solid var(--line); }
+    .today-record:last-child { border-bottom: 0; }
+    .record-color { width: 8px; height: 38px; border-radius: 8px; background: var(--category-a); }
+    .record-color.orange { background: var(--category-c); }
+    .record-name { display: block; font-size: 14px; font-weight: 720; }
+    .record-sub { display: block; margin-top: 3px; color: var(--muted); font-size: 12px; }
+    .record-duration { font-size: 14px; font-weight: 720; }
+
+    .today-record-card {
+      display: grid;
+      gap: 6px;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+    }
+
+    .today-record-card__heading { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); }
+    .today-record-card__heading strong { font-size: 14px; }
+    .today-record-card__heading span { color: var(--muted); font-size: 12px; white-space: nowrap; }
+    .today-record-card__note { color: var(--muted); font-size: 12px; }
+
+    .bottom-nav {
+      position: absolute;
+      z-index: 4;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: grid;
+      min-height: 82px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+      border-top: 1px solid var(--line);
+      background: rgba(255, 255, 255, .96);
+    }
+
+    .prototype-shell.is-timer .bottom-nav { display: none; }
+
+    .nav-item { display: grid; gap: 4px; place-items: center; border: 0; background: transparent; color: var(--quiet); font-size: 12px; font-weight: 650; }
+    .nav-icon { height: 23px; font-size: 20px; line-height: 23px; }
+    .nav-item.is-active { color: var(--primary); }
+
+    .timer-top { width: 100%; display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; }
+    .timer-top .brand { justify-self: center; }
+    .timer-circle {
+      width: min(72vw, 296px);
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      margin: auto;
+      border: 12px solid #e2e5eb;
+      border-top-color: var(--primary);
+      border-right-color: var(--primary);
+      border-radius: 50%;
+      background: var(--surface);
+      text-align: center;
+    }
+    .timer-circle strong { display: block; font-size: 44px; line-height: 1; letter-spacing: 0; }
+    .timer-circle span { display: block; margin-top: 10px; color: var(--primary); font-size: 14px; font-weight: 700; }
+    .timer-state { display: none; }
+    .timer-controls { display: flex; align-items: end; justify-content: center; gap: var(--space-4); margin-top: auto; padding-top: var(--space-8); }
+    .timer-control { width: 64px; min-height: 64px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 50%; background: var(--surface); color: var(--ink); font-size: 13px; font-weight: 720; }
+    .timer-control.main { width: 76px; min-height: 76px; border: 0; background: var(--primary); color: #fff; }
+    .timer-control.stop { color: var(--danger); }
+    .timer-control small { display: block; margin-top: 4px; font-size: 11px; }
+    .timer-screen .timer-circle { margin-top: 92px; }
+
+    .filter-row { display: flex; gap: var(--space-2); overflow-x: auto; margin: var(--space-4) -20px 0; padding: 0 20px 2px; }
+    .filter-chip { min-height: 38px; white-space: nowrap; border: 1px solid var(--line); border-radius: 999px; padding: 0 var(--space-3); background: var(--surface); color: var(--muted); font-size: 13px; font-weight: 650; }
+    .filter-chip.is-selected { border-color: transparent; background: var(--primary-soft); color: var(--primary); }
+    .timeline { margin-top: var(--space-5); }
+    .timeline-date { margin: 22px 0 10px; color: var(--muted); font-size: 13px; font-weight: 720; }
+    .timeline-card { width: 100%; display: grid; grid-template-columns: 8px minmax(0, 1fr) auto; gap: var(--space-3); padding: var(--space-3); text-align: left; }
+    .timeline-card + .timeline-card { margin-top: var(--space-2); }
+    .timeline-card:hover { border-color: #b9bfff; }
+    .timeline-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
+    .mini-tag { display: inline-flex; align-items: center; min-height: 22px; border-radius: 999px; padding: 0 8px; background: #f1f2fb; color: #5d61a7; font-size: 11px; font-weight: 650; }
+    .photo-count { align-self: center; color: var(--muted); font-size: 12px; white-space: nowrap; }
+
+    .stats-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: var(--space-5); }
+    .compact-metric { min-height: 94px; padding: 12px 9px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface); }
+    .compact-metric span { display: block; color: var(--muted); font-size: 11px; font-weight: 650; }
+    .compact-metric strong { display: block; margin-top: 9px; font-size: 20px; line-height: 1.05; }
+    .segmented { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; margin-top: var(--space-4); padding: 3px; border-radius: var(--radius-sm); background: #e7eaf0; }
+    .segmented button { min-height: 38px; border: 0; border-radius: 8px; background: transparent; color: var(--muted); font-size: 14px; font-weight: 720; }
+    .segmented button.is-active { background: var(--surface); color: var(--primary); }
+    .stats-heatmap .month-line { margin-bottom: var(--space-3); }
+    .stats-heatmap.is-hidden, .year-heatmap { display: none; }
+    .year-heatmap.is-visible { display: block; }
+    .year-heatmap { padding: var(--space-4); }
+    .year-heatmap__top { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-4); }
+    .year-heatmap__top strong { font-size: 15px; }
+    .heat-legend { display: flex; align-items: center; gap: 4px; color: var(--quiet); font-size: 10px; }
+    .heat-legend i { width: 8px; height: 8px; border-radius: 2px; background: #eef0f3; }
+    .heat-legend i:nth-of-type(2) { background: #e5e8ff; }
+    .heat-legend i:nth-of-type(3) { background: #bfc5ff; }
+    .heat-legend i:nth-of-type(4) { background: var(--primary); }
+    .year-months { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px 10px; }
+    .year-month { min-width: 0; }
+    .year-month strong { display: block; margin-bottom: 6px; color: var(--muted); font-size: 11px; font-weight: 720; }
+    .year-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 3px; }
+    .year-heat { aspect-ratio: 1; border-radius: 3px; background: #eef0f3; }
+    .year-heat.is-1 { background: #e5e8ff; }
+    .year-heat.is-2 { background: #bfc5ff; }
+    .year-heat.is-3 { background: #858df7; }
+    .year-heat.is-4 { background: var(--primary); }
+    .chart-card { padding: 20px var(--space-4) var(--space-4); }
+    .chart-wrap { display: grid; justify-items: center; gap: 20px; margin-top: var(--space-1); }
+    .donut { width: 148px; aspect-ratio: 1; display: grid; place-items: center; border-radius: 50%; background: conic-gradient(var(--category-a) 0 42%, var(--category-b) 42% 71%, var(--category-c) 71% 88%, var(--category-d) 88% 100%); }
+    .donut.tags { background: conic-gradient(var(--tag-a) 0 35%, var(--tag-b) 35% 62%, var(--tag-c) 62% 83%, var(--tag-d) 83% 100%); }
+    .donut-center { width: 88px; aspect-ratio: 1; display: grid; place-items: center; border-radius: 50%; background: var(--surface); text-align: center; }
+    .donut-center strong { display: block; font-size: 18px; }
+    .donut-center span { display: block; margin-top: 3px; color: var(--muted); font-size: 11px; }
+    .legend-list { width: 100%; display: grid; gap: 13px; }
+    .legend-item { display: grid; gap: 7px; color: var(--muted); font-size: 13px; }
+    .legend-item__line { display: grid; grid-template-columns: 8px minmax(0, 1fr) auto; align-items: center; gap: 8px; }
+    .legend-item__line span:nth-child(2) { color: var(--ink); font-weight: 650; }
+    .legend-item__line em { margin-left: 8px; color: var(--quiet); font-style: normal; font-weight: 500; }
+    .legend-track { height: 7px; overflow: hidden; border-radius: 999px; background: var(--surface-subtle); }
+    .legend-track span { display: block; width: var(--share); height: 100%; border-radius: inherit; background: var(--tone); }
+    .legend-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--category-a); }
+    .legend-dot.b { background: var(--category-b); } .legend-dot.c { background: var(--category-c); } .legend-dot.d { background: var(--category-d); }
+    .legend-dot.t1 { background: var(--tag-a); } .legend-dot.t2 { background: var(--tag-b); } .legend-dot.t3 { background: var(--tag-c); } .legend-dot.t4 { background: var(--tag-d); }
+    .legend-item strong { color: var(--ink); font-weight: 700; }
+
+    .overlay { position: absolute; z-index: 10; inset: 0; display: none; align-items: end; background: rgba(22, 25, 31, .36); }
+    .overlay.is-open { display: flex; }
+    .sheet { width: 100%; max-height: calc(100vh - 32px); overflow: auto; padding: 12px 20px calc(24px + env(safe-area-inset-bottom)); border-radius: var(--radius-lg) var(--radius-lg) 0 0; background: var(--surface); }
+    .sheet-handle { width: 38px; height: 4px; margin: 0 auto 16px; border-radius: 999px; background: #d9dde5; }
+    .sheet-title-row { margin-bottom: var(--space-4); }
+    .sheet-title-row h2 { font-size: 20px; }
+    .field { display: grid; gap: 7px; margin-top: var(--space-4); color: var(--muted); font-size: 13px; font-weight: 700; }
+    .field select, .field textarea { width: 100%; border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 0 12px; background: var(--surface); color: var(--ink); }
+    .field select { min-height: 46px; }
+    .field textarea { min-height: 86px; padding-top: 12px; resize: vertical; }
+    .add-inline { width: max-content; min-height: 36px; margin-top: 8px; border: 0; background: transparent; color: var(--primary); font-size: 13px; font-weight: 720; }
+    .choice-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .tag-choice { min-height: 34px; border: 1px solid var(--line); border-radius: 999px; padding: 0 12px; background: var(--surface); color: var(--muted); font-size: 12px; font-weight: 700; }
+    .tag-choice.is-selected { border-color: transparent; background: var(--primary-soft); color: var(--primary); }
+    .image-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 8px; }
+    .image-tile { aspect-ratio: 1; display: grid; place-items: center; border: 1px solid var(--line); border-radius: var(--radius-sm); background: #edf0f5; color: var(--muted); font-size: 12px; }
+    .image-tile.photo-a { background: #c7d2e9; } .image-tile.photo-b { background: #dfc7a7; }
+    .image-tile.add { background: var(--surface); color: var(--primary); font-size: 26px; }
+    .sheet-actions { display: grid; grid-template-columns: 1fr 1.3fr; gap: var(--space-3); margin-top: var(--space-6); }
+
+    .settings-screen { display: none; position: absolute; z-index: 8; inset: 0; padding: 22px 20px; background: var(--bg); }
+    .settings-screen.is-open { display: block; }
+    .settings-panel { overflow: hidden; margin-top: var(--space-5); }
+    .setting-row { width: 100%; min-height: 64px; padding: 0 var(--space-4); border: 0; border-bottom: 1px solid var(--line); background: var(--surface); color: var(--ink); text-align: left; }
+    .setting-row:last-child { border-bottom: 0; }
+    .setting-row .setting-label { display: grid; gap: 3px; }
+    .setting-row .setting-label span { color: var(--quiet); font-size: 12px; }
+    .setting-row:disabled { color: var(--quiet); cursor: not-allowed; }
+
+    .draft-banner { display: none; margin-top: var(--space-4); padding: 12px; background: #fff9eb; border-color: #efd9a6; }
+    .draft-banner.is-visible { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .draft-banner strong { font-size: 13px; }
+    .draft-banner .button { min-height: 36px; font-size: 12px; }
+    .toast { position: fixed; z-index: 30; right: 20px; bottom: 98px; left: 20px; display: none; padding: 12px 14px; border-radius: var(--radius-sm); background: #252a33; color: #fff; font-size: 13px; font-weight: 650; text-align: center; }
+    .toast.is-visible { display: block; }
+
+    @media (min-width: 700px) {
+      body { padding: 34px 0; }
+      .prototype-shell { min-height: 820px; border-radius: 18px; }
+      .screen { min-height: 820px; }
+      .bottom-nav { border-radius: 0 0 18px 18px; }
+    }
+
+    @media (max-width: 360px) {
+      .screen { padding-left: 16px; padding-right: 16px; }
+      .filter-row { margin-left: -16px; margin-right: -16px; padding-left: 16px; padding-right: 16px; }
+      .donut { width: 136px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { scroll-behavior: auto !important; transition-duration: 0ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="prototype-shell" aria-label="SnareLab v0.3 高保真交互原型">
+    <section class="screen is-active" id="today-screen" aria-labelledby="today-title">
+      <header class="brand-row">
+        <span class="brand">SnareLab</span>
+        <button class="icon-button" data-open-settings aria-label="打开设置" type="button">&#9881;</button>
+      </header>
+      <div class="page-row"><h1 id="today-title">Today</h1><span class="caption">Jul 12</span></div>
+      <aside class="draft-banner" id="draft-banner"><div><strong>有一条练习尚未保存</strong><p class="fine">24 分钟 18 秒</p></div><button class="button button-primary" data-open-save type="button">继续保存</button></aside>
+      <section class="summary-grid today-summary-grid" aria-label="练习时长概览">
+        <article class="metric"><span class="metric-label">今日练习时长</span><strong class="metric-value">42<span class="metric-unit">分钟</span></strong></article>
+        <article class="metric"><span class="metric-label">总练习时长</span><strong class="metric-value">18<span class="metric-unit">小时</span></strong></article>
+      </section>
+      <button class="button button-primary button-full" data-go-timer type="button">开始练习</button>
+      <section class="section today-heatmap" aria-labelledby="today-heatmap-title">
+        <div class="panel-title"><h2 id="today-heatmap-title">本月练习</h2></div>
+        <div class="today-heatmap__body">
+        <div class="heatmap-panel">
+          <div class="month-line"><strong>7 月</strong><div class="month-controls"><button type="button" aria-label="上个月">&#8249;</button><button type="button" aria-label="下个月">&#8250;</button></div></div>
+          <div class="weekdays"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+          <div class="heatmap-grid" aria-label="2026 年 7 月练习热力图">
+            <span></span><span></span><button class="heat" type="button">1</button><button class="heat is-2" type="button">2</button><button class="heat" type="button">3</button><button class="heat is-1" type="button">4</button><button class="heat" type="button">5</button>
+            <button class="heat is-3" type="button">6</button><button class="heat" type="button">7</button><button class="heat is-1" type="button">8</button><button class="heat is-4" type="button">9</button><button class="heat" type="button">10</button><button class="heat is-2" type="button">11</button><button class="heat is-today is-3" type="button">12</button>
+            <button class="heat" type="button">13</button><button class="heat is-1" type="button">14</button><button class="heat" type="button">15</button><button class="heat" type="button">16</button><button class="heat is-2" type="button">17</button><button class="heat" type="button">18</button><button class="heat" type="button">19</button>
+            <button class="heat is-2" type="button">20</button><button class="heat" type="button">21</button><button class="heat" type="button">22</button><button class="heat is-1" type="button">23</button><button class="heat" type="button">24</button><button class="heat is-3" type="button">25</button><button class="heat" type="button">26</button>
+            <button class="heat" type="button">27</button><button class="heat is-1" type="button">28</button><button class="heat" type="button">29</button><button class="heat" type="button">30</button><button class="heat" type="button">31</button>
+          </div>
+        </div>
+        <aside class="month-pulse" aria-label="本月练习概览"><span class="month-pulse__label">本月练习</span><div class="month-pulse__count"><strong>4</strong><span>天</span></div><span class="month-pulse__duration">累计<br>2 小时 26 分钟</span></aside>
+        </div>
+      </section>
+      <section class="section" aria-labelledby="today-record-title">
+        <div class="panel-title"><h2 id="today-record-title">今日练习记录</h2></div>
+        <div class="record-list" id="today-record-list">
+          <article class="today-record-card"><div class="today-record-card__heading"><strong>基本功</strong><span>09:10 · 18 分钟</span></div><div class="timeline-tags"><span class="mini-tag">双跳</span><span class="mini-tag">控制</span></div><p class="today-record-card__note">右手第二拍容易抢。</p></article>
+          <article class="today-record-card"><div class="today-record-card__heading"><strong>曲目练习</strong><span>19:30 · 24 分钟</span></div><div class="timeline-tags"><span class="mini-tag">过门</span></div><p class="today-record-card__note">副歌进入前的过门需要更稳。</p></article>
+        </div>
+      </section>
+    </section>
+
+    <section class="screen timer-screen" id="timer-screen" aria-labelledby="timer-title">
+      <header class="timer-top"><button class="icon-button" data-tab="today" aria-label="返回今日" type="button">&#8249;</button><span class="brand">SnareLab</span><span></span></header>
+      <h1 id="timer-title" class="timer-state">专注计时</h1>
+      <div class="timer-circle" id="timer-circle"><div><strong id="timer-value">00:00:00</strong><span id="timer-label">准备开始</span></div></div>
+      <div class="timer-controls">
+        <button class="timer-control" id="timer-reset" type="button">&#8635;<small>重置</small></button>
+        <button class="timer-control main" id="timer-main" type="button">开始<small>计时</small></button>
+        <button class="timer-control stop" id="timer-stop" type="button">&#9632;<small>停止</small></button>
+      </div>
+    </section>
+
+    <section class="screen" id="records-screen" aria-labelledby="records-title">
+      <header class="brand-row"><span class="brand">SnareLab</span><button class="icon-button" data-open-settings aria-label="打开设置" type="button">&#9881;</button></header>
+      <div class="page-row"><h1 id="records-title">记录</h1><button class="icon-button" id="filter-button" aria-label="筛选练习记录" type="button">&#8801;</button></div>
+      <div class="filter-row" aria-label="记录筛选"><button class="filter-chip is-selected" type="button">全部记录</button><button class="filter-chip" type="button">分类</button><button class="filter-chip" type="button">标签</button></div>
+      <div class="timeline" id="record-timeline">
+        <h2 class="timeline-date">2026 年 7 月 12 日</h2>
+        <button class="timeline-card" data-open-record type="button"><span class="record-color"></span><span><strong class="record-name">基本功</strong><span class="record-sub">09:10 · 18 分钟</span><span class="timeline-tags"><span class="mini-tag">双跳</span><span class="mini-tag">控制</span></span></span><span class="photo-count">图片 2 张</span></button>
+        <button class="timeline-card" data-open-record type="button"><span class="record-color orange"></span><span><strong class="record-name">曲目练习</strong><span class="record-sub">19:30 · 24 分钟</span><span class="timeline-tags"><span class="mini-tag">过门</span></span></span><span class="photo-count">图片 1 张</span></button>
+        <h2 class="timeline-date">2026 年 7 月 10 日</h2>
+        <button class="timeline-card" data-open-record type="button"><span class="record-color" style="background: var(--category-b)"></span><span><strong class="record-name">手脚协调</strong><span class="record-sub">20:05 · 36 分钟</span><span class="timeline-tags"><span class="mini-tag">独立性</span><span class="mini-tag">速度</span></span></span><span class="photo-count">图片 0 张</span></button>
+      </div>
+    </section>
+
+    <section class="screen" id="stats-screen" aria-labelledby="stats-title">
+      <header class="brand-row"><span class="brand">SnareLab</span><button class="icon-button" data-open-settings aria-label="打开设置" type="button">&#9881;</button></header>
+      <div class="page-row"><h1 id="stats-title">统计</h1><span class="caption">练习趋势</span></div>
+      <section class="stats-grid" aria-label="统计概览"><article class="compact-metric"><span>今日时长</span><strong>42 分</strong></article><article class="compact-metric"><span>连续练习</span><strong>4 天</strong></article><article class="compact-metric"><span>累计时长</span><strong>18 小时</strong></article></section>
+      <div class="segmented" aria-label="统计周期"><button class="is-active" data-period="month" type="button">月</button><button data-period="year" type="button">年</button></div>
+      <section class="section"><div class="panel-title"><h2>练习热力图</h2><span class="caption" id="period-label">2026 年 7 月</span></div><div class="heatmap-panel stats-heatmap" id="month-heatmap"><div class="month-line"><strong>7 月</strong><div class="month-controls"><button type="button" aria-label="上个月">&#8249;</button><button type="button" aria-label="下个月">&#8250;</button></div></div><div class="weekdays"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div><div class="heatmap-grid" aria-label="2026 年 7 月练习热力图"><span></span><span></span><button class="heat is-1" type="button">1</button><button class="heat" type="button">2</button><button class="heat is-2" type="button">3</button><button class="heat is-3" type="button">4</button><button class="heat" type="button">5</button><button class="heat is-1" type="button">6</button><button class="heat" type="button">7</button><button class="heat is-3" type="button">8</button><button class="heat is-1" type="button">9</button><button class="heat is-4" type="button">10</button><button class="heat" type="button">11</button><button class="heat is-2" type="button">12</button><button class="heat" type="button">13</button><button class="heat is-1" type="button">14</button><button class="heat" type="button">15</button><button class="heat is-2" type="button">16</button><button class="heat" type="button">17</button><button class="heat is-3" type="button">18</button><button class="heat" type="button">19</button><button class="heat is-1" type="button">20</button><button class="heat" type="button">21</button><button class="heat is-2" type="button">22</button><button class="heat" type="button">23</button><button class="heat is-3" type="button">24</button><button class="heat" type="button">25</button><button class="heat is-1" type="button">26</button><button class="heat" type="button">27</button><button class="heat is-2" type="button">28</button><button class="heat" type="button">29</button><button class="heat is-1" type="button">30</button><button class="heat" type="button">31</button></div></div><div class="heatmap-panel year-heatmap" id="year-heatmap" aria-label="2026 年练习热力图"><div class="year-heatmap__top"><strong>全年练习概览</strong><span class="heat-legend">少<i></i><i></i><i></i><i></i>多</span></div><div class="year-months" id="year-months"></div></div></section>
+      <section class="section"><div class="panel-title"><h2>分类练习时长</h2><span class="caption">按时长</span></div><article class="chart-card"><div class="chart-wrap"><div class="donut"><div class="donut-center"><div><strong>18 小时</strong><span>练习时长</span></div></div></div><div class="legend-list"><div class="legend-item" style="--share:42%;--tone:var(--category-a)"><div class="legend-item__line"><span class="legend-dot"></span><span>基本功 <em>7 小时 34 分</em></span><strong>42%</strong></div><div class="legend-track"><span></span></div></div><div class="legend-item" style="--share:29%;--tone:var(--category-b)"><div class="legend-item__line"><span class="legend-dot b"></span><span>手脚协调 <em>5 小时 13 分</em></span><strong>29%</strong></div><div class="legend-track"><span></span></div></div><div class="legend-item" style="--share:17%;--tone:var(--category-c)"><div class="legend-item__line"><span class="legend-dot c"></span><span>曲目练习 <em>3 小时 04 分</em></span><strong>17%</strong></div><div class="legend-track"><span></span></div></div><div class="legend-item" style="--share:12%;--tone:var(--category-d)"><div class="legend-item__line"><span class="legend-dot d"></span><span>自由练习 <em>2 小时 09 分</em></span><strong>12%</strong></div><div class="legend-track"><span></span></div></div></div></div></article></section>
+      <section class="section"><div class="panel-title"><h2>标签使用次数</h2><span class="caption">共 28 次</span></div><article class="chart-card"><div class="chart-wrap"><div class="donut tags"><div class="donut-center"><div><strong>28 次</strong><span>标签使用</span></div></div></div><div class="legend-list"><div class="legend-item" style="--share:36%;--tone:var(--tag-a)"><div class="legend-item__line"><span class="legend-dot t1"></span><span>控制 <em>10 次</em></span><strong>36%</strong></div><div class="legend-track"><span></span></div></div><div class="legend-item" style="--share:29%;--tone:var(--tag-b)"><div class="legend-item__line"><span class="legend-dot t2"></span><span>独立性 <em>8 次</em></span><strong>29%</strong></div><div class="legend-track"><span></span></div></div><div class="legend-item" style="--share:21%;--tone:var(--tag-c)"><div class="legend-item__line"><span class="legend-dot t3"></span><span>速度 <em>6 次</em></span><strong>21%</strong></div><div class="legend-track"><span></span></div></div><div class="legend-item" style="--share:14%;--tone:var(--tag-d)"><div class="legend-item__line"><span class="legend-dot t4"></span><span>过门 <em>4 次</em></span><strong>14%</strong></div><div class="legend-track"><span></span></div></div></div></div></article></section>
+    </section>
+
+    <nav class="bottom-nav" aria-label="主导航"><button class="nav-item is-active" data-tab="today" type="button"><span class="nav-icon">&#8962;</span>今日</button><button class="nav-item" data-tab="records" type="button"><span class="nav-icon">&#9783;</span>记录</button><button class="nav-item" data-tab="stats" type="button"><span class="nav-icon">&#9673;</span>统计</button></nav>
+
+    <aside class="settings-screen" id="settings-screen" aria-labelledby="settings-title"><header class="brand-row"><button class="icon-button" data-close-settings aria-label="关闭设置" type="button">&#8249;</button><span class="brand">SnareLab</span><span></span></header><h1 id="settings-title" style="margin-top: 18px">设置</h1><section class="settings-panel"><button class="setting-row" id="open-category-management" type="button"><span class="setting-label"><strong>分类管理</strong><span>新建、编辑和删除练习分类</span></span><span>&#8250;</span></button><button class="setting-row" id="open-tag-management" type="button"><span class="setting-label"><strong>标签管理</strong><span>新建、编辑和删除练习标签</span></span><span>&#8250;</span></button><button class="setting-row" disabled type="button"><span class="setting-label"><strong>页面主题</strong><span>即将开放</span></span><span>—</span></button></section></aside>
+
+    <div class="overlay" id="save-sheet" aria-hidden="true"><section class="sheet" aria-label="保存本次练习" aria-modal="true" role="dialog"><div class="sheet-handle"></div><div class="sheet-title-row"><h2>保存本次练习</h2><button class="icon-button" data-close-sheet aria-label="关闭保存面板" type="button">&#215;</button></div><div class="metric" style="min-height: 90px; text-align: center"><span class="metric-label">本次练习时长</span><strong class="metric-value" id="save-duration">24 分钟 18 秒</strong></div><label class="field">分类<select id="save-category"><option value="">请选择分类</option><option>基本功</option><option>手脚协调</option><option>曲目练习</option><option>自由练习</option><option>未分类</option></select></label><button class="add-inline" id="save-add-category" type="button">+ 新增分类</button><div class="field"><span>标签</span><div class="choice-row"><button class="tag-choice is-selected" type="button">双跳</button><button class="tag-choice" type="button">控制</button><button class="tag-choice is-selected" type="button">速度</button><button class="tag-choice" type="button">过门</button></div></div><button class="add-inline" id="save-add-tag" type="button">+ 新增标签</button><label class="field">笔记<textarea id="save-note" placeholder="记录这次练习的感受或问题"></textarea></label><div class="field"><span>图片附件 <span class="fine" id="save-image-count">最多 6 张，每张不超过 2MB</span></span><div class="image-grid" id="save-images"><div class="image-tile photo-a">图片</div><div class="image-tile photo-b">图片</div><button class="image-tile add" id="save-add-image" aria-label="添加图片" type="button">+</button></div></div><div class="sheet-actions"><button class="button button-secondary" id="save-later" type="button">稍后保存</button><button class="button button-primary" id="save-record" type="button" disabled>保存记录</button></div></section></div>
+
+    <div class="overlay" id="record-sheet" aria-hidden="true"><section class="sheet" aria-label="练习记录详情" aria-modal="true" role="dialog"><div class="sheet-handle"></div><div class="sheet-title-row"><h2>练习记录</h2><button class="icon-button" data-close-sheet aria-label="关闭记录详情" type="button">&#215;</button></div><div class="metric" style="min-height: 90px; text-align: center"><span class="metric-label">练习时长</span><strong class="metric-value">18 分钟</strong></div><div class="field"><span>开始时间</span><span class="caption">2026 年 7 月 12 日 09:10</span></div><div class="field"><span>结束时间</span><span class="caption">2026 年 7 月 12 日 09:28</span></div><label class="field">分类<select><option selected>基本功</option><option>手脚协调</option><option>曲目练习</option></select></label><div class="field"><span>标签</span><div class="choice-row"><button class="tag-choice is-selected" type="button">双跳</button><button class="tag-choice is-selected" type="button">控制</button><button class="tag-choice" type="button">速度</button></div></div><label class="field">笔记<textarea>双跳在较快速度下仍不稳定，需要保持手腕放松。</textarea></label><div class="field"><span>图片</span><div class="image-grid"><div class="image-tile photo-a">图片</div><div class="image-tile photo-b">图片</div><button class="image-tile add" aria-label="添加图片" type="button">+</button></div></div><div class="sheet-actions"><button class="button button-danger" id="delete-record" type="button">删除记录</button><button class="button button-primary" id="update-record" type="button">保存修改</button></div></section></div>
+    <div class="overlay" id="category-management-sheet" aria-hidden="true"><section class="sheet" aria-label="分类管理" aria-modal="true" role="dialog"><div class="sheet-handle"></div><div class="sheet-title-row"><h2>分类管理</h2><button class="icon-button" data-close-sheet aria-label="关闭分类管理" type="button">&#215;</button></div><div class="record-list" id="category-list"><article class="today-record"><span class="record-color"></span><div><strong class="record-name">基本功</strong><span class="record-sub">12 条记录 · 5 小时 28 分</span></div><button class="icon-button" aria-label="编辑基本功" type="button">&#8250;</button></article><article class="today-record"><span class="record-color" style="background: var(--category-b)"></span><div><strong class="record-name">手脚协调</strong><span class="record-sub">8 条记录 · 3 小时 46 分</span></div><button class="icon-button" aria-label="编辑手脚协调" type="button">&#8250;</button></article><article class="today-record"><span class="record-color orange"></span><div><strong class="record-name">曲目练习</strong><span class="record-sub">5 条记录 · 2 小时 17 分</span></div><button class="icon-button" aria-label="编辑曲目练习" type="button">&#8250;</button></article><article class="today-record"><span class="record-color" style="background: #a1a7b3"></span><div><strong class="record-name">未分类</strong><span class="record-sub">系统分类，不可删除</span></div></article></div><button class="button button-primary button-full" id="add-category" type="button">新增分类</button></section></div>
+    <div class="overlay" id="tag-management-sheet" aria-hidden="true"><section class="sheet" aria-label="标签管理" aria-modal="true" role="dialog"><div class="sheet-handle"></div><div class="sheet-title-row"><h2>标签管理</h2><button class="icon-button" data-close-sheet aria-label="关闭标签管理" type="button">&#215;</button></div><div class="record-list" id="tag-list"><article class="today-record"><span class="legend-dot t1"></span><div><strong class="record-name">控制</strong><span class="record-sub">已用于 10 条记录</span></div><button class="icon-button" aria-label="编辑控制标签" type="button">&#8250;</button></article><article class="today-record"><span class="legend-dot t2"></span><div><strong class="record-name">独立性</strong><span class="record-sub">已用于 8 条记录</span></div><button class="icon-button" aria-label="编辑独立性标签" type="button">&#8250;</button></article><article class="today-record"><span class="legend-dot t3"></span><div><strong class="record-name">速度</strong><span class="record-sub">已用于 6 条记录</span></div><button class="icon-button" aria-label="编辑速度标签" type="button">&#8250;</button></article></div><button class="button button-primary button-full" id="add-tag" type="button">新增标签</button></section></div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </main>
+  <script>
+    const screens = [...document.querySelectorAll('.screen')];
+    const navItems = [...document.querySelectorAll('[data-tab]')];
+    const sheets = [...document.querySelectorAll('.overlay')];
+    const state = { seconds: 0, running: false, interval: null, imageCount: 2 };
+
+    function switchTab(name) {
+      screens.forEach((screen) => screen.classList.toggle('is-active', screen.id === `${name}-screen`));
+      navItems.forEach((item) => item.classList.toggle('is-active', item.dataset.tab === name));
+      document.getElementById('settings-screen').classList.remove('is-open');
+      document.querySelector('.prototype-shell').classList.toggle('is-timer', name === 'timer');
+    }
+
+    function formatTime(total) {
+      const hours = String(Math.floor(total / 3600)).padStart(2, '0');
+      const minutes = String(Math.floor((total % 3600) / 60)).padStart(2, '0');
+      const seconds = String(total % 60).padStart(2, '0');
+      return `${hours}:${minutes}:${seconds}`;
+    }
+
+    function showSheet(id) {
+      const sheet = document.getElementById(id);
+      sheet.classList.add('is-open');
+      sheet.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeSheets() {
+      sheets.forEach((sheet) => { sheet.classList.remove('is-open'); sheet.setAttribute('aria-hidden', 'true'); });
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('is-visible');
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => toast.classList.remove('is-visible'), 2600);
+    }
+
+    function addManagedItem(listId, name, detail, colorClass) {
+      const item = document.createElement('article');
+      item.className = 'today-record';
+      item.innerHTML = `<span class="${colorClass}"></span><div><strong class="record-name"></strong><span class="record-sub"></span></div><button class="icon-button" type="button" aria-label="编辑${name}">&#8250;</button>`;
+      item.querySelector('.record-name').textContent = name;
+      item.querySelector('.record-sub').textContent = detail;
+      document.getElementById(listId).append(item);
+    }
+
+    function renderTimer() {
+      document.getElementById('timer-value').textContent = formatTime(state.seconds);
+      document.getElementById('timer-label').textContent = state.running ? '练习中' : state.seconds ? '已暂停' : '准备开始';
+      document.getElementById('timer-main').innerHTML = state.running ? '暂停<small>计时</small>' : state.seconds ? '继续<small>计时</small>' : '开始<small>计时</small>';
+      document.getElementById('save-duration').textContent = `${Math.floor(state.seconds / 60)} 分钟 ${state.seconds % 60} 秒`;
+    }
+
+    function renderYearHeatmap() {
+      const monthNames = ['1 月', '2 月', '3 月', '4 月', '5 月', '6 月', '7 月', '8 月', '9 月', '10 月', '11 月', '12 月'];
+      const levels = ['', 'is-1', 'is-2', 'is-3', 'is-4'];
+      document.getElementById('year-months').innerHTML = monthNames.map((name, month) => {
+        const days = new Date(2026, month + 1, 0).getDate();
+        const firstDay = (new Date(2026, month, 1).getDay() + 6) % 7;
+        const blanks = Array.from({ length: firstDay }, () => '<span class="year-heat" aria-hidden="true"></span>');
+        const dates = Array.from({ length: days }, (_, index) => {
+          const day = index + 1;
+          const level = (month * 5 + day * 3) % 9 < 3 ? 0 : ((month + day) % 4) + 1;
+          return `<span class="year-heat ${levels[level]}" aria-label="${name}${day} 日练习强度 ${level}"></span>`;
+        });
+        const trailing = Array.from({ length: 42 - blanks.length - dates.length }, () => '<span class="year-heat" aria-hidden="true"></span>');
+        return `<section class="year-month"><strong>${name}</strong><div class="year-grid">${blanks.join('')}${dates.join('')}${trailing.join('')}</div></section>`;
+      }).join('');
+    }
+
+    function switchStatsPeriod(period) {
+      const isYear = period === 'year';
+      document.getElementById('period-label').textContent = isYear ? '2026 年' : '2026 年 7 月';
+      document.getElementById('month-heatmap').classList.toggle('is-hidden', isYear);
+      document.getElementById('year-heatmap').classList.toggle('is-visible', isYear);
+    }
+
+    navItems.forEach((item) => item.addEventListener('click', () => switchTab(item.dataset.tab)));
+    document.querySelectorAll('[data-go-timer]').forEach((item) => item.addEventListener('click', () => switchTab('timer')));
+    document.querySelectorAll('[data-open-settings]').forEach((item) => item.addEventListener('click', () => document.getElementById('settings-screen').classList.add('is-open')));
+    document.querySelectorAll('[data-close-settings]').forEach((item) => item.addEventListener('click', () => document.getElementById('settings-screen').classList.remove('is-open')));
+    document.querySelectorAll('[data-open-save]').forEach((item) => item.addEventListener('click', () => showSheet('save-sheet')));
+    document.querySelectorAll('[data-open-record]').forEach((item) => item.addEventListener('click', () => showSheet('record-sheet')));
+    document.querySelectorAll('[data-close-sheet]').forEach((item) => item.addEventListener('click', closeSheets));
+    document.getElementById('open-category-management').addEventListener('click', () => showSheet('category-management-sheet'));
+    document.getElementById('open-tag-management').addEventListener('click', () => showSheet('tag-management-sheet'));
+
+    document.getElementById('timer-main').addEventListener('click', () => {
+      state.running = !state.running;
+      if (state.running) state.interval = window.setInterval(() => { state.seconds += 1; renderTimer(); }, 1000);
+      else window.clearInterval(state.interval);
+      renderTimer();
+    });
+    document.getElementById('timer-reset').addEventListener('click', () => {
+      if (state.seconds && !window.confirm('确定要重置本次练习吗？')) return;
+      window.clearInterval(state.interval); state.running = false; state.seconds = 0; renderTimer(); showToast('已重置本次练习');
+    });
+    document.getElementById('timer-stop').addEventListener('click', () => {
+      if (!state.seconds) { showToast('请先开始计时'); return; }
+      window.clearInterval(state.interval); state.running = false; renderTimer(); showSheet('save-sheet');
+    });
+    document.getElementById('save-category').addEventListener('change', (event) => { document.getElementById('save-record').disabled = !event.target.value; });
+    document.querySelectorAll('.tag-choice').forEach((chip) => chip.addEventListener('click', () => chip.classList.toggle('is-selected')));
+    renderYearHeatmap();
+    document.querySelectorAll('.segmented button').forEach((button) => button.addEventListener('click', () => { document.querySelectorAll('.segmented button').forEach((item) => item.classList.remove('is-active')); button.classList.add('is-active'); switchStatsPeriod(button.dataset.period); }));
+    document.getElementById('filter-button').addEventListener('click', () => { document.querySelectorAll('.filter-chip').forEach((item, index) => item.classList.toggle('is-selected', index !== 0)); });
+
+    document.getElementById('save-add-image').addEventListener('click', () => {
+      if (state.imageCount >= 6) { showToast('每条记录最多添加 6 张图片'); return; }
+      const tile = document.createElement('div');
+      tile.className = 'image-tile photo-a';
+      tile.textContent = '新图';
+      document.getElementById('save-images').insertBefore(tile, document.getElementById('save-add-image'));
+      state.imageCount += 1;
+      document.getElementById('save-image-count').textContent = `已添加 ${state.imageCount} 张，最多 6 张`;
+    });
+
+    document.getElementById('save-record').addEventListener('click', () => {
+      const category = document.getElementById('save-category').value;
+      const note = document.getElementById('save-note').value.trim() || '已保存本次练习记录。';
+      const duration = `${Math.max(1, Math.floor(state.seconds / 60))} 分钟`;
+      const card = document.createElement('article');
+      card.className = 'today-record-card';
+      card.innerHTML = `<div class="today-record-card__heading"><strong></strong><span>刚刚 · ${duration}</span></div><div class="timeline-tags"><span class="mini-tag">新记录</span></div><p class="today-record-card__note"></p>`;
+      card.querySelector('strong').textContent = category;
+      card.querySelector('p').textContent = note;
+      document.getElementById('today-record-list').prepend(card);
+      closeSheets();
+      state.seconds = 0; state.imageCount = 2; renderTimer(); switchTab('today');
+      showToast('已保存本次练习记录');
+    });
+
+    document.getElementById('save-later').addEventListener('click', () => { closeSheets(); switchTab('today'); document.getElementById('draft-banner').classList.add('is-visible'); showToast('已暂存，稍后可以继续保存'); });
+    document.getElementById('update-record').addEventListener('click', () => { closeSheets(); showToast('已保存记录修改'); });
+    document.getElementById('delete-record').addEventListener('click', () => { if (!window.confirm('确定永久删除这条练习记录吗？')) return; closeSheets(); showToast('已删除练习记录'); });
+
+    document.getElementById('save-add-category').addEventListener('click', () => {
+      const name = window.prompt('输入新分类名称');
+      if (!name?.trim()) return;
+      const option = document.createElement('option'); option.textContent = name.trim(); option.selected = true;
+      document.getElementById('save-category').append(option);
+      document.getElementById('save-record').disabled = false;
+      showToast(`已新增分类：${name.trim()}`);
+    });
+    document.getElementById('save-add-tag').addEventListener('click', () => {
+      const name = window.prompt('输入新标签名称');
+      if (!name?.trim()) return;
+      const tag = document.createElement('button'); tag.className = 'tag-choice is-selected'; tag.type = 'button'; tag.textContent = name.trim();
+      tag.addEventListener('click', () => tag.classList.toggle('is-selected'));
+      document.querySelector('#save-sheet .choice-row').append(tag);
+      showToast(`已新增标签：${name.trim()}`);
+    });
+    document.getElementById('add-category').addEventListener('click', () => {
+      const name = window.prompt('输入新分类名称');
+      if (!name?.trim()) return;
+      addManagedItem('category-list', name.trim(), '尚无练习记录', 'record-color');
+      showToast(`已新增分类：${name.trim()}`);
+    });
+    document.getElementById('add-tag').addEventListener('click', () => {
+      const name = window.prompt('输入新标签名称');
+      if (!name?.trim()) return;
+      addManagedItem('tag-list', name.trim(), '尚未用于练习记录', 'legend-dot t4');
+      showToast(`已新增标签：${name.trim()}`);
+    });
+    renderTimer();
+  </script>
+</body>
+</html>

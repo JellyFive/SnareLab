@@ -12,10 +12,8 @@ afterEach(() => {
 describe("App shell", () => {
   it.each([
     ["/", "Today"],
-    ["/timer", "Timer"],
-    ["/log", "Log"],
-    ["/category", "Category & Tags"],
-    ["/statistics", "Statistics"],
+    ["/records", "记录"],
+    ["/statistics", "统计"],
   ])("renders %s as the %s route", (path, pageTitle) => {
     window.history.replaceState({}, "", path);
 
@@ -26,12 +24,19 @@ describe("App shell", () => {
     ).toBeInTheDocument();
   });
 
-  it("moves between every primary destination and marks the active tab", async () => {
+  it("renders the timer route with its primary start control", () => {
+    window.history.replaceState({}, "", "/timer");
+    render(<App />);
+
+    expect(screen.getByRole("button", { name: "开始练习计时" })).toBeInTheDocument();
+  });
+
+  it("moves between V0.3 primary destinations and marks the active tab", async () => {
     const user = userEvent.setup();
 
     render(<App />);
 
-    for (const [label, pageTitle] of [["Log", "Log"], ["Category", "Category & Tags"], ["Statistics", "Statistics"], ["Today", "Today"]]) {
+    for (const [label, pageTitle] of [["记录", "记录"], ["统计", "统计"], ["今日", "Today"]]) {
       await user.click(screen.getByRole("link", { name: label }));
 
       expect(screen.getByRole("heading", { level: 1, name: pageTitle })).toBeVisible();
@@ -45,16 +50,22 @@ describe("App shell", () => {
   it("gives every primary navigation control an accessible name", () => {
     render(<App />);
 
-    const navigation = screen.getByRole("navigation", {
-      name: "Primary navigation",
-    });
+    const navigation = screen.getByRole("navigation", { name: "主导航" });
     const links = screen.getAllByRole("link");
 
-    expect(links).toHaveLength(4);
+    expect(links).toHaveLength(3);
     expect(navigation).toContainElement(links[0]);
 
     for (const link of links) {
       expect(link).toHaveAccessibleName();
     }
+  });
+
+  it("redirects the legacy log address to records", () => {
+    window.history.replaceState({}, "", "/log");
+
+    render(<App />);
+
+    expect(screen.getByRole("heading", { level: 1, name: "记录" })).toBeInTheDocument();
   });
 });

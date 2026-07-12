@@ -11,6 +11,7 @@ const session: PracticeSession = {
   duration: 600,
   categoryId: "fundamentals",
   tagIds: [],
+  attachments: [],
   createdAt: new Date(2026, 6, 4, 9),
   updatedAt: new Date(2026, 6, 4, 9),
 };

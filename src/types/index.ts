@@ -1,3 +1,13 @@
+export interface ImageAttachment {
+  id: string;
+  blob: Blob;
+  mimeType: string;
+  fileName: string;
+  size: number;
+  createdAt: Date;
+  sortOrder: number;
+}
+
 export interface PracticeSession {
   id: string;
   startTime: Date;
@@ -5,6 +15,7 @@ export interface PracticeSession {
   duration: number;
   categoryId: string;
   tagIds: string[];
+  attachments: ImageAttachment[];
   note?: string;
   createdAt: Date;
   updatedAt: Date;
@@ -34,6 +45,10 @@ export interface PendingSessionDraft {
   startTime: Date;
   endTime: Date;
   duration: number;
+  categoryId?: string;
+  tagIds?: string[];
+  attachments: ImageAttachment[];
+  note?: string;
   createdAt: Date;
 }
 

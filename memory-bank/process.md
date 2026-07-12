@@ -451,6 +451,121 @@ practice target, and rhythm fields remain absent.
 - Ran `npm run test:ui`: all six mobile Chromium route/navigation checks passed.
 - Ran `git diff --check`: no whitespace errors were reported.
 
+## 2026-07-12 - V0.3 Product and Design Definition
+
+### What Changed
+
+- Reviewed all V0.2 product, technical, UI, and implementation-plan documents,
+  the V0.2 delivered product, its final acceptance notes, and the prior visual
+  reference before defining V0.3.
+- Captured and confirmed the new V0.3 product direction: Today, Records, and
+  Statistics become the three primary destinations; category/tag management
+  moves behind a global settings entry.
+- Added V0.3 requirements and design specifications covering Chinese UI copy,
+  timer controls, time-line records, retained Record Bottom Sheet editing,
+  local image attachments, and month/year category and tag statistics.
+- Added a responsive interactive prototype that demonstrates Today, Timer,
+  Save Sheet, Records, Record Detail Sheet, Statistics, Settings, Category
+  Management, and Tag Management.
+
+### Verification Performed
+
+- Rendered the V0.3 prototype in a 390px-wide local Chromium viewport and
+  exported the Today screenshot.
+- Confirmed the rendered page has no horizontal overflow.
+- Confirmed the prototype contains the agreed timer, save, record-detail,
+  statistics-period, and settings interaction entry points.
+- Reviewed V0.3 documents for placeholders and scope conflicts. The only BPM
+  references remain explicit V0.3 non-goals, not product UI or data fields.
+
+## 2026-07-12 - V0.3 Today Visual Refinement
+
+- Updated the V0.3 Today prototype from user-provided V0.2 visual references.
+- Restored the compact, divided two-metric summary layout; changed Today date
+  display to the approved English short-date format (`Jul 12`).
+- Reduced the monthly heatmap footprint and restored richer V0.2-style record
+  cards with category, time/duration, tag chips, and note previews.
+- Rendered the adjusted prototype at 390px and confirmed no horizontal
+  overflow.
+
+## 2026-07-12 - V0.3 Today Layout Follow-up
+
+- Changed the Today title to the approved English label `Today` and retained
+  the English short date `Jul 12`.
+- Reworked the split metric area into a fixed two-line treatment so labels and
+  values stay readable and duration units never wrap independently.
+- Filled the compact heatmap's remaining horizontal space with meaningful
+  month context: practice-day count and month-to-date duration.
+- Removed the record expansion affordance; all records for the current day flow
+  directly below the heatmap.
+- Further reduced Today record-card padding and note density, then re-rendered
+  at 390px with no horizontal overflow.
+
+## 2026-07-12 - V0.3 Today Visual Alignment
+
+- Split Today duration metrics into two independent V0.2-style cards rather
+  than one divided container.
+- Replaced the heatmap's bare month text with a bordered, compact monthly
+  summary panel for practice days and cumulative duration.
+- Removed the redundant external month label because the calendar itself owns
+  month navigation and labeling.
+- Restored the V0.2 prototype brand treatment: `SnareLab` uses the 28px,
+  high-weight top-bar style while the Timer keeps a smaller centered brand.
+- Re-rendered at 390px and re-ran the full Chromium interaction flow; the
+  prototype remains interactive and has no horizontal overflow.
+
+## 2026-07-12 - V0.3 Interactive Prototype
+
+- Upgraded the V0.3 HTML artifact from a screen-navigation preview to an
+  interactive local prototype.
+- Verified start, pause/continue, reset, and stop timer behavior. Timer view
+  now hides primary navigation so its control buttons remain reachable.
+- Added simulated save behavior: required category enables saving, image tiles
+  can be added up to the visual limit, save returns to Today, inserts a record
+  card, and presents feedback.
+- Added interactive record detail feedback, month/year statistics switching,
+  settings navigation, and Category Management entry.
+- Ran a Chromium interaction path through timer, save, records, detail sheet,
+  statistics, and settings. It completed with an in-prototype save confirmation
+  and no horizontal overflow at 390px.
+
+## 2026-07-12 - V0.3 Records List Refinement
+
+- Removed the decorative vertical guide and date-node markers from the Records
+  screen. Records remain grouped by date, with each date rendered as a simple
+  group title above its cards.
+- Updated the V0.3 requirements and design specification to describe the
+  screen as a date-grouped record list rather than a visual timeline.
+- Re-ran the full local Chromium interaction path after the adjustment:
+  timer, save, record detail, statistics, and settings all remained functional
+  with no horizontal overflow.
+
+## 2026-07-12 - V0.3 Statistics Visual Refinement
+
+- Rebuilt the Statistics heatmap as a complete month view with the month name,
+  month controls, weekday row, and all 31 days of July.
+- Reworked both category-duration and tag-usage cards around a centered donut
+  summary followed by color-coded rows containing the item name, quantity,
+  percentage, and a matching proportional bar.
+- Updated the V0.3 product requirements and design specification with the
+  complete-month and statistical-row rules.
+- Rendered the Statistics route at a 390px viewport and confirmed 31 heatmap
+  cells, four distribution rows in each card, and no horizontal overflow.
+- Re-ran the full interactive prototype journey after the structural update;
+  timer, save, record detail, statistics period switch, and settings remained
+  functional.
+
+## 2026-07-12 - V0.3 Annual Heatmap
+
+- Made the Statistics period control change the heatmap itself, rather than
+  only its heading. The month state retains the full natural-month calendar;
+  the year state now presents a compact grid of all twelve monthly heatmaps.
+- Added a compact intensity legend to the annual view and retained the same
+  intensity palette used for monthly practice activity.
+- Verified at 390px that the annual view hides the monthly panel, renders
+  twelve month groups with forty-two grid positions each, and has no
+  horizontal overflow. The full prototype interaction path also passed.
+
 ## 2026-07-12 - V0.2 GitHub Pages Deployment
 
 ### What Changed
@@ -497,3 +612,199 @@ practice target, and rhythm fields remain absent.
 - Ran `npm run typecheck` and a `/SnareLab/` production build successfully.
 - Inspected the generated manifest: it includes the 192px, 512px, and SVG
   icon declarations and precaches seven shell assets.
+
+## 2026-07-12 - V0.3 Task 1: Attachment Data Contract and Migration
+
+### What Changed
+
+- Added the `ImageAttachment` domain type with identifier, compressed Blob,
+  MIME type, filename, byte size, creation time, and display order.
+- Added required `attachments` arrays to `PracticeSession` and
+  `PendingSessionDraft`; newly saved sessions initialize the array to empty.
+- Added Dexie database version 3. Its migration adds an empty attachments
+  array to each V0.2 session while preserving all existing timer facts and
+  metadata.
+
+### Test-First Record
+
+- Added a V0.2-to-V0.3 IndexedDB upgrade test before the migration existed.
+- Confirmed the test failed because an upgraded V0.2 record lacked the
+  `attachments` field.
+- Added the smallest schema and migration change to make the test pass.
+
+### Verification Performed
+
+- Ran `npm test`: fourteen test files and forty-four tests passed.
+- Ran `npm run typecheck`: completed without TypeScript errors.
+- Ran `npm run build`: production PWA build completed successfully.
+- Ran `git diff --check`: no whitespace errors were reported.
+- The user manually opened existing V0.2 data and confirmed the migration
+  preserved records and metadata.
+
+### Handoff Notes
+
+- Do not begin V0.3 Task 2 until the user explicitly authorizes it.
+- This task establishes the attachment contract only. Browser image selection,
+  compression, image-grid UI, and Blob-safe pending-draft persistence remain
+  scoped to Tasks 3 and 4.
+
+## 2026-07-12 - V0.3 Task 2: Application Shell, Navigation, and Settings
+
+### What Changed
+
+- Replaced the four-item V0.2 primary navigation with the V0.3 destinations:
+  今日, 记录, and 统计. The new Records route is `/records`; the old `/log`
+  address redirects to it for compatibility.
+- Removed Category from primary navigation and routed the old `/category`
+  address back to Today. Classification management now has its future home in
+  the global settings layer.
+- Added a reusable `AppHeader` on Today, Records, and Statistics, with a
+  global settings trigger. The Timer route remains intentionally free of
+  bottom navigation.
+- Added the accessible V0.3 settings panel with 分类管理, 标签管理, and a
+  disabled 页面主题 / 即将开放 row. Management flows remain scoped to Task 8.
+- Added the SnareLab vector brand mark at `src/assets/snarelab-mark.svg`: a
+  compact dark rounded square, snare outline, crossed indigo sticks, and timing
+  tick. Top headers display it at 30px beside a small indigo SnareLab wordmark.
+
+### Verification Performed
+
+- Ran `npm test`: sixteen test files and forty-six tests passed.
+- Ran `npm run test:ui`: five mobile Chromium route and navigation tests
+  passed.
+- Ran `npm run typecheck` and `npm run build`: both completed successfully.
+- Captured a 390px local Chromium screenshot: settings opened, navigation had
+  exactly three items, the brand mark rendered, and no horizontal overflow
+  occurred.
+- Ran `git diff --check`: no whitespace errors were reported.
+- The user manually verified the Task 2 shell, settings panel, routing, and
+  top brand mark.
+
+### Handoff Notes
+
+- Do not begin V0.3 Task 3 until the user explicitly authorizes it.
+- The existing V0.2 body content remains intentionally in place. The full V0.3
+  Today, Records, and Statistics content is scheduled for Tasks 5, 6, and 10.
+
+## 2026-07-12 - V0.3 Task 3: Image Compression and Attachment Grid
+
+### What Changed
+
+- Added `imageAttachmentService` for browser-local image validation and JPEG
+  compression. It rejects non-image input and retries output at progressively
+  smaller dimensions and lower quality until it is at or below 2MB; otherwise
+  it returns a clear Chinese error.
+- Added the six-image capacity rule plus pure attachment deletion and reordering
+  helpers. Both helpers normalize the saved display order for reuse by later
+  save and edit flows.
+- Added the reusable fixed three-column `ImageAttachmentGrid` component with
+  accessible add/delete controls, loading/error inputs, max-count feedback,
+  and object-URL cleanup on unmount or image replacement.
+
+### Test-First Record
+
+- Added failing tests before implementation for non-image rejection, compressed
+  output, the 2MB rejection path, six-image capacity, ordering, and grid
+  controls.
+- A first green run exposed a real ordering bug: normalizing after a move
+  re-sorted by stale order values. The helper now preserves the caller's chosen
+  sequence and only rewrites the resulting indices.
+
+### Verification Performed
+
+- Ran `npm test`: eighteen test files and fifty-three tests passed.
+- Ran `npm run typecheck` and `npm run build`: both completed successfully.
+- Ran `npm run test:ui`: five mobile Chromium route and navigation tests
+  passed.
+- Ran `git diff --check`: no whitespace errors were reported.
+- The user manually verified that existing product flows remained functional.
+
+### Handoff Notes
+
+- Do not begin V0.3 Task 4 until the user explicitly authorizes it.
+- Task 3 deliberately does not mount image selection in a product flow. Task 4
+  is the first integration point, in the Save Session Bottom Sheet.
+
+## 2026-07-12 - V0.3 Task 4: Timer and Save Bottom Sheet
+
+### What Changed
+
+- Rebuilt `/timer` as a focused circular timer with Chinese start, pause,
+  resume, reset, finish, and back controls. Reset and draft discard both
+  require confirmation; paused time is still excluded by the existing timer
+  store.
+- Replaced the legacy English save form with the Chinese `保存本次练习` Bottom
+  Sheet. It owns required category selection, optional tags and note, image
+  attachments, and inline creation of a category or tag with auto-selection.
+- Added Dexie version 4 and a `pendingDrafts` table. "稍后保存" now persists
+  a single full draft, including Blob attachments, selected metadata, and
+  note. A legacy localStorage-only draft is migrated on first read.
+- Kept the finished timer draft stable across category/tag refreshes, fixing
+  the case where confirming a newly created tag cleared the selected category.
+- Rendered the save panel through a body-level Portal. The modal now uses the
+  dynamic viewport, a centered full-viewport backdrop, internal scrolling,
+  safe-area padding, and sticky save actions for iPhone-sized screens.
+
+### Verification Performed
+
+- Added test-first coverage for Blob-safe pending-draft persistence, the
+  `pendingDrafts` table, Chinese save controls, category-required saving,
+  explicit recovery, and the category-preservation regression.
+- Ran `npm test`: eighteen test files and fifty-four tests passed.
+- Ran `npm run build`: production PWA build completed successfully.
+- Ran `npm run test:ui`: five mobile Chromium flows passed, including timer
+  pause/resume/finish, save-panel control reachability, and modal centering.
+- The user manually verified the timer controls, save sheet, custom category
+  dropdown, new tag/category flow, mobile scrolling, and centered iPhone
+  layout.
+
+### Handoff Notes
+
+- Do not begin V0.3 Task 5 until the user explicitly authorizes it.
+- `PendingSessionDraft` is intentionally a full metadata draft in V0.3;
+  do not move attachments back into localStorage or create a second draft
+  persistence path.
+
+## 2026-07-12 - V0.3 Task 5: Today Page and Draft Recovery Regression
+
+### What Changed
+
+- Rebuilt the Today route around the V0.3 information hierarchy: compact
+  separate cards for today's and cumulative duration, a primary practice entry
+  action, a compact monthly heatmap with month summary, and an always-expanded
+  list of today's Chinese record cards.
+- Kept the V0.2 density and visual rhythm where requested while adopting the
+  V0.3 route labels, Chinese copy, small SnareLab mark, and English `Today` /
+  short-date exceptions.
+- Added a recovery-save safeguard: a persisted pending draft remains the
+  source for its metadata, but a final `PracticeSession` receives a new record
+  identifier. This prevents a pending-draft identifier from colliding with a
+  formal saved session.
+- Added an in-sheet save error state and disabled duplicate save actions while
+  persistence is in progress. Also corrected the tag quick-add cancel handler
+  so it only affects its own form state.
+
+### Test-First Record
+
+- Added Today-page coverage for the compact metric layout, monthly data, and
+  full record list.
+- Added a failing recovery test before the save-path correction: it persists a
+  finished draft with category, tags, note, and attachments, then verifies that
+  `保存记录` creates a session and clears `pendingDrafts`.
+
+### Verification Performed
+
+- Ran `npm test`: nineteen test files and fifty-nine tests passed.
+- Ran `npm run build`: TypeScript and the production PWA build completed
+  successfully.
+- Ran `npm run test:ui`: six mobile Chromium route, layout, timer, and
+  navigation checks passed.
+- The user manually verified the Today redesign and the full `稍后保存 →
+  继续保存 → 保存记录` flow.
+
+### Handoff Notes
+
+- Task 5 is complete. Do not begin Task 6 until the user explicitly authorizes
+  it.
+- Finalized sessions and pending drafts are different persistence concepts:
+  never pass a pending draft's `id` into `SessionRepository.saveSession`.

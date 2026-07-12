@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { CategoryRepository, SystemCategoryDeletionError } from "../repositories/categoryRepository";
 import type {
   Category,
+  ImageAttachment,
   LogFilter,
   PendingSessionDraft,
   PracticeSession,
@@ -33,9 +34,10 @@ describe("SnareLab database", () => {
     await database.delete();
   });
 
-  it("exposes the sessions, categories, and tags stores", () => {
+  it("exposes the sessions, categories, tags, and pending drafts stores", () => {
     expect(database.tables.map((table) => table.name).sort()).toEqual([
       "categories",
+      "pendingDrafts",
       "sessions",
       "tags",
     ]);
@@ -122,11 +124,67 @@ describe("SnareLab database", () => {
 
     await migrated.delete();
   });
+
+  it("migrates v2 records to v3 attachments without changing existing metadata", async () => {
+    const legacyName = databaseName();
+    const legacy = new Dexie(legacyName);
+    const createdAt = new Date("2026-07-01T10:00:00.000Z");
+
+    legacy.version(2).stores({
+      sessions:
+        "id, createdAt, updatedAt, categoryId, startTime, endTime, duration, *tagIds",
+      categories: "id, name, isSystem, updatedAt",
+      tags: "id, name, isPreset, updatedAt",
+    });
+    await legacy.open();
+    await legacy.table("sessions").add({
+      id: "session-v2",
+      startTime: createdAt,
+      endTime: new Date("2026-07-01T10:10:00.000Z"),
+      duration: 600,
+      categoryId: "fundamentals",
+      tagIds: ["control"],
+      note: "Keep the rebound relaxed.",
+      createdAt,
+      updatedAt: createdAt,
+    });
+    legacy.close();
+
+    const migrated = new SnareLabDatabase(legacyName);
+    await migrated.open();
+
+    await expect(migrated.sessions.get("session-v2")).resolves.toMatchObject({
+      id: "session-v2",
+      duration: 600,
+      categoryId: "fundamentals",
+      tagIds: ["control"],
+      note: "Keep the rebound relaxed.",
+      attachments: [],
+    });
+
+    migrated.close();
+    await migrated.open();
+    await expect(migrated.sessions.get("session-v2")).resolves.toMatchObject({
+      attachments: [],
+      note: "Keep the rebound relaxed.",
+    });
+
+    await migrated.delete();
+  });
 });
 
 describe("Task 3 domain types", () => {
   it("supports the approved practice-log domain shapes", () => {
     const now = new Date("2026-07-01T10:00:00.000Z");
+    const attachment: ImageAttachment = {
+      id: "image-1",
+      blob: new Blob(["practice image"], { type: "image/jpeg" }),
+      mimeType: "image/jpeg",
+      fileName: "practice.jpg",
+      size: 14,
+      createdAt: now,
+      sortOrder: 0,
+    };
     const category: Category = {
       id: "fundamentals",
       name: "Fundamentals",
@@ -150,6 +208,7 @@ describe("Task 3 domain types", () => {
       duration: 60,
       categoryId: category.id,
       tagIds: [tag.id],
+      attachments: [attachment],
       createdAt: now,
       updatedAt: now,
     };
@@ -158,6 +217,7 @@ describe("Task 3 domain types", () => {
       startTime: now,
       endTime: now,
       duration: 60,
+      attachments: [attachment],
       createdAt: now,
     };
     const filter: LogFilter = {
@@ -172,7 +232,7 @@ describe("Task 3 domain types", () => {
     expect({ session, draft, filter }).toEqual(
       expect.objectContaining({
         session: expect.objectContaining({ categoryId: "fundamentals" }),
-        draft: expect.objectContaining({ duration: 60 }),
+        draft: expect.objectContaining({ attachments: [attachment] }),
         filter: expect.objectContaining({ maxDuration: 90 }),
       }),
     );

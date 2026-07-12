@@ -1,37 +1,29 @@
 import { Navigate, Outlet, Route, Routes, useLocation } from "react-router-dom";
+import { useState } from "react";
 
+import { AppShellProvider } from "./AppShellContext";
 import { BottomNavigation } from "../components/BottomNavigation";
-import { CategoryPage } from "../pages/Category/CategoryPage";
+import { SettingsPanel } from "../components/SettingsPanel";
 import { LogPage } from "../pages/Log/LogPage";
 import { StatisticsPage } from "../pages/Statistics/StatisticsPage";
 import { TimerPage } from "../pages/Timer/TimerPage";
 import { TodayPage } from "../pages/Today/TodayPage";
 
-type PagePlaceholderProps = {
-  title: string;
-};
-
-function PagePlaceholder({ title }: PagePlaceholderProps) {
-  return (
-    <article className="page-placeholder" aria-labelledby="page-title">
-      <p className="page-placeholder__product">SnareLab</p>
-      <h1 id="page-title">{title}</h1>
-      <div aria-hidden="true" className="page-placeholder__surface" />
-    </article>
-  );
-}
-
 function AppLayout() {
   const { pathname } = useLocation();
   const isTimerRoute = pathname === "/timer";
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   return (
-    <div className={isTimerRoute ? "app-shell app-shell--timer" : "app-shell"}>
-      <main className="app-shell__content">
-        <Outlet />
-      </main>
-      {!isTimerRoute && <BottomNavigation />}
-    </div>
+    <AppShellProvider value={{ openSettings: () => setSettingsOpen(true) }}>
+      <div className={isTimerRoute ? "app-shell app-shell--timer" : "app-shell"}>
+        <main className="app-shell__content">
+          <Outlet />
+        </main>
+        {!isTimerRoute && <BottomNavigation />}
+        <SettingsPanel onClose={() => setSettingsOpen(false)} open={settingsOpen} />
+      </div>
+    </AppShellProvider>
   );
 }
 
@@ -41,8 +33,9 @@ export function AppRoutes() {
       <Route element={<AppLayout />}>
         <Route index element={<TodayPage />} />
         <Route path="timer" element={<TimerPage />} />
-        <Route path="log" element={<LogPage />} />
-        <Route path="category" element={<CategoryPage />} />
+        <Route path="records" element={<LogPage />} />
+        <Route path="log" element={<Navigate replace to="/records" />} />
+        <Route path="category" element={<Navigate replace to="/" />} />
         <Route path="statistics" element={<StatisticsPage />} />
         <Route path="*" element={<Navigate replace to="/" />} />
       </Route>

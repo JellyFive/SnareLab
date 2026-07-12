@@ -1,5 +1,5 @@
 import type { SnareLabDatabase } from "../database/dexie";
-import type { LogFilter, PracticeSession } from "../types";
+import type { ImageAttachment, LogFilter, PracticeSession } from "../types";
 
 export interface SaveSessionInput {
   id?: string;
@@ -8,6 +8,7 @@ export interface SaveSessionInput {
   duration: number;
   categoryId: string;
   tagIds?: string[];
+  attachments?: ImageAttachment[];
   note?: string;
 }
 
@@ -56,6 +57,7 @@ export class SessionRepository {
       duration: input.duration,
       categoryId: input.categoryId,
       tagIds: input.tagIds ?? [],
+      attachments: input.attachments ?? [],
       note: input.note,
       createdAt: now,
       updatedAt: now,

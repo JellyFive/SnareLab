@@ -1,15 +1,15 @@
+import { ChartNoAxesCombined, House, List } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 const navigationItems = [
-  { label: "Today", to: "/" },
-  { label: "Log", to: "/log" },
-  { label: "Category", to: "/category" },
-  { label: "Statistics", to: "/statistics" },
+  { icon: House, label: "今日", to: "/" },
+  { icon: List, label: "记录", to: "/records" },
+  { icon: ChartNoAxesCombined, label: "统计", to: "/statistics" },
 ];
 
 export function BottomNavigation() {
   return (
-    <nav aria-label="Primary navigation" className="bottom-navigation">
+    <nav aria-label="主导航" className="bottom-navigation">
       <div className="bottom-navigation__content">
         {navigationItems.map((item) => (
           <NavLink
@@ -20,7 +20,7 @@ export function BottomNavigation() {
             key={item.to}
             to={item.to}
           >
-            <span aria-hidden="true" className="bottom-navigation__marker" />
+            <item.icon aria-hidden="true" className="bottom-navigation__icon" size={19} strokeWidth={2.2} />
             <span>{item.label}</span>
           </NavLink>
         ))}

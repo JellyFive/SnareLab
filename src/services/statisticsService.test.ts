@@ -9,6 +9,7 @@ const session = (id: string, date: Date, duration: number, categoryId: string, t
   duration,
   categoryId,
   tagIds,
+  attachments: [],
   createdAt: date,
   updatedAt: date,
 });

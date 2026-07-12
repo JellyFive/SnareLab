@@ -1,26 +1,62 @@
+import type { SnareLabDatabase } from "../database/dexie";
 import type { PendingSessionDraft } from "../types";
 
-const key = "snarelab.pending-session-draft";
-let fallbackValue: string | undefined;
+const legacyKey = "snarelab.pending-session-draft";
 
-function storage() {
-  try { return globalThis.localStorage; } catch { return undefined; }
+export async function savePendingSessionDraft(
+  database: SnareLabDatabase,
+  draft: PendingSessionDraft,
+): Promise<void> {
+  await database.transaction("rw", database.pendingDrafts, async () => {
+    await database.pendingDrafts.clear();
+    await database.pendingDrafts.add(normalizeDraft(draft));
+  });
 }
 
-export function savePendingSessionDraft(draft: PendingSessionDraft): void {
-  const value = JSON.stringify(draft);
-  const target = storage();
-  if (target) target.setItem(key, value); else fallbackValue = value;
+export async function getPendingSessionDraft(
+  database: SnareLabDatabase,
+): Promise<PendingSessionDraft | undefined> {
+  const storedDraft = await database.pendingDrafts.orderBy("createdAt").last();
+  if (storedDraft) return normalizeDraft(storedDraft);
+
+  const legacyDraft = readLegacyDraft();
+  if (!legacyDraft) return undefined;
+
+  await savePendingSessionDraft(database, legacyDraft);
+  removeLegacyDraft();
+  return legacyDraft;
 }
 
-export function getPendingSessionDraft(): PendingSessionDraft | undefined {
-  const target = storage();
-  const value = target ? target.getItem(key) : fallbackValue;
-  if (!value) return undefined;
+export async function clearPendingSessionDraft(database: SnareLabDatabase): Promise<void> {
+  await database.pendingDrafts.clear();
+  removeLegacyDraft();
+}
+
+function normalizeDraft(draft: PendingSessionDraft): PendingSessionDraft {
+  return {
+    ...draft,
+    startTime: new Date(draft.startTime),
+    endTime: new Date(draft.endTime),
+    createdAt: new Date(draft.createdAt),
+    attachments: draft.attachments ?? [],
+    tagIds: draft.tagIds ?? [],
+  };
+}
+
+function readLegacyDraft(): PendingSessionDraft | undefined {
   try {
-    const draft = JSON.parse(value) as PendingSessionDraft;
-    return { ...draft, startTime: new Date(draft.startTime), endTime: new Date(draft.endTime), createdAt: new Date(draft.createdAt) };
-  } catch { return undefined; }
+    const raw = globalThis.localStorage?.getItem(legacyKey);
+    if (!raw) return undefined;
+    return normalizeDraft(JSON.parse(raw) as PendingSessionDraft);
+  } catch {
+    return undefined;
+  }
 }
 
-export function clearPendingSessionDraft(): void { const target = storage(); if (target) target.removeItem(key); fallbackValue = undefined; }
+function removeLegacyDraft(): void {
+  try {
+    globalThis.localStorage?.removeItem(legacyKey);
+  } catch {
+    // Private browsing can deny local storage. The IndexedDB draft is already cleared.
+  }
+}

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title>SnareLab 标识</title>
+  <rect x="2" y="2" width="60" height="60" rx="16" fill="#1C1D20"/>
+  <circle cx="32" cy="32" r="21" fill="#FFFFFF" stroke="#E4E7EC" stroke-width="2"/>
+  <circle cx="32" cy="32" r="17.5" fill="none" stroke="#1C1D20" stroke-width="1.7"/>
+  <path d="M20 24.5 44 43.5M44 24.5 20 43.5" fill="none" stroke="#535BF2" stroke-linecap="round" stroke-width="3.7"/>
+  <circle cx="20" cy="24.5" r="2.8" fill="#535BF2"/>
+  <circle cx="44" cy="24.5" r="2.8" fill="#535BF2"/>
+  <path d="M32 15.5v5" fill="none" stroke="#535BF2" stroke-linecap="round" stroke-width="2.8"/>
+</svg>
