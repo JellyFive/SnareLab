@@ -477,3 +477,23 @@ practice target, and rhythm fields remain absent.
 - Requested `https://jellyfive.github.io/SnareLab/` and confirmed it returns
   the SnareLab document with correctly prefixed JavaScript, CSS, manifest, and
   service-worker assets.
+
+## 2026-07-12 - PWA Install Icon
+
+### What Changed
+
+- Generated a custom SnareLab raster icon: a white snare drum and warm drumstick
+  mark on the product's blue-purple surface.
+- Added standard `192x192` and `512x512` PNG PWA icon assets alongside the
+  existing SVG icon.
+- Declared both PNG sizes in the web manifest; the 512px variant is marked as
+  maskable for Android launcher support.
+
+### Verification Performed
+
+- Visually inspected the 512px output for small-icon legibility and safe
+  padding.
+- Ran `npm test`: fourteen test files and forty-three tests passed.
+- Ran `npm run typecheck` and a `/SnareLab/` production build successfully.
+- Inspected the generated manifest: it includes the 192px, 512px, and SVG
+  icon declarations and precaches seven shell assets.

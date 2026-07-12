@@ -33,6 +33,10 @@ and automated browser regression.
   installs locked dependencies, builds with `VITE_BASE_PATH=/SnareLab/`, uploads
   `dist/`, and deploys it through GitHub Actions when `main` changes.
 - `public/icons/snarelab-icon.svg`: standalone and maskable SnareLab PWA icon, referenced by the generated web manifest and precached by Workbox.
+- `public/icons/snarelab-icon-192.png`: generated standard-resolution SnareLab
+  installation icon for PWA launchers.
+- `public/icons/snarelab-icon-512.png`: generated high-resolution maskable
+  SnareLab installation icon for Android launchers and store-facing PWA use.
 - `vitest.config.ts`: Vitest configuration using jsdom, global test APIs, and `tests/setup.ts`.
 - `playwright.config.ts`: Playwright configuration for future mobile Chrome UI tests. It builds the app, starts Vite preview on `127.0.0.1:4173`, and looks for `*.e2e.ts` or `*.e2e.tsx` files under `tests/`.
 - `tsconfig.json`: TypeScript project reference root.
@@ -133,3 +137,6 @@ Follow the V0.2 technical design when adding product code:
 - Deployment is GitHub Pages at `https://jellyfive.github.io/SnareLab/`. The
   configurable Vite base path is the shared source for page assets, React
   Router, PWA icon/start URL, and Workbox fallback, preventing subpath drift.
+- The PWA manifest declares raster 192px and 512px installation icons in
+  addition to the SVG fallback. This provides reliable browser-installable app
+  icons without changing the web application's local-first data model.
