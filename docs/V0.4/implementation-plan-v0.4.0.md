@@ -247,7 +247,7 @@ git commit -m "Add v0.4 rhythm document schema"
 - Produces: `tickToSeconds(tick, bpm)`, `stepToTick(measureIndex, stepIndex)`, `documentEndTick(document)`.
 - Produces: `createDefaultRhythmDocument`, `toggleNote`, `appendMeasure`, `removeMeasure`, `clearMeasure`, `clearAllNotes`, `setTrackMute`, `setTrackSolo`, `setDocumentBpm`, `getAudibleTrackIds`.
 
-- [ ] **Step 1: Write failing timing tests**
+- [x] **Step 1: Write failing timing tests**
 
 ```typescript
 expect(stepToTick(0, 0)).toBe(0);
@@ -260,7 +260,7 @@ expect(documentEndTick({ measureCount: 16 })).toBe(30720);
 Run: `npm test -- src/features/editor/domain/rhythmTiming.test.ts`  
 Expected: FAIL because the module is missing.
 
-- [ ] **Step 2: Implement timing constants and conversions**
+- [x] **Step 2: Implement timing constants and conversions**
 
 ```typescript
 export const PPQ = 480 as const;
@@ -281,11 +281,11 @@ export function tickToSeconds(tick: number, bpm: number): number {
 
 Validate finite integer positions and BPM 40–240; invalid inputs must throw `RangeError`.
 
-- [ ] **Step 3: Write failing command tests**
+- [x] **Step 3: Write failing command tests**
 
 Cover these exact behaviors: default document has 8 tracks and 1 measure; toggling the same cell twice returns to zero notes; duplicate notes cannot exist; appending stops at 16; deleting stops at 1; deleting measure 1 removes its notes and shifts later notes left by 1920 ticks; clear-current and clear-all are immutable; Solo selection and Mute precedence match the design.
 
-- [ ] **Step 4: Implement immutable commands**
+- [x] **Step 4: Implement immutable commands**
 
 Use commands with stable signatures:
 
@@ -301,22 +301,27 @@ export function clearAllNotes(document: RhythmDocument): RhythmDocument;
 
 New notes use `durationTicks: 120`, `velocity: 0.8`, and `articulation: "normal"`. Every successful command updates `updatedAt`; rejected boundary commands return the original object.
 
-- [ ] **Step 5: Implement audible-track selection**
+- [x] **Step 5: Implement audible-track selection**
 
 ```typescript
 export function getAudibleTrackIds(tracks: RhythmTrack[]): Set<RhythmTrackId> {
-  const soloed = tracks.filter((track) => track.solo && !track.mute);
-  const audible = soloed.length > 0 ? soloed : tracks.filter((track) => !track.mute);
+  const hasSolo = tracks.some((track) => track.solo);
+  const audible = tracks.filter((track) =>
+    hasSolo ? track.solo && !track.mute : !track.mute,
+  );
   return new Set(audible.map((track) => track.id));
 }
 ```
 
-- [ ] **Step 6: Run verification**
+Mute has priority inside Solo mode. If every Solo track is also muted, the
+audible set is empty; playback must not fall back to non-Solo tracks.
+
+- [x] **Step 6: Run verification**
 
 Run: `npm test -- src/features/editor/domain && npm run typecheck && npm run build && git diff --check`  
 Expected: all timing and command tests pass and commands do not mutate their input fixtures.
 
-- [ ] **Step 7: Manual gate, memory-bank update, and commit**
+- [x] **Step 7: Manual gate, memory-bank update, and commit**
 
 Manual review: inspect test fixtures for first/last measure and Mute/Solo semantics. After approval, document PPQ and immutable command boundaries.
 

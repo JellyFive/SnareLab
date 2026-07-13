@@ -44,6 +44,31 @@ and responsive editor UI remain later tasks.
   Later pages must access the new tables through the dedicated repository
   introduced in Task 3, never directly through Dexie.
 
+## V0.4.0 Rhythm Domain Commands
+
+- `src/features/editor/domain/rhythmConstants.ts` is the single V0.4.0 source
+  for 480 PPQ, 120 ticks per sixteenth-note Step, 1920 ticks per 4/4 measure,
+  1–16 measure bounds, and 40–240 BPM bounds.
+- `src/features/editor/domain/rhythmTiming.ts` owns validated conversion between
+  measure/Step positions, absolute ticks, document end ticks, and audio seconds.
+  Invalid, non-integer, non-finite, or out-of-range inputs throw `RangeError`.
+- `src/features/editor/domain/rhythmCommands.ts` owns pure immutable edits for
+  default-document creation, note toggling, measure append/removal, note
+  clearing, BPM changes, and track Mute/Solo changes. UI, Store, Repository,
+  Canvas, and Audio code must reuse these commands rather than duplicate the
+  transformations.
+- A Grid cell is uniquely identified by `trackId + tick`. New V0.4.0 notes use
+  a 120-tick duration, 0.8 velocity, and `normal` articulation.
+- Deleting a measure removes notes inside its half-open tick range and shifts
+  every later note left by exactly 1920 ticks. The original document and note
+  arrays are never mutated.
+- Successful state changes produce a later `updatedAt`; no-op boundary or
+  unchanged-value commands return the original document object.
+- Solo mode is active whenever any track has `solo: true`. Within Solo mode,
+  Mute has priority and only `solo && !mute` tracks are audible. If every Solo
+  track is muted, the audible set is empty and playback must remain silent;
+  it must not fall back to non-Solo tracks.
+
 ## Root Files
 
 - `package.json`: defines app metadata, npm scripts, runtime dependencies, and test/tooling dependencies, including `fake-indexeddb` for Dexie tests.

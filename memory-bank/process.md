@@ -1187,3 +1187,57 @@ practice target, and rhythm fields remain absent.
   commands, but must not add repositories, Canvas UI, or audio behavior.
 - Keep the v5 transition mutation-free and keep rhythm data isolated from
   `PracticeSession`.
+
+## 2026-07-13 - V0.4.0 Task 2: Rhythm Timing and Immutable Edit Commands
+
+### Context
+
+- Re-read the V0.4 Task 2 plan, design rules, V0.4 architecture foundation,
+  and the latest process log before implementation.
+- A plan/example conflict was found before code: the design required Solo mode
+  to remain active when all Solo tracks are muted, while the old example would
+  fall back to non-Solo tracks. The user confirmed that all-muted Solo tracks
+  must produce silence, and the plan example was corrected.
+- Task 2 remains a pure domain milestone. It adds no Dexie access, Store,
+  repository, Canvas, route, component, or audio engine.
+
+### What Changed
+
+- Added shared constants for PPQ, Step, measure, BPM, and measure-count bounds.
+- Added validated conversions from measure/Step to Tick, Tick to seconds, and
+  document measure count to its exclusive end Tick.
+- Added immutable commands for default document creation, note toggle,
+  measure append/remove, current/all-note clearing, BPM, and Mute/Solo.
+- Added audible-track selection with the confirmed Solo-mode and Mute-priority
+  semantics.
+- Added strict tests for invalid numeric input, cell bounds, note uniqueness,
+  1–16 measures, deletion Tick shifting, immutability, `updatedAt`, no-op
+  identity, and all Mute/Solo combinations required by the task.
+
+### Test-First Record
+
+- Timing tests were written first and failed because `rhythmTiming` did not
+  exist; the minimal constants and conversion module made 18 tests green.
+- Command tests were written next and failed because `rhythmCommands` did not
+  exist; the minimal immutable command implementation made 12 tests green.
+- Added a final successful/no-op `updatedAt` regression, bringing the domain
+  suite to 31 tests.
+- The final read-only source review found no Critical, Important, or Minor
+  issues and marked Task 2 ready to merge.
+
+### Verification Performed
+
+- Task 2 domain suite: 2 test files and 31 tests passed.
+- Full suite: 23 test files and 116 tests passed.
+- `npm run typecheck` completed without TypeScript errors.
+- `npm run build` completed and generated the production PWA assets with 10
+  precache entries.
+- `git diff --check` reported no whitespace errors.
+- The user reviewed the domain behavior and approved Task 2.
+
+### Handoff Notes
+
+- Task 2 is complete. Task 3 may add the rhythm document repository, editor
+  session Store, and autosave hook on top of these pure commands.
+- Task 3 must not duplicate Tick calculations or edit transformations, and it
+  must not add the Canvas or Web Audio engine.
