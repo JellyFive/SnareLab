@@ -1120,3 +1120,17 @@ practice target, and rhythm fields remain absent.
 - V0.3 implementation is complete as V0.3.1. Future work should start from
   the persisted local-first boundaries rather than adding parallel data stores
   or record-detail screens.
+
+## 2026-07-13 - V0.3.2 PWA Icon Alignment
+
+### What Changed
+
+- Replaced the standalone PWA SVG and its 192px/512px raster exports with the
+  same SnareLab mark used by the application header and Timer page.
+- Added a PWA asset regression assertion requiring the public SVG installation
+  icon to exactly match `src/assets/snarelab-mark.svg`.
+
+### Verification Performed
+
+- Ran the PWA asset test and production build successfully. The resulting
+  manifest and service worker include the aligned raster installation icons.

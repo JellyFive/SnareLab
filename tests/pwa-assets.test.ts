@@ -4,8 +4,9 @@ import { describe, expect, it } from "vitest";
 
 describe("PWA assets and configuration", () => {
   it("declares a standalone app icon and caches the application shell assets", async () => {
-    const [config, icon, icon192, icon512] = await Promise.all([
+    const [config, appMark, icon, icon192, icon512] = await Promise.all([
       readFile(resolve(process.cwd(), "vite.config.ts"), "utf8"),
+      readFile(resolve(process.cwd(), "src/assets/snarelab-mark.svg"), "utf8"),
       readFile(resolve(process.cwd(), "public/icons/snarelab-icon.svg"), "utf8"),
       readFile(resolve(process.cwd(), "public/icons/snarelab-icon-192.png")),
       readFile(resolve(process.cwd(), "public/icons/snarelab-icon-512.png")),
@@ -18,7 +19,7 @@ describe("PWA assets and configuration", () => {
     expect(config).toContain("start_url: base");
     expect(config).toContain("globPatterns");
     expect(config).toContain("**/*.{js,css,html,png,woff2}");
-    expect(icon).toContain("SnareLab");
+    expect(icon).toBe(appMark);
     expect(icon192.byteLength).toBeGreaterThan(0);
     expect(icon512.byteLength).toBeGreaterThan(0);
   });
