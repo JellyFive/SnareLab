@@ -349,14 +349,14 @@ git commit -m "Add rhythm timing and edit commands"
 - Produces: `useEditorStore` with `openDocument`, `applyEdit`, `undo`, `redo`, `replaceDocumentWithoutHistory`, `clearHistory`, `setSaveStatus`.
 - Produces: `useRhythmDocumentAutosave({ document, repository, delayMs: 300 })` returning `flush` and `retry`.
 
-- [ ] **Step 1: Write repository tests against fake IndexedDB**
+- [x] **Step 1: Write repository tests against fake IndexedDB**
 
 Require deterministic order by `updatedAt` descending, trimmed non-empty names, BPM and measure validation, last-document restoration, fallback to most recent document, and automatic default creation after deleting the final document.
 
 Run: `npm test -- src/repositories/rhythmDocumentRepository.test.ts`  
 Expected: FAIL because the repository is missing.
 
-- [ ] **Step 2: Implement the repository boundary**
+- [x] **Step 2: Implement the repository boundary**
 
 ```typescript
 export class RhythmDocumentRepository {
@@ -374,11 +374,11 @@ export class RhythmDocumentRepository {
 
 `save` must validate the whole aggregate before `put`; `delete` and fallback creation/opening must run in one transaction across both new tables.
 
-- [ ] **Step 3: Write failing editor-store tests**
+- [x] **Step 3: Write failing editor-store tests**
 
 Test: open clears history; `applyEdit` pushes the previous snapshot; undo and redo preserve immutable objects; the 101st edit drops the oldest snapshot; a new edit after undo clears redo; `replaceDocumentWithoutHistory` updates BPM/Mute/Solo without adding a Grid undo entry.
 
-- [ ] **Step 4: Implement the Zustand editor store**
+- [x] **Step 4: Implement the Zustand editor store**
 
 ```typescript
 type SaveStatus = "idle" | "saving" | "saved" | "error";
@@ -399,20 +399,20 @@ interface EditorState {
 }
 ```
 
-- [ ] **Step 5: Write failing autosave-hook tests with fake timers**
+- [x] **Step 5: Write failing autosave-hook tests with fake timers**
 
 Assert no save before 299ms, one save at 300ms, rapid edits coalesce, `flush()` saves immediately, failures set `error` without discarding the document, and `retry()` persists the same in-memory document.
 
-- [ ] **Step 6: Implement autosave with stale-write protection**
+- [x] **Step 6: Implement autosave with stale-write protection**
 
 Use a monotonically increasing revision inside the hook. Only the newest completed request may set `saved`; an older completion must not overwrite a later `saving` or `error` state. `flush` cancels the timer and awaits the current document save.
 
-- [ ] **Step 7: Run verification**
+- [x] **Step 7: Run verification**
 
 Run: `npm test -- src/repositories/rhythmDocumentRepository.test.ts src/store/editorStore.test.ts src/features/editor/hooks/useRhythmDocumentAutosave.test.tsx && npm run typecheck && npm run build && git diff --check`  
 Expected: all repository, history and timer-controlled autosave tests pass.
 
-- [ ] **Step 8: Manual gate, memory-bank update, and commit**
+- [x] **Step 8: Manual gate, memory-bank update, and commit**
 
 Manual check: use a temporary test harness to create, rename, reload and delete documents; simulate one rejected save and verify retry. After approval, record repository/store/autosave ownership.
 

@@ -3,10 +3,11 @@
 ## Current Stage
 
 The repository contains the accepted SnareLab Practice Log v0.3.2 product and
-has started the V0.4.0 Grid Editor implementation. V0.4.0 Task 1 adds the rhythm
-document data contract and Dexie v5 storage foundation only. The editor route,
-document repository, Canvas Grid, playback engine, audio samples, Transport,
-and responsive editor UI remain later tasks.
+has started the V0.4.0 Grid Editor implementation. V0.4.0 Tasks 1–3 provide the
+rhythm document contract, Dexie v5 storage, pure edit commands, document
+repository, editor history Store, and reliable autosave boundary. The editor
+route, Canvas Grid, playback engine, audio samples, Transport, and responsive
+editor UI remain later tasks.
 
 ## Source of Truth
 
@@ -68,6 +69,36 @@ and responsive editor UI remain later tasks.
   Mute has priority and only `solo && !mute` tracks are audible. If every Solo
   track is muted, the audible set is empty and playback must remain silent;
   it must not fall back to non-Solo tracks.
+
+## V0.4.0 Rhythm Documents, History, and Autosave
+
+- `src/repositories/rhythmDocumentRepository.ts` is the only direct access
+  boundary for `rhythmDocuments` and `editorPreferences`. It owns multi-document
+  CRUD, deterministic newest-first ordering, last-document restoration, and
+  default-document recovery; pages and components must not access either Dexie
+  table directly.
+- Repository writes validate the complete rhythm aggregate before persistence,
+  including fixed timing/track rules, valid document and note identifiers,
+  note uniqueness, ranges, and reserved tie/tuplet metadata. Corrupt persisted
+  documents are ignored during restoration rather than opened into the editor.
+- Deleting a document and choosing or creating its fallback runs in one Dexie
+  transaction across both V0.4 tables. Deleting the final document therefore
+  cannot leave the editor without a remembered default document.
+- `src/store/editorStore.ts` owns only the active in-memory document, save
+  feedback, and up to 100 immutable Grid history snapshots. Opening a document
+  clears history; a new edit after Undo clears the Redo branch.
+- `replaceDocumentWithoutHistory` is the boundary for BPM and track Mute/Solo
+  changes that must not become Grid history entries. It rebases those non-Grid
+  values across existing Undo/Redo snapshots so later Grid history navigation
+  cannot roll them back; replacing a different document clears history.
+- `src/features/editor/hooks/useRhythmDocumentAutosave.ts` owns the 300ms
+  debounce, immediate `flush`, same-document `retry`, and save-status updates.
+  A module-wide monotonic revision plus each hook instance's current revision
+  prevents older requests—including completions from an unmounted editor—from
+  overwriting a newer editor instance's `saving`, `saved`, or `error` state.
+- Save failures remain UI state only and never discard or replace the active
+  in-memory document. UI document switching must call `flush` before opening
+  the next document; that route-level coordination belongs to a later task.
 
 ## Root Files
 

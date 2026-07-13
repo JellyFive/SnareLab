@@ -1241,3 +1241,59 @@ practice target, and rhythm fields remain absent.
   session Store, and autosave hook on top of these pure commands.
 - Task 3 must not duplicate Tick calculations or edit transformations, and it
   must not add the Canvas or Web Audio engine.
+
+## 2026-07-13 - V0.4.0 Task 3: Rhythm Documents, Editor History, and Autosave
+
+### Context
+
+- Re-read the V0.4 Task 3 plan, document-management and module-boundary rules,
+  prototype, and both memory-bank files before implementation.
+- Task 3 is an infrastructure milestone only. It adds no Editor route, Canvas,
+  responsive workbench, audio engine, samples, or Practice Log integration.
+
+### What Changed
+
+- Added `RhythmDocumentRepository` as the sole Dexie boundary for rhythm
+  documents and editor preferences, including validated create/save/rename,
+  newest-first listing, remembered-document recovery, and transactional delete
+  with automatic fallback/default creation.
+- Added `useEditorStore` with immutable document replacement, a 100-snapshot
+  Undo/Redo limit, Redo branch clearing, history reset on document switch, and
+  explicit save feedback.
+- Kept BPM and Mute/Solo outside Grid history while rebasing those values into
+  existing history snapshots so later Undo/Redo cannot accidentally revert
+  them.
+- Added `useRhythmDocumentAutosave` with 300ms debounce, rapid-edit coalescing,
+  immediate flush, same-document retry, failure preservation, and monotonic
+  stale-write protection across edits, unmounts, and new hook instances.
+
+### Test-First Record
+
+- Added repository, Store, and fake-timer hook tests first; all three suites
+  failed because the implementation modules were absent, then became green
+  after the minimal boundaries were added.
+- The first independent review found three interleaving/runtime gaps: non-Grid
+  settings could be reverted by Grid history, an unmounted save could overwrite
+  a newer hook instance, and reserved note metadata was not fully validated.
+  Each received a failing regression test before its fix.
+- Follow-up review found that a truthy non-string document ID could reach
+  IndexedDB and break deterministic sorting. A final red/green regression
+  tightened root IDs to trimmed non-empty strings. Final review reported no
+  remaining issues and marked the task ready for manual validation.
+
+### Verification Performed
+
+- Task 3 focused suite: 3 test files and 22 tests passed.
+- Full suite: 26 test files and 138 tests passed.
+- `npm run typecheck` completed without TypeScript errors.
+- `npm run build` completed and generated the production PWA assets with 10
+  precache entries.
+- `git diff --check` reported no whitespace errors.
+- The user approved the repository, history, and autosave behavior.
+
+### Handoff Notes
+
+- Task 3 is complete. Task 4 may add pure Canvas geometry, high-DPI rendering,
+  click/keyboard cell editing, and accessible announcements on top of the Store.
+- Task 4 must reuse `stepToTick`, `toggleNote`, and `useEditorStore.applyEdit`;
+  it must not access Dexie directly or add audio scheduling.
