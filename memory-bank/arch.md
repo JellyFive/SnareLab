@@ -2,17 +2,11 @@
 
 ## Current Stage
 
-The repository now contains the SnareLab Practice Log v0.2 shell, local data
-foundation, Timer/Today flows, Task 8's complete Log flow, and Task 9's
-classification-management flow, Task 10's real-time statistics flow, and Task
-11's PWA/accessibility hardening. Task 1
-established tooling and PWA foundations; Tasks 2-5 added routes, navigation,
-domain storage, and repository rules; Tasks 6-7 added Timer and Today behavior;
-Task 8 adds calendar-first review, filtering, record metadata editing, and
-confirmed hard deletion; Task 9 adds category/tag create, edit, and confirmed
-deletion interfaces; Task 10 adds category-only statistics and the shared
-summary heatmap; Task 11 completes PWA assets/caching, dialog focus handling,
-and automated browser regression.
+The repository contains the accepted SnareLab Practice Log v0.3.2 product and
+has started the V0.4.0 Grid Editor implementation. V0.4.0 Task 1 adds the rhythm
+document data contract and Dexie v5 storage foundation only. The editor route,
+document repository, Canvas Grid, playback engine, audio samples, Transport,
+and responsive editor UI remain later tasks.
 
 ## Source of Truth
 
@@ -24,6 +18,31 @@ and automated browser regression.
 - `docs/V0.3/SnareLab_Practice_Log_v0.3_Product_Requirements.md`: approved V0.3 product scope, flows, data rules, V0.2 deltas, and acceptance criteria.
 - `docs/V0.3/SnareLab_Practice_Log_v0.3_Design_Spec.md`: approved V0.3 visual tokens, Chinese copy rules, control system, screen layouts, Bottom Sheet rules, and accessibility guidance.
 - `docs/V0.3/prototypes/snarelab-v0.3-practice-console-prototype.html`: self-contained interactive V0.3 prototype; its matching PNG is the rendered mobile Today reference.
+- `docs/V0.4/SnareLab_Grid_Editor_v0.4.0_Design_Spec.md`: approved V0.4.0 product, interaction, data, audio, responsive, and acceptance contract.
+- `docs/V0.4/implementation-plan-v0.4.0.md`: test-first V0.4.0 execution plan. Work proceeds one task at a time and pauses for manual acceptance after every major task.
+
+## V0.4.0 Rhythm Data Foundation
+
+- `src/types/rhythm.ts` owns the Grid Editor domain contract. It defines the
+  stable eight-track identifiers, persisted track Mute/Solo state, extensible
+  Tick-based notes, complete rhythm documents, and the singleton editor
+  preferences record.
+- `RhythmDocument` is separate from `PracticeSession`. Task 1 introduces no
+  relationship between rhythm documents and Today, Records, or Statistics.
+- Rhythm positions use a literal 480 PPQ contract. V0.4.0 UI remains fixed to
+  4/4 and sixteenth-note subdivision, while note duration, velocity,
+  articulation, tie, and tuplet fields preserve future model capacity.
+- `src/database/dexie.ts` owns Dexie version 5. It retains the exact V0.3
+  `sessions`, `categories`, `tags`, and `pendingDrafts` schemas and adds
+  `rhythmDocuments: "id, name, updatedAt"` plus
+  `editorPreferences: "key, updatedAt"`.
+- The v4-to-v5 transition requires no data upgrade callback because it only
+  adds empty stores. Database tests verify complete legacy top-level fields,
+  attachment metadata and Blob presence, exact new-table keys/indexes, empty
+  initial stores, and new-record round trips.
+- Task 1 intentionally exposes no rhythm repository or direct UI persistence.
+  Later pages must access the new tables through the dedicated repository
+  introduced in Task 3, never directly through Dexie.
 
 ## Root Files
 

@@ -106,7 +106,7 @@ src/types/
 - Produces: `RhythmTrackId`, `RhythmTrack`, `RhythmNote`, `RhythmDocument`, `EditorPreferences`。
 - Produces: `SnareLabDatabase.rhythmDocuments` and `SnareLabDatabase.editorPreferences` Dexie tables。
 
-- [ ] **Step 1: Write failing type and database tests**
+- [x] **Step 1: Write failing type and database tests**
 
 Add a compile-time fixture and change the table assertion to require the two new stores:
 
@@ -135,12 +135,12 @@ expect(database.tables.map((table) => table.name).sort()).toEqual([
 ]);
 ```
 
-- [ ] **Step 2: Run the focused test and verify failure**
+- [x] **Step 2: Run the focused test and verify failure**
 
 Run: `npm test -- src/database/database.test.ts`  
 Expected: FAIL because rhythm types and Dexie tables do not exist.
 
-- [ ] **Step 3: Define the exact rhythm types**
+- [x] **Step 3: Define the exact rhythm types**
 
 Create `src/types/rhythm.ts` with the approved contracts:
 
@@ -191,7 +191,7 @@ export interface EditorPreferences {
 
 Re-export these contracts from `src/types/index.ts`.
 
-- [ ] **Step 4: Add Dexie version 5 without an upgrade mutation**
+- [x] **Step 4: Add Dexie version 5 without an upgrade mutation**
 
 Extend `SnareLabDatabase`:
 
@@ -211,16 +211,16 @@ this.version(5).stores({
 
 Do not add a v4-to-v5 data rewrite; adding empty tables is sufficient.
 
-- [ ] **Step 5: Prove v4 data survives the v5 upgrade**
+- [x] **Step 5: Prove v4 data survives the v5 upgrade**
 
 Create a legacy v4 database with one session, one category, one tag and one pending draft; open it using `SnareLabDatabase`, then assert all four old values are unchanged and both new tables are empty.
 
-- [ ] **Step 6: Run verification**
+- [x] **Step 6: Run verification**
 
 Run: `npm test -- src/database/database.test.ts && npm run typecheck && npm run build && git diff --check`  
 Expected: all commands exit 0; production build completes; old-data assertions pass.
 
-- [ ] **Step 7: Manual gate, architecture notes, and commit**
+- [x] **Step 7: Manual gate, architecture notes, and commit**
 
 Manual check: open an existing V0.3 local database and verify Today, records and statistics still load. After approval, record schema v5 in both memory-bank files.
 

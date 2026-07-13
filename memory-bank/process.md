@@ -1134,3 +1134,56 @@ practice target, and rhythm fields remain absent.
 
 - Ran the PWA asset test and production build successfully. The resulting
   manifest and service worker include the aligned raster installation icons.
+
+## 2026-07-13 - V0.4.0 Task 1: Rhythm Types and Dexie v5 Schema
+
+### Context
+
+- Re-read the V0.4 design, implementation plan, prototype, and both memory-bank
+  files before implementation.
+- The user explicitly authorized in-place execution on `main`; existing
+  uncommitted V0.4 documents and prototype assets were preserved.
+- Task 1 is a data foundation only. It does not add the Editor route, Canvas,
+  repository, audio engine, samples, or any Practice Log integration.
+
+### What Changed
+
+- Added `src/types/rhythm.ts` with the stable eight-track identifiers,
+  `RhythmTrack`, extensible `RhythmNote`, `RhythmDocument`, and singleton
+  `EditorPreferences` contracts.
+- Re-exported rhythm contracts from the shared type boundary.
+- Added Dexie version 5 with `rhythmDocuments` and `editorPreferences`, while
+  retaining all four V0.3 table definitions unchanged.
+- Added exact schema assertions, a v4-to-v5 preservation test, and round-trip
+  coverage for rhythm documents and editor preferences.
+
+### Test-First Record
+
+- Added the V0.4 type, table, and migration expectations before production
+  changes.
+- Confirmed the focused RED run failed in three expected places: missing track
+  constants and both missing tables.
+- Added the minimal type and Dexie definitions, then confirmed the focused
+  database suite became green.
+- A read-only code review identified that partial migration assertions were
+  too weak. The test was strengthened to compare all legacy top-level fields,
+  every attachment metadata field and Blob presence, exact indexes, and new
+  store round trips. Follow-up review reported no remaining issues.
+
+### Verification Performed
+
+- Baseline before Task 1: 21 test files and 82 tests passed.
+- Final automated suite: 21 test files and 85 tests passed.
+- `npm run typecheck` completed without TypeScript errors.
+- `npm run build` completed and generated the production PWA assets with 10
+  precache entries.
+- `git diff --check` reported no whitespace errors.
+- The user manually verified the existing V0.3 application data and approved
+  Task 1.
+
+### Handoff Notes
+
+- Task 1 is complete. Task 2 may implement timing constants and immutable edit
+  commands, but must not add repositories, Canvas UI, or audio behavior.
+- Keep the v5 transition mutation-free and keep rhythm data isolated from
+  `PracticeSession`.

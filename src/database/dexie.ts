@@ -1,6 +1,13 @@
 import Dexie, { type Table } from "dexie";
 
-import type { Category, PendingSessionDraft, PracticeSession, Tag } from "../types";
+import type {
+  Category,
+  EditorPreferences,
+  PendingSessionDraft,
+  PracticeSession,
+  RhythmDocument,
+  Tag,
+} from "../types";
 import { migrateV1ToV2, migrateV2ToV3 } from "./migrations";
 
 export class SnareLabDatabase extends Dexie {
@@ -8,6 +15,8 @@ export class SnareLabDatabase extends Dexie {
   categories!: Table<Category, string>;
   tags!: Table<Tag, string>;
   pendingDrafts!: Table<PendingSessionDraft, string>;
+  rhythmDocuments!: Table<RhythmDocument, string>;
+  editorPreferences!: Table<EditorPreferences, string>;
 
   constructor(name = "snarelab-practice-log") {
     super(name);
@@ -41,6 +50,16 @@ export class SnareLabDatabase extends Dexie {
       categories: "id, name, isSystem, updatedAt",
       tags: "id, name, isPreset, updatedAt",
       pendingDrafts: "id, createdAt",
+    });
+
+    this.version(5).stores({
+      sessions:
+        "id, createdAt, updatedAt, categoryId, startTime, endTime, duration, *tagIds",
+      categories: "id, name, isSystem, updatedAt",
+      tags: "id, name, isPreset, updatedAt",
+      pendingDrafts: "id, createdAt",
+      rhythmDocuments: "id, name, updatedAt",
+      editorPreferences: "key, updatedAt",
     });
   }
 }

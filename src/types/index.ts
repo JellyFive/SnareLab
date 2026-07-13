@@ -60,3 +60,5 @@ export interface LogFilter {
   minDuration?: number;
   maxDuration?: number;
 }
+
+export * from "./rhythm";
