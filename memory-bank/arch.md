@@ -3,11 +3,11 @@
 ## Current Stage
 
 The repository contains the accepted SnareLab Practice Log v0.3.2 product and
-has started the V0.4.0 Grid Editor implementation. V0.4.0 Tasks 1–3 provide the
+has started the V0.4.0 Grid Editor implementation. V0.4.0 Tasks 1–4 provide the
 rhythm document contract, Dexie v5 storage, pure edit commands, document
-repository, editor history Store, and reliable autosave boundary. The editor
-route, Canvas Grid, playback engine, audio samples, Transport, and responsive
-editor UI remain later tasks.
+repository, editor history Store, reliable autosave, and an accessible Canvas
+Grid primitive. The editor route, playback engine, audio samples, Transport,
+and responsive editor workbench remain later tasks.
 
 ## Source of Truth
 
@@ -99,6 +99,31 @@ editor UI remain later tasks.
 - Save failures remain UI state only and never discard or replace the active
   in-memory document. UI document switching must call `flush` before opening
   the next document; that route-level coordination belongs to a later task.
+
+## V0.4.0 Canvas Grid Boundary
+
+- `src/features/editor/domain/rhythmGridGeometry.ts` is the DOM-free geometry
+  source for the fixed V0.4.0 grid: 32 CSS pixels per sixteenth Step, 44 per
+  track row, 36 for the beat header, eight rows, and 16 Steps per measure.
+  Hit testing, cell rectangles, and cursor movement operate only in CSS pixels.
+- `src/features/editor/components/RhythmGridCanvas.tsx` draws the header,
+  Step/beat/measure hierarchy, cursor, and notes on one Canvas. It receives a
+  controlled document/cursor and reports only `trackId + tick` intents; Store
+  edits remain the future parent page's responsibility.
+- Canvas CSS size and backing size are separate. The backing ratio follows
+  device DPR until it reaches a 16384-pixel dimension or 16M-pixel allocation
+  budget, preventing a 16-measure Grid from exhausting high-DPR mobile Canvas
+  limits while preserving the full CSS coordinate space.
+- Canvas sizing/observer work is separate from content redraws. The playhead is
+  a 2px pointer-inert DOM overlay, so animation-frame Tick changes move only a
+  transform and never reallocate or redraw the full Grid backing buffer.
+- Pointer editing captures the active pointer. Movement beyond six CSS pixels
+  permanently classifies the gesture as scrolling/dragging until pointer up or
+  cancel, so leaving and re-entering the Canvas cannot create a note.
+- The Canvas itself is visual-only. Its focusable wrapper exposes `grid`
+  semantics, row/column counts, one hidden active `row > gridcell`, and polite
+  action announcements. Arrow keys clamp the controlled cursor; Space/Enter
+  emit one toggle intent for the normalized active cell.
 
 ## Root Files
 

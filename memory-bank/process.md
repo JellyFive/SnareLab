@@ -1297,3 +1297,57 @@ practice target, and rhythm fields remain absent.
   click/keyboard cell editing, and accessible announcements on top of the Store.
 - Task 4 must reuse `stepToTick`, `toggleNote`, and `useEditorStore.applyEdit`;
   it must not access Dexie directly or add audio scheduling.
+
+## 2026-07-13 - V0.4.0 Task 4: Canvas Geometry and Accessible Grid Editing
+
+### Context
+
+- Re-read the approved V0.4 Task 4 plan, Grid interaction rules, prototype, and
+  both memory-bank files before implementation.
+- Task 4 provides a reusable Grid primitive only. It does not add the Editor
+  route, document toolbar, track controls, measure UI, autosave wiring, or audio.
+
+### What Changed
+
+- Added pure fixed-layout geometry for exact Canvas dimensions, hit testing,
+  cell rectangles, 1–16 measure widths, and clamped keyboard cursor movement.
+- Added a high-DPI Canvas Grid with visually weighted Step, beat, and measure
+  lines, track-colored notes, a controlled cursor, click/touch activation, and
+  pointer-captured drag suppression.
+- Added accessible `grid > row > gridcell` semantics without one DOM node per
+  visible cell, including normalized row/column metadata, instrument/note state,
+  arrow navigation, Space/Enter toggling, and polite action announcements.
+- Split Canvas sizing from redraws, capped high-DPR backing allocation for the
+  8192px sixteen-measure case, and moved the playback head to a transform-only
+  DOM overlay so future animation frames do not redraw the complete Grid.
+
+### Test-First Record
+
+- Geometry and component tests were written first and failed because both
+  implementation modules were absent. The initial implementation made eight
+  focused tests green.
+- Independent review found repeated backing allocation, incomplete drag
+  tracking, unsafe DPR-3 maximum width, missing ARIA row ownership, and a stale
+  out-of-range cursor lookup. Each issue received a failing regression test.
+- Follow-up review found full-Canvas playhead redraws and missing explicit
+  pointer capture. The playhead was separated into a DOM overlay and pointer
+  capture/release was added before final review reported no remaining issues.
+
+### Verification Performed
+
+- Task 4 focused suite: 2 test files and 12 tests passed.
+- Full suite: 28 test files and 150 tests passed.
+- `npm run typecheck` completed without TypeScript errors.
+- `npm run build` completed and generated the production PWA assets with 10
+  precache entries.
+- `git diff --check` reported no whitespace errors.
+- The user approved the Canvas geometry, input, rendering, and accessibility
+  behavior.
+
+### Handoff Notes
+
+- Task 4 is complete. Task 5 may mount the Grid in `/editor`, connect Store and
+  repository flows, add document/measure/track controls, and build the responsive
+  mobile/tablet/desktop workbench.
+- Task 5 must keep the Canvas visual-only, call `flush` before document switches,
+  and use the existing domain commands for every document edit.

@@ -438,7 +438,7 @@ git commit -m "Add rhythm documents and editor history"
 - Produces: `createGridGeometry`, `hitTestGrid`, `cellToRect`, `moveGridCursor`.
 - Produces: `<RhythmGridCanvas document cursorTick cursorTrackId playheadTick onToggleNote onCursorChange />`.
 
-- [ ] **Step 1: Write failing geometry tests**
+- [x] **Step 1: Write failing geometry tests**
 
 Use fixed layout constants (`stepWidth: 32`, `rowHeight: 44`, `headerHeight: 36`) and assert exact hit results at boundaries, outside-canvas rejection, 1/16 beat and measure widths, and 16-measure total width.
 
@@ -447,15 +447,15 @@ expect(hitTestGrid(geometry, { x: 33, y: 37 })).toEqual({ trackIndex: 0, stepInd
 expect(hitTestGrid(geometry, { x: -1, y: 20 })).toBeUndefined();
 ```
 
-- [ ] **Step 2: Implement pure geometry helpers**
+- [x] **Step 2: Implement pure geometry helpers**
 
 Geometry functions must not read the DOM or device pixel ratio. Return CSS-pixel rectangles; keep DPR scaling inside the component renderer.
 
-- [ ] **Step 3: Write failing Canvas component tests**
+- [x] **Step 3: Write failing Canvas component tests**
 
 Mock `HTMLCanvasElement.getContext`. Assert canvas backing size is CSS size multiplied by DPR, one pointer activation calls `onToggleNote` with the expected `trackId/tick`, drag movement does not add notes, arrow keys move the cursor, and Space/Enter toggles the active cell.
 
-- [ ] **Step 4: Implement the Canvas renderer**
+- [x] **Step 4: Implement the Canvas renderer**
 
 Keep draw order explicit:
 
@@ -471,16 +471,16 @@ drawPlayhead(context, geometry, playheadTick);
 
 Use `ResizeObserver` to update CSS dimensions and backing pixels. Do not create one DOM element per cell.
 
-- [ ] **Step 5: Add accessible keyboard and announcement behavior**
+- [x] **Step 5: Add accessible keyboard and announcement behavior**
 
 The focusable canvas wrapper uses `role="grid"`, `tabIndex={0}`, `aria-rowcount={8}`, `aria-colcount={measureCount * 16}`, and `aria-activedescendant` pointing to one visually hidden active `role="gridcell"`. The active cell exposes matching `aria-rowindex`, `aria-colindex`, instrument name and note state. A separate visually hidden `aria-live="polite"` region announces messages such as “Snare，第 2 小节，第 3 拍第 2 格，已添加音符”.
 
-- [ ] **Step 6: Run verification**
+- [x] **Step 6: Run verification**
 
 Run: `npm test -- src/features/editor/domain/rhythmGridGeometry.test.ts src/features/editor/components/RhythmGridCanvas.test.tsx && npm run typecheck && npm run build && git diff --check`  
 Expected: geometry, pointer, keyboard and DPR tests pass.
 
-- [ ] **Step 7: Manual gate, memory-bank update, and commit**
+- [x] **Step 7: Manual gate, memory-bank update, and commit**
 
 Manual check at DPR 1 and 2: add/remove notes at first and last cell; keyboard across row/measure boundaries; horizontal scrolling must not continuously draw. After approval, document Canvas/DOM accessibility boundary.
 
