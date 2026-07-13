@@ -2,6 +2,7 @@ import { ChevronLeft, Pause, Play, RotateCcw, Square } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
+import { useAppShell } from "../../app/AppShellContext";
 import { SaveSessionSheet, type SaveSessionMetadata } from "../../components/SaveSessionSheet";
 import snareLabMark from "../../assets/snarelab-mark.svg";
 import { db, type SnareLabDatabase } from "../../database/dexie";
@@ -21,6 +22,7 @@ export function TimerPage({ database = db }: TimerPageProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const timer = useTimerStore();
+  const { classificationRevision } = useAppShell();
   const [categories, setCategories] = useState<Category[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
   const [recoveredDraft, setRecoveredDraft] = useState<PendingSessionDraft>();
@@ -34,7 +36,7 @@ export function TimerPage({ database = db }: TimerPageProps) {
     setCategories(nextCategories);
     setTags(nextTags);
   };
-  useEffect(() => { void Promise.all([ensureDefaultCategories(database), ensurePresetTags(database)]).then(refreshClassifications); }, [database]);
+  useEffect(() => { void Promise.all([ensureDefaultCategories(database), ensurePresetTags(database)]).then(refreshClassifications); }, [database, classificationRevision]);
   useEffect(() => { if ((location.state as RecoveryState | null)?.recoverDraft) void getPendingSessionDraft(database).then(setRecoveredDraft); }, [database, location.state]);
   useEffect(() => { if (timer.status !== "running") return; const interval = window.setInterval(() => useTimerStore.getState().tick(), 1000); return () => window.clearInterval(interval); }, [timer.status]);
 

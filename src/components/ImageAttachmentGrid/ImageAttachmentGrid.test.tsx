@@ -36,4 +36,13 @@ describe("ImageAttachmentGrid", () => {
     expect(screen.getByRole("button", { name: "最多添加 6 张图片" })).toBeDisabled();
     expect(screen.getByText("已达到 6 张图片上限")).toBeInTheDocument();
   });
+
+  it("offers accessible controls to reorder attachments", async () => {
+    const user = userEvent.setup();
+    const onMove = vi.fn();
+    render(<ImageAttachmentGrid attachments={[attachment, { ...attachment, id: "image-2", fileName: "第二张.jpg", sortOrder: 1 }]} onAddFiles={vi.fn()} onMove={onMove} onRemove={vi.fn()} />);
+
+    await user.click(screen.getByRole("button", { name: "将第二张.jpg前移" }));
+    expect(onMove).toHaveBeenCalledWith("image-2", 0);
+  });
 });

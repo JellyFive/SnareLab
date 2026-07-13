@@ -11,6 +11,7 @@ import { SessionRepository } from "../../repositories/sessionRepository";
 import { TagRepository } from "../../repositories/tagRepository";
 import { clearPendingSessionDraft, getPendingSessionDraft } from "../../services/pendingSessionDraftService";
 import type { Category, PendingSessionDraft, PracticeSession, Tag } from "../../types";
+import { displayCategory, displayTag } from "../../utils/classificationLabels";
 
 export interface TodayPageProps {
   database?: SnareLabDatabase;
@@ -19,7 +20,7 @@ export interface TodayPageProps {
 
 export function TodayPage({ database = db, initialDate = new Date() }: TodayPageProps) {
   const navigate = useNavigate();
-  const { openSettings } = useAppShell();
+  const { classificationRevision, openSettings } = useAppShell();
   const [sessions, setSessions] = useState<PracticeSession[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
@@ -39,7 +40,7 @@ export function TodayPage({ database = db, initialDate = new Date() }: TodayPage
       setTags(nextTags);
       setDraft(nextDraft);
     });
-  }, [database]);
+  }, [database, classificationRevision]);
 
   const todaySessions = sessions.filter((session) => isSameDay(session.startTime, today));
   const todayDuration = totalDuration(todaySessions);
@@ -70,8 +71,6 @@ function aggregateHeatmap(sessions: PracticeSession[]): CalendarHeatMapDatum[] {
   return [...byDate.values()];
 }
 
-function displayCategory(category: Category | undefined): string { return category ? ({ fundamentals: "基本功", coordination: "手脚协调", "song-practice": "曲目练习", "free-practice": "自由练习", uncategorized: "未分类" }[category.id] ?? category.name) : "未分类"; }
-function displayTag(tag: Tag): string { return ({ "single-stroke": "单跳", "double-stroke": "双跳", paradiddle: "复合跳", rudiment: "基本功", groove: "律动", fill: "过门", timing: "节奏", dynamics: "力度", speed: "速度", control: "控制", independence: "独立性", reading: "视奏", endurance: "耐力", accuracy: "准确性" }[tag.id] ?? tag.name); }
 function totalDuration(sessions: PracticeSession[]): number { return sessions.reduce((sum, session) => sum + session.duration, 0); }
 function startOfDay(date: Date): Date { return new Date(date.getFullYear(), date.getMonth(), date.getDate()); }
 function isSameDay(left: Date, right: Date): boolean { return left.getFullYear() === right.getFullYear() && left.getMonth() === right.getMonth() && left.getDate() === right.getDate(); }

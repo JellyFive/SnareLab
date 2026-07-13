@@ -65,6 +65,15 @@ describe("SessionRepository", () => {
     await sessions.updateSessionMetadata(
       "session-1",
       {
+        attachments: [{
+          id: "attachment-1",
+          blob: new Blob(["image"], { type: "image/jpeg" }),
+          mimeType: "image/jpeg",
+          fileName: "练习照片.jpg",
+          size: 5,
+          createdAt: new Date("2026-07-05T12:00:00.000Z"),
+          sortOrder: 0,
+        }],
         categoryId: "coordination",
         tagIds: ["independence"],
         note: "Slow the left foot.",
@@ -76,6 +85,7 @@ describe("SessionRepository", () => {
 
     await expect(sessions.findById("session-1")).resolves.toMatchObject({
       categoryId: "coordination",
+      attachments: [expect.objectContaining({ id: "attachment-1", fileName: "练习照片.jpg" })],
       tagIds: ["independence"],
       note: "Slow the left foot.",
       duration: 1_800,

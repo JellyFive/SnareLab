@@ -8,10 +8,12 @@ export interface CalendarHeatMapDatum {
 
 export interface CalendarHeatMapProps {
   data: CalendarHeatMapDatum[];
+  labelStyle?: "english" | "chinese";
   mode: CalendarHeatMapMode;
   month: Date;
   onSelectDate?: (date: string) => void;
   selectedDate?: string;
+  showDuration?: boolean;
   weekStartsOnMonday?: boolean;
 }
 
@@ -20,10 +22,12 @@ const MONDAY_WEEKDAYS = ["一", "二", "三", "四", "五", "六", "日"];
 
 export function CalendarHeatMap({
   data,
+  labelStyle = "english",
   mode,
   month,
   onSelectDate,
   selectedDate,
+  showDuration = false,
   weekStartsOnMonday = false,
 }: CalendarHeatMapProps) {
   const firstDay = new Date(month.getFullYear(), month.getMonth(), 1);
@@ -36,8 +40,10 @@ export function CalendarHeatMap({
     return day > 0 ? new Date(month.getFullYear(), month.getMonth(), day) : undefined;
   });
 
+  const monthLabel = formatMonth(month, labelStyle);
+
   return (
-    <section className={`calendar-heatmap calendar-heatmap--${mode}`} aria-label="Practice calendar">
+    <section className={`calendar-heatmap calendar-heatmap--${mode} ${showDuration ? "calendar-heatmap--with-duration" : ""}`} aria-label={`${monthLabel}练习热力图`}>
       <div className="calendar-heatmap__weekdays" aria-hidden="true">
         {(weekStartsOnMonday ? MONDAY_WEEKDAYS : SUNDAY_WEEKDAYS).map((weekday) => <span key={weekday}>{weekday}</span>)}
       </div>
@@ -48,12 +54,9 @@ export function CalendarHeatMap({
           }
 
           const dateKey = toDateKey(date);
-          const intensity = calculateIntensity(durationByDate.get(dateKey) ?? 0, maximumDuration);
-          const label = date.toLocaleDateString("en-US", {
-            day: "numeric",
-            month: "long",
-            year: "numeric",
-          });
+          const duration = durationByDate.get(dateKey) ?? 0;
+          const intensity = calculateIntensity(duration, maximumDuration);
+          const label = formatDay(date, labelStyle);
           const isSelected = selectedDate === dateKey;
           const className = [
             "calendar-heatmap__day",
@@ -72,19 +75,19 @@ export function CalendarHeatMap({
                 onClick={() => onSelectDate?.(dateKey)}
                 type="button"
               >
-                {date.getDate()}
+                <span>{date.getDate()}</span>{showDuration && duration > 0 && <small>{formatDuration(duration)}</small>}
               </button>
             );
           }
 
           return (
             <span
-              aria-label={`${label}, intensity ${intensity}`}
+              aria-label={labelStyle === "chinese" ? `${label}，${intensity ? `练习强度 ${intensity}` : "无练习"}` : `${label}, intensity ${intensity}`}
               className={className}
               data-intensity={intensity}
               key={dateKey}
             >
-              {date.getDate()}
+              <span>{date.getDate()}</span>{showDuration && duration > 0 && <small>{formatDuration(duration)}</small>}
             </span>
           );
         })}
@@ -93,12 +96,31 @@ export function CalendarHeatMap({
   );
 }
 
+function formatMonth(date: Date, labelStyle: "english" | "chinese"): string {
+  return labelStyle === "chinese"
+    ? `${date.getFullYear()} 年 ${date.getMonth() + 1} 月`
+    : date.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+}
+
+function formatDay(date: Date, labelStyle: "english" | "chinese"): string {
+  return labelStyle === "chinese"
+    ? `${date.getFullYear()} 年 ${date.getMonth() + 1} 月 ${date.getDate()} 日`
+    : date.toLocaleDateString("en-US", { day: "numeric", month: "long", year: "numeric" });
+}
+
 function calculateIntensity(duration: number, maximumDuration: number): number {
   if (duration <= 0 || maximumDuration <= 0) {
     return 0;
   }
 
   return Math.min(4, Math.max(1, Math.ceil((duration / maximumDuration) * 4)));
+}
+
+function formatDuration(duration: number): string {
+  const hours = Math.floor(duration / 3_600);
+  const minutes = Math.floor((duration % 3_600) / 60);
+  if (minutes === 0 && hours > 0) return `${hours}小时`;
+  return `${hours * 60 + minutes}分`;
 }
 
 export function toDateKey(date: Date): string {

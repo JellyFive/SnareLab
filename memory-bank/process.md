@@ -808,3 +808,315 @@ practice target, and rhythm fields remain absent.
   it.
 - Finalized sessions and pending drafts are different persistence concepts:
   never pass a pending draft's `id` into `SessionRepository.saveSession`.
+
+## 2026-07-13 - V0.3 Task 6: Records Timeline and Classification Filters
+
+### What Changed
+
+- Replaced the V0.2 calendar-first Log interaction with the V0.3 `/records`
+  page: records are sorted newest first, grouped by the local `startTime`
+  date, and opened from compact clickable cards.
+- Added the confirmed information timeline treatment: a thin left-side line
+  joins date nodes and record-time nodes; weekdays remain neutral, while each
+  start time uses a lighter indigo treatment for rapid scanning.
+- Reduced record-card density for a browsing surface. Cards display category,
+  duration, at most two tags, note preview, and image count, without the
+  earlier internal category-color bar.
+- Reduced the visible filter UI to category and tag selection. The repository
+  still preserves its broader historical query capability, but date range and
+  duration controls are no longer part of the V0.3 records experience.
+- Added Chinese filter summaries, an explicit clear action, and a Chinese
+  no-results state. Selecting a record continues to open the existing detail
+  Bottom Sheet; its V0.3 detail/edit redesign remains Task 7.
+
+### Test-First Record
+
+- Replaced the old selected-day/calendar page tests with failing tests for
+  descending local-date groups, compact timeline semantics, Chinese labels,
+  two-tag truncation, image counts, category/tag combination filters, clear
+  filters, empty results, and the detail entry point.
+- Added a mobile browser regression for the records filter and empty state.
+
+### Verification Performed
+
+- Ran `npm test`: nineteen test files and fifty-nine tests passed.
+- Ran `npm run build`: TypeScript and production PWA builds completed
+  successfully.
+- Ran `npm run test:ui`: seven mobile Chromium checks passed.
+- Ran targeted record-page tests and TypeScript checks after the timeline
+  alignment, card-accent removal, and indigo-time refinements.
+- The user manually verified the records timeline, its node alignment, compact
+  typography, filters, and indigo time labels.
+
+### Handoff Notes
+
+- Task 6 is complete. Do not begin Task 7 until the user explicitly authorizes
+  it.
+- Preserve the information timeline as a Records-only browsing aid. It does
+  not turn Today into a detail entry point or replace the Bottom Sheet detail
+  flow.
+
+## 2026-07-13 - V0.3 Task 7: Record Detail and Attachment Editing
+
+### What Changed
+
+- Completed the Records-only detail flow in `RecordBottomSheet`. The view and
+  edit states stay inside one Chinese Bottom Sheet; it does not create a
+  route-level detail page.
+- Timer facts remain read-only. The sheet now presents duration plus one
+  compact `练习时间` row in the form `开始时间 - 结束时间`; it never submits
+  duration or timestamps when saving changes.
+- Editing now persists category, tags, note, and the full attachment array.
+  Attachments can be added, deleted, and moved earlier or later in their
+  fixed three-column grid. The attachment service continues to apply browser
+  compression, the 2MB cap, and the six-image limit.
+- Extracted the V0.3 custom category picker so the timer save sheet and record
+  editor share the same color-dot, listbox, and selected-state interaction.
+- Kept hard deletion in a separate confirmation state. It states that the
+  operation cannot be recovered, closes after a successful deletion, and the
+  Records page reloads its repository-backed data.
+
+### Verification Performed
+
+- Added coverage for Chinese read-only facts, the combined time row, custom
+  category selection, image deletion and ordering controls, metadata-only
+  save payloads, save errors, Escape close, delete confirmation, and automatic
+  close after deletion.
+- Added repository coverage that attachment updates persist without changing
+  timer facts, plus a browser regression that saves a record, edits it from
+  `/records`, and hard deletes it.
+- Ran `npm test`: nineteen test files and sixty-five tests passed.
+- Ran `npm run typecheck`, `npm run build`, and `npm run test:ui`: all passed;
+  the browser suite completed eight mobile flows.
+- The user manually verified the combined practice-time row and the shared
+  category picker in the detail editor.
+
+### Handoff Notes
+
+- Task 7 is complete. Do not begin Task 8 until the user explicitly authorizes
+  it.
+- Keep record detail fields limited to category, tags, note, and attachments.
+  `duration`, `startTime`, and `endTime` are immutable timer facts.
+
+## 2026-07-13 - V0.3 Task 8: Settings Classification Management
+
+### What Changed
+
+- Connected the global Settings panel to the only primary entry points for
+  category and tag management. Theme remains visibly disabled as `即将开放`.
+- Replaced the interim management Bottom Sheet list with a focused full-screen
+  management surface for both classifications: search, usage/name sorting,
+  count summaries, colored identity dots, and a compact per-item more menu.
+- Added consistent `新建 / 编辑` Sheets for categories and tags. The forms use
+  the same field, section, action, and color vocabulary as other V0.3 Sheets;
+  both offer preset colors plus a custom color control. Categories additionally
+  retain their icon field.
+- More menus now expose rename/color editing, usage statistics, and deletion.
+  Statistics show record count, accumulated duration, and the most recent
+  practice date for the selected category or tag.
+- Retained the data rules: `未分类` is editable but cannot be deleted; category
+  deletion migrates related sessions to `uncategorized`; tag deletion removes
+  only that tag relationship while preserving sessions.
+- Added a shell-level classification revision signal. A successful management
+  change refreshes Today, Timer save, Records filters/detail, and Statistics.
+  Built-in labels display their Chinese defaults only while their persisted
+  English default names remain unchanged, so renamed built-ins are visible.
+- Corrected preset tag seeding to compare identifiers rather than names. A
+  renamed preset tag is no longer recreated on a subsequent refresh.
+
+### Verification Performed
+
+- Added test-first coverage for settings actions, management creation,
+  category migration, tag cleanup, search, more menus, editing controls,
+  color selection, statistics, and the renamed-preset seeding regression.
+- Ran `npm test`: twenty-one test files and seventy-three tests passed.
+- Ran `npm run typecheck` and `npm run build`: both passed.
+- Ran `npm run test:ui`: nine mobile Chromium flows passed, including settings
+  management, selector refresh, and no horizontal overflow.
+- The user manually verified the full-screen category/tag management UI and
+  the aligned create/edit Sheets.
+
+### Handoff Notes
+
+- Task 8 is complete. Do not begin Task 9 until the user explicitly authorizes
+  it.
+- Classification management is a settings workflow, not a primary route. Keep
+  its full-screen management surface separate from the small Settings panel;
+  closing it returns to Settings.
+- Keep `ensurePresetTags` idempotent by preset `id`, never by mutable display
+  name. Use `classificationLabels` for visible default translations so user
+  renames remain authoritative.
+
+## 2026-07-13 - V0.3 Task 9: Month and Year Statistics Aggregation
+
+### What Changed
+
+- Extended `statisticsService` with V0.3 `month` and `year` periods while
+  retaining the temporary `week` period required by the unreworked statistics
+  screen.
+- Period filtering now uses local calendar boundaries based on `startTime`:
+  natural month or natural year through the current local day. The returned
+  heatmap therefore contains only practice days in the selected period.
+- Added independent `todayDuration`, all-time `totalDuration`, current-period
+  duration, and the existing current streak. No summary table is introduced;
+  all values remain calculated from saved session facts.
+- Category distribution is scoped to the selected period and reports duration,
+  session count, and percentage. Percentages use largest-remainder allocation
+  so displayed values always sum to 100%.
+- Added tag distribution for the selected period. Each tag association counts
+  once, so its denominator is total tag usage rather than practice duration;
+  sessions with multiple tags contribute to each selected tag.
+
+### Verification Performed
+
+- Added service tests for natural-month filtering, today versus period totals,
+  cross-year annual boundaries, category-duration percentages, tag many-to-many
+  counts, and empty data without division by zero.
+- Ran the focused statistics service suite: six tests passed.
+- Ran `npm test`: twenty-one test files and seventy-six tests passed.
+- Ran `npm run build`: TypeScript checks and the production build passed.
+- The user manually verified Task 9.
+
+### Handoff Notes
+
+- Task 9 is complete. Do not begin Task 10 until the user explicitly authorizes
+  it.
+- Task 10 should consume `StatisticsResult` rather than re-aggregate raw
+  sessions in `StatisticsPage`. Its month/year UI must use `heatmap`,
+  `categoryDistribution`, and `tagDistribution` together.
+
+## 2026-07-13 - V0.3 Task 10.1: Statistics Overview Drilldown
+
+### What Changed
+
+- Rebuilt the Statistics overview as a year-first view with an annual summary,
+  twelve miniature month heatmaps, and a month-summary list.
+- Added the overview-to-month-to-day drilldown. A saved month opens a complete
+  natural-month calendar, and any date opens a detail using only persisted
+  practice data.
+- The month view shows the selected month's duration, practice days, session
+  count, and category-duration distribution. The day view shows duration,
+  session count, category count, and its saved records.
+- Day records reuse the existing `RecordBottomSheet`, retaining one edit and
+  hard-delete flow rather than creating a second detail page.
+- A day-detail back action returns to its parent month; the month-detail back
+  action returns to the annual overview.
+
+### Verification Performed
+
+- Added tests for annual-to-month-to-day navigation, the record-detail entry
+  point, empty annual data, completed historical-month summaries, current
+  month cut-off at the current day, and chronological day records.
+- Ran `npm test`: twenty-one test files and eighty tests passed.
+- Ran `npm run typecheck`, `npm run build`, `npm run test:ui`, and
+  `git diff --check`: all completed successfully. Browser regression covered
+  the annual overview at mobile and desktop widths without horizontal overflow.
+- The user manually verified Task 10.1 and confirmed the feature behavior.
+
+### Handoff Notes
+
+- Task 10.1 is complete. Task 10.2 may now enable the Category and Tag tabs.
+- Task 10.2 must change tag reporting from the old usage-count rule to the
+  approved many-to-many duration rule. A session's full duration belongs to
+  every attached tag, so tag percentages may total more than 100%.
+
+## 2026-07-13 - V0.3 Statistics Annual Overview Visual Refresh
+
+### What Changed
+
+- Reworked the approved annual overview into the V0.3 reference hierarchy:
+  year control, four compact annual metrics, a week-column annual heatmap,
+  intensity legend, and recent-month summaries with miniature activity strips.
+- The annual heatmap now renders 53 Monday-first week columns rather than
+  twelve independent mini calendars. Month rows begin with the current month,
+  show five rows by default, and can reveal earlier months without changing
+  the existing month-detail navigation.
+- Kept all statistics derived from saved sessions and retained the indigo
+  intensity system. No rhythm, BPM, calorie, comparison, or mood fields were
+  added.
+
+### Verification Performed
+
+- Added annual heatmap structure coverage and retained the annual-to-month
+  drilldown test.
+- Ran the full unit suite (82 tests), TypeScript check, production build, and
+  mobile browser regression. The mobile visual check confirmed 53 week columns
+  with no horizontal overflow.
+- The user accepted the annual overview and authorized the monthly visual work.
+
+### Handoff Notes
+
+- Annual overview is accepted. Do not alter it while implementing the monthly
+  page unless a cross-view consistency issue requires a shared component fix.
+- The next visual checkpoint is the monthly detail page; daily detail remains
+  unchanged until the user verifies the monthly result.
+
+## 2026-07-13 - V0.3 Statistics Monthly Detail Visual Refresh
+
+### What Changed
+
+- Reframed the month detail as a focused drilldown: a centered month title
+  with return control, a complete Monday-first calendar heatmap, an indigo
+  intensity legend, compact category distribution, and the three most recent
+  records for the month.
+- Removed the superseded monthly summary cards and in-calendar month controls
+  so the page follows the approved reference hierarchy. Each heatmap day
+  remains the entry point to the existing daily detail.
+- Added compact Chinese duration labels inside calendar cells. Values such as
+  ninety minutes display as `90分`, avoiding truncation at phone widths.
+- Reused `RecordBottomSheet` for recent-record entry, preserving one detail
+  and editing flow. Added a statistics-service helper to return the current
+  month's saved sessions in reverse chronological order.
+
+### Verification Performed
+
+- Added month-detail assertions for the calendar title, daily duration labels,
+  recent-record list, and record entry point.
+- Ran the focused statistics and calendar suites, the full unit suite (82
+  tests), TypeScript check, production build, browser regression, and a
+  populated mobile visual check with no horizontal overflow.
+- The user authorized Task 11 after reviewing the monthly page.
+
+### Handoff Notes
+
+- Month detail is accepted. The calendar duration mode is opt-in and must not
+  alter the compact Today or Records calendars.
+- Task 11 is the final visual, offline, PWA, and regression sweep. It should
+  include the daily detail presentation rather than reopening the annual or
+  month layouts without a specific finding.
+
+## 2026-07-13 - V0.3 Task 11: Final Visual, PWA, and Offline Acceptance
+
+### What Changed
+
+- Completed the final statistics drilldown presentation. Daily detail now has
+  a centered date header, a balanced return action, compact real-data metrics,
+  chronological record entry points, and a duration-based category
+  distribution; record editing still uses the existing Bottom Sheet.
+- Completed the V0.3 visual and behavioral review for Today, Timer, save
+  sheets, Log, record detail, Statistics, Settings, and classification
+  management. No fields outside the approved local practice model were added.
+- Confirmed the release configuration keeps the PWA manifest, Workbox shell,
+  installation icons, and GitHub Pages `/SnareLab/` base path aligned.
+
+### Verification Performed
+
+- Ran `npm test`: 21 test files and 82 tests passed, including IndexedDB
+  migrations, drafts, attachments, filtering, metadata edits, hard deletion,
+  classification cleanup, and statistics aggregation.
+- Ran `npm run typecheck`, normal production build, and a production build
+  with `VITE_BASE_PATH=/SnareLab/`; all passed and generated the PWA service
+  worker and manifest.
+- Ran `npm run test:ui`: all 11 mobile-browser flows passed, covering layout,
+  navigation, timer/save, detail edit/delete, and classification management.
+- Captured the 390px day-detail screen with populated local data. It reported
+  no horizontal overflow, rendered the centered day title, and showed the
+  category distribution.
+- The user requested the V0.3.1 release and GitHub Pages publication after
+  final review.
+
+### Handoff Notes
+
+- V0.3 implementation is complete as V0.3.1. Future work should start from
+  the persisted local-first boundaries rather than adding parallel data stores
+  or record-detail screens.

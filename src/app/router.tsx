@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AppShellProvider } from "./AppShellContext";
 import { BottomNavigation } from "../components/BottomNavigation";
 import { SettingsPanel } from "../components/SettingsPanel";
+import { ClassificationManagementSheet } from "../components/ClassificationManagementSheet";
 import { LogPage } from "../pages/Log/LogPage";
 import { StatisticsPage } from "../pages/Statistics/StatisticsPage";
 import { TimerPage } from "../pages/Timer/TimerPage";
@@ -13,15 +14,18 @@ function AppLayout() {
   const { pathname } = useLocation();
   const isTimerRoute = pathname === "/timer";
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [managementKind, setManagementKind] = useState<"category" | "tag">();
+  const [classificationRevision, setClassificationRevision] = useState(0);
 
   return (
-    <AppShellProvider value={{ openSettings: () => setSettingsOpen(true) }}>
+    <AppShellProvider value={{ classificationRevision, notifyClassificationChanged: () => setClassificationRevision((current) => current + 1), openSettings: () => setSettingsOpen(true) }}>
       <div className={isTimerRoute ? "app-shell app-shell--timer" : "app-shell"}>
         <main className="app-shell__content">
           <Outlet />
         </main>
         {!isTimerRoute && <BottomNavigation />}
-        <SettingsPanel onClose={() => setSettingsOpen(false)} open={settingsOpen} />
+        <SettingsPanel onClose={() => setSettingsOpen(false)} onOpenCategoryManagement={() => { setSettingsOpen(false); setManagementKind("category"); }} onOpenTagManagement={() => { setSettingsOpen(false); setManagementKind("tag"); }} open={settingsOpen} />
+        {managementKind && <ClassificationManagementSheet kind={managementKind} onChanged={() => setClassificationRevision((current) => current + 1)} onClose={() => { setManagementKind(undefined); setSettingsOpen(true); }} />}
       </div>
     </AppShellProvider>
   );

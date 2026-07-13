@@ -4,13 +4,16 @@ import type { ReactNode } from "react";
 import snareLabMark from "../../assets/snarelab-mark.svg";
 
 interface AppHeaderProps {
+  centeredTitle?: boolean;
+  leading?: ReactNode;
   onOpenSettings: () => void;
   title: string;
+  titleAccessory?: ReactNode;
   titleId?: string;
   trailing?: ReactNode;
 }
 
-export function AppHeader({ onOpenSettings, title, titleId, trailing }: AppHeaderProps) {
+export function AppHeader({ centeredTitle = false, leading, onOpenSettings, title, titleAccessory, titleId, trailing }: AppHeaderProps) {
   return (
     <header className="app-header">
       <div className="app-header__brand-row">
@@ -22,9 +25,10 @@ export function AppHeader({ onOpenSettings, title, titleId, trailing }: AppHeade
           <Settings aria-hidden="true" size={21} strokeWidth={2.5} />
         </button>
       </div>
-      <div className="app-header__page-row">
-        <h1 id={titleId}>{title}</h1>
-        {trailing}
+      <div className={`app-header__page-row ${centeredTitle ? "app-header__page-row--centered" : ""}`}>
+        {centeredTitle && <div className="app-header__page-side">{leading}</div>}
+        <h1 id={titleId}><span>{title}</span>{titleAccessory}</h1>
+        {centeredTitle ? <div className="app-header__page-side app-header__page-side--end">{trailing}</div> : trailing}
       </div>
     </header>
   );

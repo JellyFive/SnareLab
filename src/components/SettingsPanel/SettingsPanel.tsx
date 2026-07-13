@@ -4,10 +4,12 @@ import { useDialogFocus } from "../../hooks/useDialogFocus";
 
 interface SettingsPanelProps {
   onClose: () => void;
+  onOpenCategoryManagement: () => void;
+  onOpenTagManagement: () => void;
   open: boolean;
 }
 
-export function SettingsPanel({ onClose, open }: SettingsPanelProps) {
+export function SettingsPanel({ onClose, onOpenCategoryManagement, onOpenTagManagement, open }: SettingsPanelProps) {
   const dialogRef = useDialogFocus(open);
 
   if (!open) return null;
@@ -20,11 +22,11 @@ export function SettingsPanel({ onClose, open }: SettingsPanelProps) {
           <button aria-label="关闭设置" className="icon-button" data-dialog-initial-focus onClick={onClose} type="button">关闭</button>
         </div>
         <div className="settings-panel__list">
-          <button className="settings-panel__row" type="button">
+          <button className="settings-panel__row" onClick={onOpenCategoryManagement} type="button">
             <span><Tags aria-hidden="true" size={18} />分类管理</span>
             <ChevronRight aria-hidden="true" size={18} />
           </button>
-          <button className="settings-panel__row" type="button">
+          <button className="settings-panel__row" onClick={onOpenTagManagement} type="button">
             <span><Tags aria-hidden="true" size={18} />标签管理</span>
             <ChevronRight aria-hidden="true" size={18} />
           </button>

@@ -82,11 +82,11 @@ export async function ensurePresetTags(
   now = new Date(),
 ): Promise<void> {
   await database.transaction("rw", database.tags, async () => {
-    const existingNames = new Set(
-      (await database.tags.toArray()).map((tag) => tag.name),
+    const existingIds = new Set(
+      await database.tags.toCollection().primaryKeys(),
     );
     const missingTags = PRESET_TAG_DEFINITIONS.filter(
-      (tag) => !existingNames.has(tag.name),
+      (tag) => !existingIds.has(tag.id),
     ).map((tag) => ({ ...tag, createdAt: now, updatedAt: now }));
 
     if (missingTags.length > 0) {

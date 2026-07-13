@@ -71,6 +71,17 @@ describe("SnareLab database", () => {
     expect(tags).toHaveLength(PRESET_TAG_DEFINITIONS.length);
   });
 
+  it("does not recreate a preset tag after it has been renamed", async () => {
+    await ensurePresetTags(database);
+    await database.tags.update("control", { name: "稳定性" });
+
+    await ensurePresetTags(database);
+
+    expect(await database.tags.get("control")).toMatchObject({ name: "稳定性" });
+    expect(await database.tags.where("name").equals("Control").count()).toBe(0);
+    expect(await database.tags.count()).toBe(PRESET_TAG_DEFINITIONS.length);
+  });
+
   it("rejects deletion of the Uncategorized system category", async () => {
     await ensureDefaultCategories(database);
     const categories = new CategoryRepository(database);

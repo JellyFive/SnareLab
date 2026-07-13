@@ -13,6 +13,7 @@ export interface SaveSessionInput {
 }
 
 export interface SessionMetadataUpdate {
+  attachments: ImageAttachment[];
   categoryId: string;
   tagIds: string[];
   note?: string;
@@ -81,6 +82,7 @@ export class SessionRepository {
     const changed = await this.database.sessions.update(id, {
       categoryId: input.categoryId,
       tagIds: input.tagIds,
+      attachments: input.attachments,
       note: input.note,
       updatedAt: this.now(),
     });

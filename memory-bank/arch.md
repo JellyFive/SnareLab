@@ -164,6 +164,25 @@ Follow the V0.2 technical design when adding product code:
   actions during a write and exposes a Chinese error alert on failure; it still
   owns only temporary form state.
 
+### Task 6 Records Boundaries
+
+- `src/pages/Log/LogPage.tsx` remains the route implementation for `/records`.
+  It reads records through `SessionRepository.filterSessions`, groups them by
+  local `startTime` date in descending order, owns only category/tag filter
+  state, and opens the existing `RecordBottomSheet` from a card selection.
+- `LogPage` deliberately does not use `CalendarHeatMap` as a page body or keep
+  selected-day state. The V0.3 records timeline is a compact browsing view:
+  date nodes and time nodes provide order, while the cards hold the record
+  summary. The timeline's indigo is reserved for start-time scanning; weekday
+  labels remain secondary text.
+- `src/components/FilterSheet/FilterSheet.tsx` is now the shared V0.3
+  classification filter surface. Its public UI accepts only category and tag
+  selections, although `LogFilter` and `SessionRepository.filterSessions`
+  retain date/duration fields for backward-compatible repository queries.
+- `src/utils/classificationLabels.ts` translates system category and preset tag
+  identifiers into the approved Chinese UI names. Pages and sheets should reuse
+  it instead of adding duplicate id-to-label maps.
+
 - V0.3 redesigns the product around three primary routes: Today, Records, and
   Statistics. Classification management is no longer a primary navigation
   destination; it is reached from the global settings icon and via contextual
@@ -238,6 +257,36 @@ Follow the V0.2 technical design when adding product code:
 - `src/components/BottomNavigation/` contains exactly three V0.3 links. The
   Timer route is the sole route that hides bottom navigation.
 
+## V0.3 Settings Classification Management
+
+- `src/app/AppShellContext.tsx` exposes `openSettings` and the monotonic
+  `classificationRevision` signal. `AppLayout` owns both the Settings panel
+  and the active management kind; a successful repository operation increments
+  the revision so mounted pages reload their classification data.
+- `src/components/SettingsPanel/` is deliberately small. It only opens
+  category or tag management and exposes a disabled theme row. It must not
+  duplicate management state, repository reads, or form logic.
+- `src/components/ClassificationManagementSheet/` is the shared full-screen
+  management surface, despite its historical filename. It owns search, local
+  ordering, item action menus, create/edit form state, deletion confirmation,
+  and per-item usage statistics. It depends on repositories for persistence;
+  it never mutates session records directly.
+- `ClassificationManagementSheet` calls `ensureDefaultCategories` and
+  `ensurePresetTags` before listing items, then reads categories, tags, and
+  sessions through their repositories. Its category deletion path delegates to
+  `CategoryRepository.deleteCategory`; its tag deletion path delegates to
+  `TagRepository.deleteTag`, preserving the repository transaction rules.
+- `src/utils/classificationLabels.ts` translates only untouched seeded names.
+  Once a default category or tag has been renamed, it returns the persisted
+  name, preventing the UI translation layer from hiding management changes.
+- `src/database/seedDefaults.ts` identifies preset tags by immutable `id`, not
+  mutable `name`. This preserves user edits while retaining idempotent default
+  seeding.
+- `TodayPage`, `TimerPage`, `LogPage`, and `StatisticsPage` subscribe to
+  `classificationRevision`. Their own page state remains local, but their
+  repository reads are refreshed after management changes so selectors,
+  filters, records, and reports stay synchronized.
+
 ## V0.3 Image Attachments
 
 - `src/services/imageAttachmentService.ts` is the sole browser-side boundary
@@ -253,6 +302,24 @@ Follow the V0.2 technical design when adding product code:
   component. Parents own attachment state and persistence through its add and
   remove callbacks; the component owns only fixed-grid rendering, input access,
   preview object URLs, and local feedback display.
+
+## V0.3 Record Detail Boundaries
+
+- `src/components/RecordBottomSheet/` is the only record-detail surface. It
+  owns view, edit, and delete-confirmation states; the parent controls whether
+  the selected session is open and reloads its lists after repository writes.
+- `RecordBottomSheet` keeps `duration`, `startTime`, and `endTime` read-only.
+  It renders the two timestamps as one compact practice-time range and sends
+  only category, tags, note, and attachments to its save callback.
+- `SessionRepository.updateSessionMetadata` is the persistence boundary for
+  record editing. Its metadata update now includes the complete normalized
+  attachment array, but it still never writes timer facts.
+- `src/components/CategoryPicker/` is the shared custom category listbox for
+  `SaveSessionSheet` and `RecordBottomSheet`. It owns opening and closing the
+  options list; parents own the selected category id and any persistence.
+- `ImageAttachmentGrid` remains controlled by its parent and now exposes
+  optional accessible move callbacks for attachment ordering. Ordering itself
+  is normalized by `moveAttachment` in `imageAttachmentService`.
 - `SnareLabDatabase` is the only place that defines IndexedDB versions and table indexes; migrations are kept separate so schema evolution remains reviewable.
 - `ensureDefaultCategories` and `ensurePresetTags` are safe to call more than once. `uncategorized` is the stable system-category id used by future migration logic.
 - Default categories and preset tags are data definitions, not UI constants; future views must read them through repositories or stores.
@@ -277,3 +344,98 @@ Follow the V0.2 technical design when adding product code:
 - The PWA manifest declares raster 192px and 512px installation icons in
   addition to the SVG fallback. This provides reliable browser-installable app
   icons without changing the web application's local-first data model.
+
+## V0.3 Statistics Aggregation
+
+- `src/services/statisticsService.ts` is the sole domain aggregation boundary
+  for the V0.3 statistics experience. It receives persisted `PracticeSession`
+  facts and returns display-ready summaries; pages must not independently
+  calculate durations, ratios, streaks, or heatmap data.
+- `StatisticsPeriod` supports `month` and `year` for V0.3. The legacy `week`
+  member exists only until Task 10 replaces the older statistics page controls.
+  Every period is calculated with local `startTime` calendar boundaries and
+  excludes future days after the supplied `now` value.
+- `StatisticsResult.todayDuration` is always the current local day;
+  `totalDuration` and `sessionCount` are all-time; `periodDuration`, `heatmap`,
+  category distribution, and tag distribution are scoped to the selected
+  period. `currentStreak` remains an all-session, local-day calculation.
+- `categoryDistribution` and `tagDistribution` are both duration-based. A
+  multi-tag session contributes its full duration to every attached tag, so tag
+  percentages may total more than 100% and must not be combined with category
+  percentages.
+- Percentage allocation uses the largest-remainder method so a non-empty chart
+  always displays a total of exactly 100%; empty and zero-value inputs return
+  empty distributions or zero percentages without division errors.
+
+## V0.3 Statistics Overview Drilldown
+
+- `src/pages/Statistics/StatisticsPage.tsx` is the route-level coordinator
+  for the three overview states: annual overview, month detail, and day
+  detail. It loads sessions and classifications through repositories, but all
+  aggregation remains in `statisticsService`.
+- `src/components/AnnualHeatMap/` renders the year-specific twelve-month grid
+  with intensity text equivalents. It is not reused as a monthly calendar.
+- `src/components/CalendarHeatMap/` remains the full natural-month component;
+  navigation mode exposes each day as an accessible date button for the month
+  to day-detail transition.
+- `calculateMonthSummaries` owns the twelve monthly totals. Completed months
+  include their full natural range, while the active month stops at the local
+  current day. `calculateDayStatistics` owns one-day duration, count,
+  chronological record ordering, and category duration distribution.
+- The Statistics day-detail reuses `RecordBottomSheet` for record viewing and
+  metadata editing. This preserves the global constraint that there is exactly
+  one record-detail implementation and that timer facts are immutable.
+- Detail navigation has explicit hierarchy: day returns to its parent month;
+  month returns to the annual overview. The Category and Tag views are the
+  next independent Task 10.2 surface.
+
+## V0.3 Annual Statistics Presentation
+
+- `src/components/AnnualHeatMap/AnnualHeatMap.tsx` renders the annual view as
+  a Monday-first, 53-column calendar. It owns only week/date placement and
+  intensity mapping; it does not perform session aggregation or navigation.
+- `src/pages/Statistics/StatisticsPage.tsx` composes annual metrics, the
+  annual heatmap, and month-summary entry points. It uses the statistics
+  service output for all numeric values and owns only selected-view state.
+- The annual month-summary strip is intentionally presentational. It condenses
+  already-aggregated daily heatmap durations into sixteen cells and remains
+  inside `StatisticsPage` because it is specific to this annual list.
+- `src/index.css` contains the responsive visual vocabulary for the annual
+  screen. The 53-column grid is constrained within the page surface so the
+  dashboard remains usable at phone widths without horizontal scrolling.
+
+## V0.3 Monthly Statistics Presentation
+
+- `src/services/statisticsService.ts` exposes `listMonthPracticeSessions` for
+  reverse-chronological, period-bounded month records. It reuses the same local
+  calendar boundary rules as the heatmap and remains the only source of this
+  list's period filtering.
+- `src/components/CalendarHeatMap/CalendarHeatMap.tsx` supports an opt-in
+  `showDuration` display mode. The navigation semantics stay unchanged: the
+  parent still owns date selection, while the component only adds a compact,
+  Chinese duration label when data exists for a day.
+- `src/components/DistributionDonut/DistributionDonut.tsx` supports a compact
+  side-by-side presentation for the monthly category distribution without
+  affecting the vertical card used by other statistics views.
+- `src/components/AppHeader/AppHeader.tsx` supports a centered detail title
+  with a balanced leading action. Month drilldown uses it for the centered
+  month selector while the page still owns navigation state.
+- `src/pages/Statistics/StatisticsPage.tsx` composes the monthly heatmap,
+  category distribution, and recent records. It does not calculate period
+  totals or filter raw sessions directly.
+
+## V0.3 Final Acceptance Surface
+
+- The application remains local-first: `SnareLabDatabase` persists sessions,
+  category/tag metadata, image Blobs, and completed unsaved drafts in
+  IndexedDB. The application shell reloads these repositories on route and
+  classification changes, so statistics and selectors refresh from persisted
+  facts rather than in-memory copies.
+- `StatisticsPage` now presents one shared hierarchy for annual, month, and
+  day drilldowns. The detail header is centered through `AppHeader`; day detail
+  uses the same `RecordBottomSheet` as Log and supplements its record list with
+  a duration-based category donut.
+- The final PWA configuration in `vite.config.ts` uses a single configurable
+  base path for routes, manifest assets, start URL, and Workbox fallback. The
+  GitHub Pages workflow builds with `/SnareLab/`, preserving installation and
+  offline shell behavior under the repository subpath.
