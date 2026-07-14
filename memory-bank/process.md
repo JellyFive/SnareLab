@@ -1351,3 +1351,56 @@ practice target, and rhythm fields remain absent.
   mobile/tablet/desktop workbench.
 - Task 5 must keep the Canvas visual-only, call `flush` before document switches,
   and use the existing domain commands for every document edit.
+
+## 2026-07-14 - V0.4.0 Task 5: Responsive Silent Grid Editor
+
+### Context
+
+- Re-read the V0.4 Task 5 plan, route, document-management, responsive, and
+  module-boundary rules before implementation.
+- This milestone deliberately excludes audio playback, samples, Transport,
+  Library, score, Count-in, and metronome placeholders.
+
+### What Changed
+
+- Added `/editor`, the fourth `编辑` primary-navigation item, and an editor-only
+  wide application shell.
+- Added `EditorPage` to restore the last valid document, coordinate Store,
+  repository, Canvas Grid, document CRUD, measure operations, Mute/Solo, and
+  explicit save feedback.
+- Added focus-managed toolbar dialogs for rename/delete, destructive measure
+  confirmations, eight bilingual track rows, and responsive fixed-track/Grid
+  scrolling workbench layouts.
+- Extended autosave `flush` and `retry` with success results so document changes
+  cannot discard a document whose latest in-memory write failed.
+
+### Test-First Record
+
+- Route/navigation tests first failed because `/editor` redirected to Today and
+  only three primary links existed; page and toolbar tests then failed because
+  their modules were absent.
+- Added repository-backed tests for restoration, switch flushing and preference
+  persistence, final-document replacement, failed-save retention, and pending
+  save flushing on page exit.
+- Independent review found a failed-flush data-loss path, missing leave-page
+  flush, stale local view state after transitions, and rename-dialog focus
+  restoration. Regression tests guided each fix; final review had no issues.
+
+### Verification Performed
+
+- Task 5 focused suite: 4 test files and 21 tests passed.
+- Full suite: 30 test files and 158 tests passed.
+- `npm run typecheck`, `npm run build`, PWA generation, and `git diff --check`
+  all passed.
+- Browser checks at 390×844, 1024×768, and 1440×900 confirmed no whole-page
+  horizontal overflow, fixed track labels, isolated Grid scrolling, and no
+  console errors.
+- The user approved document CRUD, Grid editing, Mute/Solo, responsive layout,
+  and silent-editor scope.
+
+### Handoff Notes
+
+- Task 5 is complete. Task 6 may add licensed local drum samples and the Web
+  Audio engine while preserving the EditorPage orchestration boundary.
+- Existing injected playback-stop callbacks are the intended integration seam;
+  scheduling must remain outside React rendering and Canvas code.

@@ -511,22 +511,22 @@ git commit -m "Add accessible canvas rhythm grid"
 - Consumes: `RhythmDocumentRepository`, `useEditorStore`, autosave hook, rhythm commands and `RhythmGridCanvas`.
 - Produces: `/editor` route and `编辑` primary navigation link.
 
-- [ ] **Step 1: Write failing route and navigation tests**
+- [x] **Step 1: Write failing route and navigation tests**
 
 Extend route cases with `['/editor', '节奏编辑器']`, expect four accessible navigation links, click “编辑”, and assert `aria-current="page"`.
 
 Run: `npm test -- src/app/App.test.tsx`  
 Expected: FAIL because `/editor` redirects and only three links exist.
 
-- [ ] **Step 2: Add the Editor route and fourth navigation item**
+- [x] **Step 2: Add the Editor route and fourth navigation item**
 
 Add `SquarePen` or the existing icon-system equivalent with label “编辑”. Keep Timer as the only route that hides bottom navigation.
 
-- [ ] **Step 3: Write failing page and toolbar tests**
+- [x] **Step 3: Write failing page and toolbar tests**
 
 Seed two documents and assert: last document opens; switching calls autosave flush and clears history; new/rename/delete flows update the selector; delete requires confirmation; final deletion creates “未命名节奏”; save state text is visible; unavailable future features are absent.
 
-- [ ] **Step 4: Implement EditorToolbar and document dialogs**
+- [x] **Step 4: Implement EditorToolbar and document dialogs**
 
 Use explicit callbacks:
 
@@ -549,24 +549,24 @@ interface EditorToolbarProps {
 
 Rename rejects an empty trimmed name. Delete and destructive clear actions use focus-managed confirmation dialogs.
 
-- [ ] **Step 5: Implement measure and track controls**
+- [x] **Step 5: Implement measure and track controls**
 
 `MeasureControls` exposes selected measure, add, delete, clear current and clear all. `TrackControlPanel` renders exactly 8 rows with Chinese/English instrument labels and 44px Mute/Solo buttons. Boundary controls explain why they are disabled.
 
-- [ ] **Step 6: Compose EditorPage**
+- [x] **Step 6: Compose EditorPage**
 
 On mount resolve the initial document, open it in the store, and load the list. On document switch: stop future audio through an injected no-op callback for now, `await flush()`, remember the id, open the new document, and clear history. Use repository injection props in tests to avoid the production database.
 
-- [ ] **Step 7: Add responsive styles**
+- [x] **Step 7: Add responsive styles**
 
 Use `.app-shell--editor` to remove the 720px content cap only for `/editor`. Desktop/tablet uses toolbar + fixed track column + scrollable Canvas; phone keeps the track column visible and scrolls only `.editor-grid-scroll`. Do not add Library or score placeholders.
 
-- [ ] **Step 8: Run verification**
+- [x] **Step 8: Run verification**
 
 Run: `npm test -- src/app/App.test.tsx src/pages/Editor/EditorPage.test.tsx src/features/editor/components/EditorToolbar.test.tsx && npm run typecheck && npm run build && git diff --check`  
 Expected: editor route, four-tab navigation, CRUD, editing, history and save-status tests pass.
 
-- [ ] **Step 9: Manual gate, memory-bank update, and commit**
+- [x] **Step 9: Manual gate, memory-bank update, and commit**
 
 Manual check at 390x844, 1024x768 landscape and 1440x900: document CRUD, 16-measure horizontal scrolling, fixed track labels, keyboard editing and no whole-page horizontal overflow. After approval, document route and responsive composition.
 

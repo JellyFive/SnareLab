@@ -3,11 +3,11 @@
 ## Current Stage
 
 The repository contains the accepted SnareLab Practice Log v0.3.2 product and
-has started the V0.4.0 Grid Editor implementation. V0.4.0 Tasks 1–4 provide the
+has started the V0.4.0 Grid Editor implementation. V0.4.0 Tasks 1–5 provide the
 rhythm document contract, Dexie v5 storage, pure edit commands, document
 repository, editor history Store, reliable autosave, and an accessible Canvas
-Grid primitive. The editor route, playback engine, audio samples, Transport,
-and responsive editor workbench remain later tasks.
+Grid primitive plus the silent responsive Editor workbench. Playback engine,
+audio samples, and Transport remain later tasks.
 
 ## Source of Truth
 
@@ -124,6 +124,30 @@ and responsive editor workbench remain later tasks.
   semantics, row/column counts, one hidden active `row > gridcell`, and polite
   action announcements. Arrow keys clamp the controlled cursor; Space/Enter
   emit one toggle intent for the normalized active cell.
+
+## V0.4.0 Editor Route and Workbench
+
+- `/editor` is the fourth primary route and `编辑` is the fourth bottom-navigation
+  link. `AppLayout` applies `app-shell--editor` only on that route so its content
+  is intentionally wider than the V0.3 720px page cap; Timer remains the only
+  route without bottom navigation.
+- `EditorPage` is the orchestration boundary for the active rhythm document. It
+  resolves/restores through `RhythmDocumentRepository`, opens Store state, wires
+  autosave, and combines the toolbar, measure controls, fixed track column, and
+  visual-only Canvas Grid.
+- Every document transition stops future playback, flushes the old document, and
+  proceeds only when that save succeeds. Failed flushes leave the in-memory
+  document active for retry; successful transitions reset measure/cursor state.
+- Leaving Editor triggers an immediate flush. Autosave `flush` and `retry` now
+  report boolean success so transition guards can preserve unsaved in-memory
+  work without surfacing timer-driven write failures as unhandled rejections.
+- `EditorToolbar` owns document-selection and focus-managed rename/delete
+  dialogs; `MeasureControls` owns destructive measure confirmations;
+  `TrackControlPanel` renders the eight fixed bilingual tracks with 44px
+  Mute/Solo controls. None access Dexie directly.
+- Mobile preserves a fixed track column and lets only the Grid timeline scroll
+  horizontally. Library, score, Count-in, metronome, and audio Transport UI
+  remain absent until their dedicated tasks.
 
 ## Root Files
 

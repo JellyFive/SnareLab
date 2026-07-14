@@ -9,17 +9,19 @@ import { LogPage } from "../pages/Log/LogPage";
 import { StatisticsPage } from "../pages/Statistics/StatisticsPage";
 import { TimerPage } from "../pages/Timer/TimerPage";
 import { TodayPage } from "../pages/Today/TodayPage";
+import { EditorPage } from "../pages/Editor/EditorPage";
 
 function AppLayout() {
   const { pathname } = useLocation();
   const isTimerRoute = pathname === "/timer";
+  const isEditorRoute = pathname === "/editor";
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [managementKind, setManagementKind] = useState<"category" | "tag">();
   const [classificationRevision, setClassificationRevision] = useState(0);
 
   return (
     <AppShellProvider value={{ classificationRevision, notifyClassificationChanged: () => setClassificationRevision((current) => current + 1), openSettings: () => setSettingsOpen(true) }}>
-      <div className={isTimerRoute ? "app-shell app-shell--timer" : "app-shell"}>
+      <div className={`app-shell${isTimerRoute ? " app-shell--timer" : ""}${isEditorRoute ? " app-shell--editor" : ""}`}>
         <main className="app-shell__content">
           <Outlet />
         </main>
@@ -41,6 +43,7 @@ export function AppRoutes() {
         <Route path="log" element={<Navigate replace to="/records" />} />
         <Route path="category" element={<Navigate replace to="/" />} />
         <Route path="statistics" element={<StatisticsPage />} />
+        <Route path="editor" element={<EditorPage />} />
         <Route path="*" element={<Navigate replace to="/" />} />
       </Route>
     </Routes>

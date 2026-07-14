@@ -13,8 +13,8 @@ export interface UseRhythmDocumentAutosaveOptions {
 }
 
 export interface RhythmDocumentAutosaveController {
-  flush: () => Promise<void>;
-  retry: () => Promise<void>;
+  flush: () => Promise<boolean>;
+  retry: () => Promise<boolean>;
 }
 
 function errorMessage(error: unknown): string {
@@ -30,7 +30,7 @@ export function useRhythmDocumentAutosave({
   const repositoryRef = useRef(repository);
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const revisionRef = useRef(0);
-  const inFlightRef = useRef(new Map<number, Promise<void>>());
+  const inFlightRef = useRef(new Map<number, Promise<boolean>>());
 
   latestDocumentRef.current = document;
   repositoryRef.current = repository;
@@ -62,6 +62,7 @@ export function useRhythmDocumentAutosave({
         ) {
           useEditorStore.getState().setSaveStatus("saved");
         }
+        return true;
       })
       .catch((error: unknown) => {
         if (
@@ -70,6 +71,7 @@ export function useRhythmDocumentAutosave({
         ) {
           useEditorStore.getState().setSaveStatus("error", errorMessage(error));
         }
+        return false;
       })
       .finally(() => {
         inFlightRef.current.delete(revision);
@@ -103,17 +105,17 @@ export function useRhythmDocumentAutosave({
   const flush = useCallback(async () => {
     cancelTimer();
     const target = latestDocumentRef.current;
-    if (!target) return;
-    await persist(target, revisionRef.current);
+    if (!target) return true;
+    return persist(target, revisionRef.current);
   }, [cancelTimer, persist]);
 
   const retry = useCallback(async () => {
     cancelTimer();
     const target = latestDocumentRef.current;
-    if (!target) return;
+    if (!target) return true;
     const revision = ++latestAutosaveRevision;
     revisionRef.current = revision;
-    await persist(target, revision);
+    return persist(target, revision);
   }, [cancelTimer, persist]);
 
   return { flush, retry };

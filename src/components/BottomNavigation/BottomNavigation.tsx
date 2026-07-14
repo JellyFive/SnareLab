@@ -1,10 +1,11 @@
-import { ChartNoAxesCombined, House, List } from "lucide-react";
+import { ChartNoAxesCombined, House, List, SquarePen } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 const navigationItems = [
   { icon: House, label: "今日", to: "/" },
   { icon: List, label: "记录", to: "/records" },
   { icon: ChartNoAxesCombined, label: "统计", to: "/statistics" },
+  { icon: SquarePen, label: "编辑", to: "/editor" },
 ];
 
 export function BottomNavigation() {

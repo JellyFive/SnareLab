@@ -14,6 +14,7 @@ describe("App shell", () => {
     ["/", "Today"],
     ["/records", "记录"],
     ["/statistics", "统计"],
+    ["/editor", "节奏编辑器"],
   ])("renders %s as the %s route", (path, pageTitle) => {
     window.history.replaceState({}, "", path);
 
@@ -36,7 +37,7 @@ describe("App shell", () => {
 
     render(<App />);
 
-    for (const [label, pageTitle] of [["记录", "记录"], ["统计", "统计"], ["今日", "Today"]]) {
+    for (const [label, pageTitle] of [["记录", "记录"], ["统计", "统计"], ["编辑", "节奏编辑器"], ["今日", "Today"]]) {
       await user.click(screen.getByRole("link", { name: label }));
 
       expect(screen.getByRole("heading", { level: 1, name: pageTitle })).toBeVisible();
@@ -53,7 +54,7 @@ describe("App shell", () => {
     const navigation = screen.getByRole("navigation", { name: "主导航" });
     const links = screen.getAllByRole("link");
 
-    expect(links).toHaveLength(3);
+    expect(links).toHaveLength(4);
     expect(navigation).toContainElement(links[0]);
 
     for (const link of links) {
