@@ -40,7 +40,7 @@ export default defineConfig({
         start_url: base
       },
       workbox: {
-        globPatterns: ["**/*.{js,css,html,png,woff2}"],
+        globPatterns: ["**/*.{js,css,html,png,wav,woff2}"],
         navigateFallback: `${base}index.html`
       }
     })

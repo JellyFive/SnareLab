@@ -599,15 +599,15 @@ git commit -m "Add responsive grid editor page"
 - Produces: `SAMPLE_MANIFEST: Record<RhythmTrackId, SampleDefinition>`.
 - Produces: class `RhythmAudioEngine` with `load`, `play`, `pause`, `stop`, `setDocument`, `setBpm`, `setLoop`, `setVolume`, `getPlayheadTick`, `subscribe`, `dispose`.
 
-- [ ] **Step 1: Add the sample license record before binaries**
+- [x] **Step 1: Add the sample license record before binaries**
 
 `LICENSE.md` must list source URL or original creator, exact license, modification status, retrieval date and filename mapping. Only project-owned, public-domain or license-compatible redistributable samples may be added. Do not commit assets with unknown terms.
 
-- [ ] **Step 2: Add the eight normalized local samples**
+- [x] **Step 2: Add the eight normalized local samples**
 
 Use mono or stereo WAV files with consistent sample rate where practical; trim leading silence so scheduled onset is audible at the requested time. Keep filenames exactly aligned with the target file list.
 
-- [ ] **Step 3: Define a base-path-safe manifest**
+- [x] **Step 3: Define a base-path-safe manifest**
 
 ```typescript
 export const SAMPLE_MANIFEST: Record<RhythmTrackId, SampleDefinition> = {
@@ -622,11 +622,11 @@ export const SAMPLE_MANIFEST: Record<RhythmTrackId, SampleDefinition> = {
 };
 ```
 
-- [ ] **Step 4: Write failing Audio Engine tests using fakes**
+- [x] **Step 4: Write failing Audio Engine tests using fakes**
 
 Create fake `AudioContext`, `AudioBufferSourceNode`, `GainNode`, fetch and controllable clock. Assert: eight buffers load once; missing sample reports its track; play schedules notes in `[currentTime, currentTime + 0.1]`; order follows tick then track; velocity affects per-source gain; pause preserves Tick; stop cancels sources and returns Tick 0; loop wraps at document end; non-loop stops; dispose clears timer and nodes.
 
-- [ ] **Step 5: Implement engine dependency injection**
+- [x] **Step 5: Implement engine dependency injection**
 
 ```typescript
 interface RhythmAudioEngineDependencies {
@@ -654,16 +654,16 @@ export class RhythmAudioEngine {
 
 Use a 25ms scheduler interval and 100ms schedule-ahead window. Use `AudioContext.currentTime` for onset calculation; the interval only wakes the scheduler.
 
-- [ ] **Step 6: Implement Mute/Solo and live document changes**
+- [x] **Step 6: Implement Mute/Solo and live document changes**
 
 Before each scheduling pass, derive audible tracks from the latest document. Never cancel audio already inside the 100ms window solely because BPM/Mute/Solo changed; changes apply to newly scheduled notes.
 
-- [ ] **Step 7: Run verification**
+- [x] **Step 7: Run verification**
 
 Run: `npm test -- src/features/editor/audio/RhythmAudioEngine.test.ts && npm run typecheck && npm run build && git diff --check`  
 Expected: deterministic fake-clock tests pass; build copies all eight WAV files.
 
-- [ ] **Step 8: Manual gate, memory-bank update, and commit**
+- [x] **Step 8: Manual gate, memory-bank update, and commit**
 
 Manual check in Chrome/Safari-compatible browser: first click resumes AudioContext; every track has distinct sound; repeated start/stop does not duplicate timers; tab backgrounding followed by stop leaves silence. Review license file before approval.
 

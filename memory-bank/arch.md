@@ -563,3 +563,20 @@ Follow the V0.2 technical design when adding product code:
   base path for routes, manifest assets, start URL, and Workbox fallback. The
   GitHub Pages workflow builds with `/SnareLab/`, preserving installation and
   offline shell behavior under the repository subpath.
+
+## V0.4.0 Local Drum Samples and Audio Engine
+
+- `public/audio/drum-kit/` contains the eight normalized offline WAV assets.
+  `LICENSE.md` records the creator/source URL, CC0 1.0 licence, retrieval date,
+  modification status, and exact filename mapping; future audio assets require
+  equivalent provenance.
+- `src/features/editor/audio/sampleManifest.ts` is the stable base-path-safe
+  `RhythmTrackId` map. Components must not hard-code sample URLs.
+- `RhythmAudioEngine` owns AudioContext creation, decoded-buffer caching, source
+  nodes, master gain, transport state, and precise scheduling. It is React-free
+  and has injected context/fetch/interval dependencies for deterministic tests.
+- The scheduler wakes every 25ms while `AudioContext.currentTime` controls onset;
+  it schedules 100ms ahead in tick then track order, applies velocity gain, and
+  reads fresh Mute/Solo state for only newly scheduled notes. Errors—including
+  unsupported Web Audio—remain explicit audio state and never affect document
+  editing or persistence. Workbox includes WAV assets in PWA precaching.

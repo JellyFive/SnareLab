@@ -1404,3 +1404,40 @@ practice target, and rhythm fields remain absent.
   Audio engine while preserving the EditorPage orchestration boundary.
 - Existing injected playback-stop callbacks are the intended integration seam;
   scheduling must remain outside React rendering and Canvas code.
+
+## 2026-07-14 - V0.4.0 Task 6: Local Drum Samples and Web Audio Engine
+
+### What Changed
+
+- Added eight stereo PCM WAV samples with complete CC0 provenance, source
+  mapping, retrieval date, and no-modification record in
+  `public/audio/drum-kit/LICENSE.md`.
+- Added base-path-safe `SAMPLE_MANIFEST` and a React-free `RhythmAudioEngine`
+  with injectable AudioContext, fetch, and interval dependencies.
+- Implemented decoded-buffer caching, shared master gain, 25ms wakeups with a
+  100ms AudioContext-clock look-ahead window, tick/track ordering, velocity,
+  Mute/Solo, pause/resume, stop, loop/non-loop, BPM changes, errors, and cleanup.
+- Updated Workbox asset globbing and tests so all eight WAV assets are
+  precached in production builds.
+
+### Test-First Record
+
+- Added fake AudioContext scheduler tests before the engine module existed.
+- A failing BPM-change regression fixed duplicate notes already inside the
+  scheduling window. Independent review then added failing coverage for
+  unsupported Web Audio and all eight PWA asset files; follow-up review found
+  no remaining issues.
+
+### Verification Performed
+
+- Full suite: 31 files / 170 tests passed; `npm run typecheck`, `npm run build`,
+  and `git diff --check` passed.
+- Production Workbox output contains all eight `audio/drum-kit/*.wav` entries
+  and reports 18 precache entries.
+- The user approved the sample-license record and Task 6.
+
+### Handoff Notes
+
+- Task 7 owns the React lifecycle and visible Transport controls. It must stop
+  the engine on document change, navigation, unmount, and page visibility
+  changes; it must not schedule notes from React or Canvas.
