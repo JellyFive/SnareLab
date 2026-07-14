@@ -830,11 +830,11 @@ git commit -m "Verify offline responsive rhythm editor"
 - Consumes: all previous tasks.
 - Produces: verified V0.4.0 release candidate and final architecture record.
 
-- [ ] **Step 1: Build a requirement-to-test checklist**
+- [x] **Step 1: Build a requirement-to-test checklist**
 
 Map every section of `SnareLab_Grid_Editor_v0.4.0_Design_Spec.md` to at least one automated or manual check. Explicitly prove non-goals are absent: no Library, score, Count-in, metronome, multi-kit, variable subdivision, track CRUD or PracticeSession write.
 
-- [ ] **Step 2: Run the complete automated suite**
+- [x] **Step 2: Run the complete automated suite**
 
 Run:
 
@@ -848,19 +848,19 @@ git diff --check
 
 Expected: every command exits 0; no required test is skipped; production build contains the PWA manifest, service worker and drum samples.
 
-- [ ] **Step 3: Run V0.3 regression manually**
+- [x] **Step 3: Run V0.3 regression manually**
 
 Verify Today, timer start/pause/save, pending draft, image attachment, records filtering/detail editing/hard delete, category/tag settings and annual/month/day statistics. Confirm the four-tab navigation does not alter existing data or page layouts.
 
-- [ ] **Step 4: Run V0.4.0 acceptance manually**
+- [x] **Step 4: Run V0.4.0 acceptance manually**
 
 Verify multiple documents, autosave statuses, 1–16 measures, all 8 tracks, first/last cells, keyboard editing, 100-history behavior, destructive confirmations, playback timing, pause/resume, stop, loop, BPM 40/240 boundaries, volume, Mute/Solo, route/background stop, three viewport layouts and offline playback.
 
-- [ ] **Step 5: Update memory-bank to final implementation facts**
+- [x] **Step 5: Update memory-bank to final implementation facts**
 
 `arch.md` must describe schema v5, repository/store/Canvas/audio boundaries, sample licensing location, responsive shell and Practice Log isolation. `process.md` must list commands, results, manual devices/viewports, known non-goals and final acceptance date.
 
-- [ ] **Step 6: Final commit**
+- [x] **Step 6: Final commit**
 
 ```bash
 git add docs/V0.4 memory-bank src public tests vite.config.ts package.json package-lock.json

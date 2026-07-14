@@ -1464,3 +1464,14 @@ practice target, and rhythm fields remain absent.
   read the latest Store document before applying their non-history update.
 - All 12 editor E2E cases passed across the three viewports, including offline
   service-worker reload; the user completed manual offline acceptance.
+
+## 2026-07-14 - V0.4.0 Release Acceptance
+
+- Final release verification passed: 33 Vitest files / 179 tests; TypeScript;
+  production PWA build with 18 Workbox precache entries; and 45 Playwright
+  browser tests covering V0.3 regression plus V0.4 editor journeys at mobile,
+  tablet, and desktop widths.
+- Confirmed V0.4 non-goals remain absent: Library, score, Count-in, metronome,
+  multiple kits, variable subdivision, track CRUD, and PracticeSession writes.
+- The editor remains isolated from Practice Log data and statistics. V0.3 Today,
+  timer, records, settings, and statistics browser journeys all passed.
