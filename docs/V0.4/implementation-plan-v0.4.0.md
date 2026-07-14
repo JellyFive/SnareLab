@@ -693,11 +693,11 @@ git commit -m "Add local drum samples and audio engine"
 - Consumes: `RhythmAudioEngine` and current `RhythmDocument`.
 - Produces: `useEditorAudio(document)` returning status, playhead Tick, load error and Transport actions.
 
-- [ ] **Step 1: Write failing Transport tests**
+- [x] **Step 1: Write failing Transport tests**
 
 Assert accessible controls for play, pause, stop, BPM, loop and volume; BPM clamps/rejects outside 40–240; pause replaces play while running; stop is disabled at Tick 0; loading disables play; a named sample error identifies the failed track.
 
-- [ ] **Step 2: Implement TransportControls as a controlled component**
+- [x] **Step 2: Implement TransportControls as a controlled component**
 
 ```typescript
 interface TransportControlsProps {
@@ -717,28 +717,28 @@ interface TransportControlsProps {
 
 Use Chinese `aria-label`s and visible value text. Volume range is 0–1; UI may display 0–100%.
 
-- [ ] **Step 3: Write failing hook lifecycle tests**
+- [x] **Step 3: Write failing hook lifecycle tests**
 
 With an injected fake engine, assert: mount loads once; play forwards current document; document updates call `setDocument`; switching document stops; `visibilitychange` to hidden stops; unmount disposes; subscription updates playhead; requestAnimationFrame is used only for visual polling.
 
-- [ ] **Step 4: Implement useEditorAudio**
+- [x] **Step 4: Implement useEditorAudio**
 
 The hook owns one engine instance per mounted EditorPage. It reports load errors without blocking Grid operations. It stops before document switch and on `document.visibilityState === "hidden"`.
 
-- [ ] **Step 5: Connect document changes and track controls**
+- [x] **Step 5: Connect document changes and track controls**
 
 BPM and Mute/Solo update the current document through `replaceDocumentWithoutHistory`, auto-save, and immediately call engine setters. Grid edits remain undoable; mixer and tempo changes do not enter the Grid Undo stack.
 
-- [ ] **Step 6: Connect the playhead**
+- [x] **Step 6: Connect the playhead**
 
 Pass `playheadTick` to `RhythmGridCanvas`. Stop resets it to 0; pause freezes it; loop visibly returns to 0. Do not auto-scroll the Grid in V0.4.0.
 
-- [ ] **Step 7: Run verification**
+- [x] **Step 7: Run verification**
 
 Run: `npm test -- src/features/editor/components/TransportControls.test.tsx src/features/editor/hooks/useEditorAudio.test.tsx src/pages/Editor/EditorPage.test.tsx && npm run typecheck && npm run build && git diff --check`  
 Expected: full controlled Transport and lifecycle tests pass.
 
-- [ ] **Step 8: Manual gate, memory-bank update, and commit**
+- [x] **Step 8: Manual gate, memory-bank update, and commit**
 
 Manual sequence: enter notes on all tracks; play/pause/resume/stop; change BPM while playing; toggle loop; adjust volume; test individual Mute and multiple Solo; navigate to Today and confirm immediate silence. After approval, document audio lifecycle and UI boundary.
 

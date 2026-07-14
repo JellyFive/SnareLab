@@ -1441,3 +1441,15 @@ practice target, and rhythm fields remain absent.
 - Task 7 owns the React lifecycle and visible Transport controls. It must stop
   the engine on document change, navigation, unmount, and page visibility
   changes; it must not schedule notes from React or Canvas.
+
+## 2026-07-14 - V0.4.0 Task 7: Editor Transport and Playback
+
+- Added accessible Chinese Transport controls for play/pause/stop, BPM, loop,
+  and master volume, including loading/error feedback.
+- `useEditorAudio` owns one engine per EditorPage mount, subscriptions,
+  requestAnimationFrame playhead display, lifecycle cleanup, and visible
+  playback-start error state.
+- BPM and Mute/Solo remain non-Undo document changes, immediately update audio,
+  and retain existing autosave. The user approved manual playback checks.
+- Full verification: 33 test files / 179 tests, typecheck, production PWA build,
+  and diff check passed; independent review verified the rejection regression.

@@ -564,6 +564,14 @@ Follow the V0.2 technical design when adding product code:
   GitHub Pages workflow builds with `/SnareLab/`, preserving installation and
   offline shell behavior under the repository subpath.
 
+## V0.4.0 Editor Transport Lifecycle
+
+- `useEditorAudio` owns the React lifecycle around `RhythmAudioEngine`: one
+  engine per editor mount, subscriptions, visibility/unmount cleanup, visible
+  error state, and rAF-only playhead presentation. Canvas receives only Tick.
+- `TransportControls` is controlled; EditorPage applies BPM and Mute/Solo as
+  non-history document changes, preserves autosave, and updates audio at once.
+
 ## V0.4.0 Local Drum Samples and Audio Engine
 
 - `public/audio/drum-kit/` contains the eight normalized offline WAV assets.

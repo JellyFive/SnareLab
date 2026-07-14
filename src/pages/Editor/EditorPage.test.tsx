@@ -7,6 +7,19 @@ import { RhythmDocumentRepository } from "../../repositories/rhythmDocumentRepos
 import { EditorPage } from "./EditorPage";
 import { useEditorStore } from "../../store/editorStore";
 import { toggleNote } from "../../features/editor/domain/rhythmCommands";
+import type { AudioEngineState } from "../../features/editor/audio/RhythmAudioEngine";
+import type { EditorAudioEngine } from "../../features/editor/hooks/useEditorAudio";
+
+class FakeEditorAudioEngine implements EditorAudioEngine {
+  state: AudioEngineState = { status: "ready", playheadTick: 0 };
+  listener?: (state: AudioEngineState) => void;
+  load = vi.fn(async () => undefined); play = vi.fn(async () => undefined); pause = vi.fn(() => 0); stop = vi.fn();
+  setDocument = vi.fn(); setBpm = vi.fn(); setLoop = vi.fn(); setVolume = vi.fn();
+  getPlayheadTick = vi.fn(() => this.state.playheadTick); getState = vi.fn(() => this.state);
+  subscribe = vi.fn((listener: (state: AudioEngineState) => void) => { this.listener = listener; return () => { this.listener = undefined; }; });
+  dispose = vi.fn();
+  emit(state: AudioEngineState) { this.state = state; this.listener?.(state); }
+}
 
 describe("EditorPage", () => {
   let database: SnareLabDatabase;
@@ -31,6 +44,26 @@ describe("EditorPage", () => {
     expect(screen.queryByText(/Library|五线谱|Count In|节拍器/)).not.toBeInTheDocument();
     expect(second.name).toBe("副歌");
     unmount();
+  });
+
+  it("connects the visible transport, playhead, BPM, and mixer to the audio engine", async () => {
+    const user = userEvent.setup();
+    const initial = await repository.create("播放测试");
+    await repository.rememberLastDocument(initial.id);
+    const engine = new FakeEditorAudioEngine();
+    render(<EditorPage repository={repository} createAudioEngine={() => engine} />);
+    await screen.findByRole("button", { name: "播放" });
+    await user.click(screen.getByRole("button", { name: "播放" }));
+    expect(engine.play).toHaveBeenCalledWith(expect.objectContaining({ id: initial.id }));
+    act(() => engine.emit({ status: "playing", playheadTick: 120 }));
+    expect(screen.getByRole("button", { name: "暂停" })).toBeEnabled();
+    expect(screen.getByTestId("rhythm-grid-playhead")).toHaveStyle({ transform: "translateX(32px)" });
+    await user.clear(screen.getByRole("spinbutton", { name: "速度 BPM" }));
+    await user.type(screen.getByRole("spinbutton", { name: "速度 BPM" }), "140");
+    await user.tab();
+    expect(engine.setBpm).toHaveBeenLastCalledWith(140);
+    await user.click(screen.getByRole("button", { name: /Hi-Hat.*静音/ }));
+    expect(engine.setDocument).toHaveBeenCalledWith(expect.objectContaining({ tracks: expect.arrayContaining([expect.objectContaining({ id: "hi-hat", mute: true })]) }));
   });
 
   it("flushes the old document before switching and remembers the new one", async () => {
