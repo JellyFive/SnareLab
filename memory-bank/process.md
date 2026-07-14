@@ -1453,3 +1453,14 @@ practice target, and rhythm fields remain absent.
   and retain existing autosave. The user approved manual playback checks.
 - Full verification: 33 test files / 179 tests, typecheck, production PWA build,
   and diff check passed; independent review verified the rejection regression.
+
+## 2026-07-14 - V0.4.0 Task 8: Offline and Responsive Editor Acceptance
+
+- Added Playwright editor journeys for mobile 390×844, tablet 1024×768, and
+  desktop 1440×900: navigation, isolated Grid overflow, edit/mixer persistence,
+  play/pause/stop/navigation lifecycle, and service-worker offline reload.
+- The E2E suite found and fixed a stale-render race where an immediate Mute or
+  Solo update could overwrite a just-added Grid note. Mixer and BPM handlers now
+  read the latest Store document before applying their non-history update.
+- All 12 editor E2E cases passed across the three viewports, including offline
+  service-worker reload; the user completed manual offline acceptance.

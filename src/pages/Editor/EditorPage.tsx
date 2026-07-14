@@ -50,11 +50,11 @@ export function EditorPage({ repository: injectedRepository, stopPlayback = NOOP
       onClear={() => apply((current) => clearMeasure(current, selectedMeasure))} onClearAll={() => apply(clearAllNotes)} />
     <TransportControls status={audio.status === "idle" ? "loading" : audio.status} bpm={document.bpm} loop={audio.loop ?? false} volume={audio.volume ?? 1} playheadTick={audio.playheadTick} error={audio.error}
       onPlay={() => void audio.play()} onPause={audio.pause} onStop={stopAudio}
-      onBpmChange={(bpm) => { const next = setDocumentBpm(document, bpm); useEditorStore.getState().replaceDocumentWithoutHistory(next); audio.setBpm(bpm); }}
+      onBpmChange={(bpm) => { const current = useEditorStore.getState().document; if (!current) return; const next = setDocumentBpm(current, bpm); useEditorStore.getState().replaceDocumentWithoutHistory(next); audio.setBpm(bpm); }}
       onLoopChange={audio.setLoop} onVolumeChange={audio.setVolume} />
     <div className="editor-workspace"><TrackControlPanel tracks={document.tracks}
-      onMute={(id, value) => { const next = setTrackMute(document, id, value); useEditorStore.getState().replaceDocumentWithoutHistory(next); audio.setDocument(next); }}
-      onSolo={(id, value) => { const next = setTrackSolo(document, id, value); useEditorStore.getState().replaceDocumentWithoutHistory(next); audio.setDocument(next); }} />
+      onMute={(id, value) => { const current = useEditorStore.getState().document; if (!current) return; const next = setTrackMute(current, id, value); useEditorStore.getState().replaceDocumentWithoutHistory(next); audio.setDocument(next); }}
+      onSolo={(id, value) => { const current = useEditorStore.getState().document; if (!current) return; const next = setTrackSolo(current, id, value); useEditorStore.getState().replaceDocumentWithoutHistory(next); audio.setDocument(next); }} />
       <div className="editor-grid-scroll"><RhythmGridCanvas document={document} cursorTick={cursorTick} cursorTrackId={cursorTrackId}
         playheadTick={audio.playheadTick}
         onCursorChange={(trackId, tick) => { setCursorTrackId(trackId); setCursorTick(tick); setSelectedMeasure(Math.floor(tick / TICKS_PER_MEASURE)); }}

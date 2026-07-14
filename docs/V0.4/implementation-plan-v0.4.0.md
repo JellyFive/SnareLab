@@ -765,7 +765,7 @@ git commit -m "Connect editor transport and playback"
 - Consumes: completed `/editor` UI and local audio assets.
 - Produces: browser acceptance coverage and Workbox inclusion for `.wav` files.
 
-- [ ] **Step 1: Write failing PWA asset test**
+- [x] **Step 1: Write failing PWA asset test**
 
 Require WAV glob support and all eight files with non-zero size:
 
@@ -776,11 +776,11 @@ for (const fileName of expectedSamples) {
 }
 ```
 
-- [ ] **Step 2: Update Workbox glob patterns**
+- [x] **Step 2: Update Workbox glob patterns**
 
 Change only the asset extension glob to include `wav`; preserve configurable base path and `navigateFallback`.
 
-- [ ] **Step 3: Write editor E2E tests**
+- [x] **Step 3: Write editor E2E tests**
 
 Cover exact journeys:
 
@@ -792,20 +792,20 @@ Cover exact journeys:
 6. Mute Kick and Solo Snare; verify UI state persists after reload.
 7. Switch to Today while playing and verify Transport state is stopped on return.
 
-- [ ] **Step 4: Add viewport assertions**
+- [x] **Step 4: Add viewport assertions**
 
 Run the editor journey at 390x844, 1024x768 and 1440x900. Assert the document body does not overflow; at mobile width only `.editor-grid-scroll` has greater scroll width, and the track column remains within the viewport.
 
-- [ ] **Step 5: Add offline acceptance**
+- [x] **Step 5: Add offline acceptance**
 
 Load once online, wait for service worker readiness, switch the Playwright context offline, reload `/editor`, edit a note, reload again and start playback. Expect document persistence and no failed sample request.
 
-- [ ] **Step 6: Run verification**
+- [x] **Step 6: Run verification**
 
 Run: `npm test -- tests/pwa-assets.test.ts && npm run build && npm run test:ui && git diff --check`  
 Expected: unit and Playwright suites exit 0; `dist/` contains versioned audio assets or precache entries; offline test passes.
 
-- [ ] **Step 7: Manual gate, memory-bank update, and commit**
+- [x] **Step 7: Manual gate, memory-bank update, and commit**
 
 Manual PWA check: install or launch standalone, go offline, create/edit/reload/play at all three target widths. After approval, record PWA audio caching and responsive constraints.
 

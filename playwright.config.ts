@@ -18,6 +18,14 @@ export default defineConfig({
     {
       name: "mobile-chrome",
       use: { ...devices["Pixel 5"] }
+    },
+    {
+      name: "tablet-landscape",
+      use: { viewport: { width: 1024, height: 768 } }
+    },
+    {
+      name: "desktop",
+      use: { viewport: { width: 1440, height: 900 } }
     }
   ]
 });
